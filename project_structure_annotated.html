@@ -1,0 +1,112 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { padding: 16px; }
+.tree { font-family: var(--font-mono, monospace); font-size: 12.5px; line-height: 1.8; }
+.row { display: flex; align-items: baseline; gap: 10px; padding: 1px 0; }
+.row:hover { background: var(--color-background-secondary); border-radius: 4px; }
+.path { color: var(--color-text-primary); white-space: nowrap; flex-shrink: 0; }
+.path.dir { color: var(--color-text-info); font-weight: 600; }
+.path.config { color: var(--color-text-warning); }
+.path.agent { color: var(--color-text-success); }
+.path.infra { color: var(--color-text-danger); }
+.sep { color: var(--color-text-tertiary); flex-shrink: 0; }
+.desc { font-family: var(--font-sans, sans-serif); font-size: 11.5px; color: var(--color-text-secondary); }
+.section { font-family: var(--font-sans, sans-serif); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--color-text-tertiary); margin: 14px 0 4px 4px; }
+</style>
+
+<div class="tree">
+
+<div class="section">Root</div>
+<div class="row"><span class="path dir">architecture-ai/</span><span class="sep">—</span><span class="desc">Project root</span></div>
+<div class="row"><span class="path config">├── .env</span><span class="sep">—</span><span class="desc">Secret keys, model names, ports — never committed to git</span></div>
+<div class="row"><span class="path">├── .env.example</span><span class="sep">—</span><span class="desc">Template of .env with placeholder values — committed so teammates know what's needed</span></div>
+<div class="row"><span class="path"">├── .gitignore</span><span class="sep">—</span><span class="desc">Excludes .env, venv/, __pycache__, data/uploads, data/chroma</span></div>
+<div class="row"><span class="path infra">├── docker-compose.yml</span><span class="sep">—</span><span class="desc">Defines all services: backend, chromadb, redis, postgres, ollama — one command to start everything</span></div>
+<div class="row"><span class="path">└── README.md</span><span class="sep">—</span><span class="desc">How to install, run, and use the project</span></div>
+
+<div class="section">Backend — Core App</div>
+<div class="row"><span class="path dir">backend/app/</span><span class="sep">—</span><span class="desc">All Python application code lives here</span></div>
+<div class="row"><span class="path config">├── main.py</span><span class="sep">—</span><span class="desc">FastAPI app entry point — registers all routers, starts the server, loads middleware</span></div>
+<div class="row"><span class="path config">└── config.py</span><span class="sep">—</span><span class="desc">Reads .env and exposes a global settings object — every file imports from here, never reads .env directly</span></div>
+
+<div class="section">LLM Layer — provider abstraction</div>
+<div class="row"><span class="path dir">├── llm/</span></div>
+<div class="row"><span class="path">│   ├── base.py</span><span class="sep">—</span><span class="desc">Abstract BaseLLM class with chat() and stream() methods — defines the contract every provider must follow</span></div>
+<div class="row"><span class="path">│   ├── ollama.py</span><span class="sep">—</span><span class="desc">Ollama implementation of BaseLLM — calls local Ollama API on the server (Qwen 14B)</span></div>
+<div class="row"><span class="path config">│   ├── factory.py</span><span class="sep">—</span><span class="desc">get_llm(agent_type) function — reads config and returns the right model instance with the right system prompt loaded</span></div>
+<div class="row"><span class="path dir">│   └── prompts/</span><span class="sep">—</span><span class="desc">Plain text system prompts — editable without touching code</span></div>
+<div class="row"><span class="path">│       ├── analysis.txt</span><span class="sep">—</span><span class="desc">System prompt for document analysis agent — instructs model to extract, structure, follow templates</span></div>
+<div class="row"><span class="path">│       ├── generation.txt</span><span class="sep">—</span><span class="desc">System prompt for document generation — instructs model to write formal French technical content</span></div>
+<div class="row"><span class="path">│       ├── proofreading.txt</span><span class="sep">—</span><span class="desc">System prompt for proofreading — instructs model to find errors, redundancies, inconsistencies</span></div>
+<div class="row"><span class="path">│       ├── regulatory.txt</span><span class="sep">—</span><span class="desc">System prompt for regulatory agent — instructs model to cite sources, apply CNIL/normes context</span></div>
+<div class="row"><span class="path">│       ├── coding.txt</span><span class="sep">—</span><span class="desc">System prompt for coding assistant — instructs model to generate clean Python/scripts with comments</span></div>
+<div class="row"><span class="path">│       └── vision.txt</span><span class="sep">—</span><span class="desc">System prompt for vision agent — instructs model to describe technical photos, identify equipment</span></div>
+
+<div class="section">Agents — one per specialized use case</div>
+<div class="row"><span class="path dir">├── agents/</span></div>
+<div class="row"><span class="path">│   ├── base_agent.py</span><span class="sep">—</span><span class="desc">Parent class all agents inherit — handles shared logic: loading prompt, calling LLM, logging, error handling</span></div>
+<div class="row"><span class="path agent">│   ├── analysis_agent.py</span><span class="sep">—</span><span class="desc">Feature 1 — receives a document + template name, retrieves relevant chunks via RAG, returns structured synthesis</span></div>
+<div class="row"><span class="path agent">│   ├── generation_agent.py</span><span class="sep">—</span><span class="desc">Feature 2 — receives a template + context, queries doc base for similar past documents, generates new DOCX content</span></div>
+<div class="row"><span class="path agent">│   ├── proofreading_agent.py</span><span class="sep">—</span><span class="desc">Feature 3 — receives one or multiple documents, runs consistency checks, returns structured report of issues</span></div>
+<div class="row"><span class="path agent">│   ├── regulatory_agent.py</span><span class="sep">—</span><span class="desc">Feature 4 — receives a query, calls search gateway (never internal docs), returns sourced regulatory answer</span></div>
+<div class="row"><span class="path agent">│   ├── coding_agent.py</span><span class="sep">—</span><span class="desc">Feature 5 — pure LLM agent, no RAG needed, handles script generation, code explanation, automation help</span></div>
+<div class="row"><span class="path agent">│   ├── report_agent.py</span><span class="sep">—</span><span class="desc">Feature 6 — receives raw data files (Excel, notes), applies report template, generates full structured report</span></div>
+<div class="row"><span class="path agent">│   ├── diagram_agent.py</span><span class="sep">—</span><span class="desc">Feature 8 — receives natural language description, generates Mermaid or SVG diagram, exports to file</span></div>
+<div class="row"><span class="path agent">│   └── vision_agent.py</span><span class="sep">—</span><span class="desc">Feature 9 — receives image file, calls multimodal Qwen-VL model via Ollama, returns structured description</span></div>
+
+<div class="section">Documents — ingestion & retrieval pipeline</div>
+<div class="row"><span class="path dir">├── documents/</span></div>
+<div class="row"><span class="path">│   ├── ingestion.py</span><span class="sep">—</span><span class="desc">Orchestrates the full pipeline: receive file → call right parser → chunk → embed → store in ChromaDB</span></div>
+<div class="row"><span class="path">│   ├── chunker.py</span><span class="sep">—</span><span class="desc">Splits extracted text into chunks — configurable size/overlap, aware of document type (technical docs need larger chunks)</span></div>
+<div class="row"><span class="path">│   ├── retrieval.py</span><span class="sep">—</span><span class="desc">Queries ChromaDB with an embedding, returns top-k most relevant chunks, optional reranking</span></div>
+<div class="row"><span class="path dir">│   └── parsers/</span><span class="sep">—</span><span class="desc">Each parser handles one file type and returns clean plain text</span></div>
+<div class="row"><span class="path">│       ├── pdf_parser.py</span><span class="sep">—</span><span class="desc">Extracts text from PDF — uses pdfplumber for digital PDFs, falls back to pytesseract OCR for scanned ones</span></div>
+<div class="row"><span class="path">│       ├── docx_parser.py</span><span class="sep">—</span><span class="desc">Extracts text and structure from Word documents using python-docx, preserves headings hierarchy</span></div>
+<div class="row"><span class="path">│       ├── excel_parser.py</span><span class="sep">—</span><span class="desc">Reads Excel sheets with openpyxl, converts tables to structured text or JSON for LLM consumption</span></div>
+<div class="row"><span class="path">│       ├── image_parser.py</span><span class="sep">—</span><span class="desc">Pre-processes images with OpenCV (contrast, denoise), then runs pytesseract OCR to extract any text</span></div>
+<div class="row"><span class="path">│       └── bim_parser.py</span><span class="sep">—</span><span class="desc">Parses IFC files with ifcopenshell — extracts element names, properties, materials as queryable text</span></div>
+
+<div class="section">Templates — company document structures</div>
+<div class="row"><span class="path dir">├── templates/</span><span class="sep">—</span><span class="desc">JSON files defining the expected output structure for each document type — edited by the company, not by devs</span></div>
+<div class="row"><span class="path">│   ├── amiante.json</span><span class="sep">—</span><span class="desc">Sections and fields expected in an asbestos diagnostic summary</span></div>
+<div class="row"><span class="path">│   ├── offres_entreprises.json</span><span class="sep">—</span><span class="desc">Reading grid for analyzing company bids</span></div>
+<div class="row"><span class="path">│   ├── memoire_technique.json</span><span class="sep">—</span><span class="desc">Structure for technical bid document analysis based on consultation regulations</span></div>
+<div class="row"><span class="path">│   └── rapport_audit.json</span><span class="sep">—</span><span class="desc">Template for automated energy audit or thermal study reports</span></div>
+
+<div class="section">Search — external internet access (RGPD-isolated)</div>
+<div class="row"><span class="path dir">├── search/</span></div>
+<div class="row"><span class="path infra">│   ├── gateway.py</span><span class="sep">—</span><span class="desc">PII firewall — sanitizes all queries before sending outward, logs every external call, enforces GET-only rule</span></div>
+<div class="row"><span class="path">│   ├── brave_search.py</span><span class="sep">—</span><span class="desc">Calls Brave Search API — returns raw results, no tracking, EU-friendly</span></div>
+<div class="row"><span class="path dir">│   └── sources/</span></div>
+<div class="row"><span class="path">│       ├── legifrance.py</span><span class="sep">—</span><span class="desc">Queries Légifrance API for current legislation and regulatory texts</span></div>
+<div class="row"><span class="path">│       └── normes.py</span><span class="sep">—</span><span class="desc">Fetches updates from technical standards sources (AFNOR, thermal norms, building regulations)</span></div>
+
+<div class="section">Output — document export</div>
+<div class="row"><span class="path dir">├── output/</span></div>
+<div class="row"><span class="path">│   ├── docx_writer.py</span><span class="sep">—</span><span class="desc">Takes structured LLM output and writes a formatted Word document using python-docx with company styles</span></div>
+<div class="row"><span class="path">│   ├── pdf_writer.py</span><span class="sep">—</span><span class="desc">Converts generated content to PDF — uses reportlab or weasyprint</span></div>
+<div class="row"><span class="path">│   └── svg_writer.py</span><span class="sep">—</span><span class="desc">Takes Mermaid or raw SVG from diagram agent and exports clean SVG file for use in Illustrator</span></div>
+
+<div class="section">API — HTTP routes</div>
+<div class="row"><span class="path dir">├── api/</span></div>
+<div class="row"><span class="path">│   ├── middleware.py</span><span class="sep">—</span><span class="desc">Runs on every request — checks auth token, writes audit log entry, handles CORS</span></div>
+<div class="row"><span class="path dir">│   └── routes/</span></div>
+<div class="row"><span class="path">│       ├── chat.py</span><span class="sep">—</span><span class="desc">POST /chat — receives message + agent_type, routes to correct agent, streams response back</span></div>
+<div class="row"><span class="path">│       ├── documents.py</span><span class="sep">—</span><span class="desc">POST /documents/upload — receives file, triggers ingestion pipeline, returns doc ID</span></div>
+<div class="row"><span class="path">│       ├── agents.py</span><span class="sep">—</span><span class="desc">GET /agents — returns list of available agents with descriptions for the frontend selector UI</span></div>
+<div class="row"><span class="path">│       ├── search.py</span><span class="sep">—</span><span class="desc">POST /search — triggers regulatory_agent with external search, returns sourced results</span></div>
+<div class="row"><span class="path">│       └── health.py</span><span class="sep">—</span><span class="desc">GET /health — checks Ollama, ChromaDB, Redis are reachable — used by Docker healthcheck</span></div>
+
+<div class="section">Audit — RGPD compliance</div>
+<div class="row"><span class="path dir">├── audit/</span></div>
+<div class="row"><span class="path">│   ├── logger.py</span><span class="sep">—</span><span class="desc">Writes structured log entry for every action: who, which agent, which document, timestamp, no content stored</span></div>
+<div class="row"><span class="path">│   └── models.py</span><span class="sep">—</span><span class="desc">Pydantic schema for a log entry — defines exactly what fields are recorded</span></div>
+
+<div class="section">Data — persistent storage (gitignored)</div>
+<div class="row"><span class="path dir">└── data/</span></div>
+<div class="row"><span class="path">    ├── uploads/</span><span class="sep">—</span><span class="desc">Raw files uploaded by users — never committed, backed up separately on the server</span></div>
+<div class="row"><span class="path">    ├── chroma/</span><span class="sep">—</span><span class="desc">ChromaDB vector database persistence — the embedded knowledge base of all ingested documents</span></div>
+<div class="row"><span class="path">    └── logs/</span><span class="sep">—</span><span class="desc">Audit log files — retained according to company RGPD data retention policy</span></div>
+
+</div>
