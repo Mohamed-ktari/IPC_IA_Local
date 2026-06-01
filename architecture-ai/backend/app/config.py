@@ -40,12 +40,31 @@ class Settings(BaseSettings):
     # VECTOR DATABASE — ChromaDB
     # ------------------------------------------------------------------
     CHROMA_PATH: str = ""  # set in .env as absolute path on the server
+    CHROMA_HOST: str = "localhost"
+    CHROMA_PORT: int = 8001
 
     @property
     def chroma_path(self) -> Path:
         if self.CHROMA_PATH:
             return Path(self.CHROMA_PATH)
         return BASE_DIR / "backend" / "data" / "chroma"
+
+    # Redis
+    REDIS_URL: str = "redis://localhost:6379"
+
+    # Postgres
+    POSTGRES_USER: str = "archai"
+    POSTGRES_PASSWORD: str = "changeme"
+    POSTGRES_DB: str = "architecture_ai"
+
+    @property
+    def database_url(self) -> str:
+        return (
+            f"postgresql://{self.POSTGRES_USER}:"
+            f"{self.POSTGRES_PASSWORD}@localhost/"
+            f"{self.POSTGRES_DB}"
+        )
+
 
     # ------------------------------------------------------------------
     # DOCUMENT STORAGE

@@ -1,0 +1,99 @@
+# docker-compose.yml
+# Defines all infrastructure services the backend depends on.
+# Run with: make docker-up
+# All services communicate on the internal "ai-network" bridge.
+# Nothing is exposed to the internet except through explicit port mappings.
+
+services:
+
+  # ────────────────────────────────────────
+  # OLLAMA — local LLM runtime
+  # ────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"         # exposes Ollama API to the host
+    volumes:
+      - ollama_data:/root/.ollama   # persists downloaded models
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h       # keeps model loaded in memory
+    networks:
+      - ai-network
+    # GPU support — comment this block out if running on CPU only
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # ────────────────────────────────────────
+  # CHROMADB — vector database
+  # ────────────────────────────────────────
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"           # chromadb runs on 8000 internally, mapped to 8001
+    volumes:
+      - chroma_data:/chroma/chroma   # persists embedded documents
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE   # no usage data sent to Chroma
+    networks:
+      - ai-network
+
+  # ────────────────────────────────────────
+  # REDIS — task queue + cache
+  # ────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - ai-network
+
+  # ────────────────────────────────────────
+  # POSTGRES — users, audit logs, metadata
+  # ────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-archai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-architecture_ai}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ai-network
+
+# ────────────────────────────────────────
+# VOLUMES — persistent data survives container restarts
+# ────────────────────────────────────────
+volumes:
+  ollama_data:
+  chroma_data:
+  redis_data:
+  postgres_data:
+
+# ────────────────────────────────────────
+# NETWORK — isolated internal bridge
+# All services talk to each other by container name
+# e.g. backend connects to ollama at http://ollama:11434
+# ────────────────────────────────────────
+networks:
+  ai-network:
+    driver: bridge

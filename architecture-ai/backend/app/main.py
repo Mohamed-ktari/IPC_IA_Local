@@ -7,6 +7,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+
+
+
 from app.config  import settings, ensure_directories
 from app.api.routes import health, documents, agents, chat, search
 
