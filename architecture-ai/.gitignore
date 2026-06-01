@@ -1,1 +1,9 @@
-architecture-ai/.env
+backend/venv
+backend/.env.example
+
+
+
+
+
+
+.env
