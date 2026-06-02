@@ -28,7 +28,8 @@ class Settings(BaseSettings):
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "qwen2.5:14b"
+    #OLLAMA_MODEL: str = "qwen2.5:14b"
+    OLLAMA_MODEL: str = "mistral:7b-instruct-q4_K_M"
     OLLAMA_VISION_MODEL: str = "qwen2.5vl:7b"  # multimodal — for vision agent
     OLLAMA_TIMEOUT: int = 120  # seconds — 14B can be slow on first token
 
