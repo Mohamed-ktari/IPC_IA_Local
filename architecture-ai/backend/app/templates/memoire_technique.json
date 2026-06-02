@@ -1,0 +1,36 @@
+{
+    "name": "Analyse Mémoire Technique",
+    "description": "Analysis of technical bid documents based on consultation regulations",
+    "sections": [
+        {
+            "key": "presentation_entreprise",
+            "label": "Présentation de l'entreprise",
+            "description": "Company profile, size, experience in similar projects, certifications"
+        },
+        {
+            "key": "comprehension_projet",
+            "label": "Compréhension du projet",
+            "description": "How well the company demonstrates understanding of the project scope and challenges"
+        },
+        {
+            "key": "methodologie",
+            "label": "Méthodologie et moyens",
+            "description": "Proposed methods, human resources, equipment and technical means"
+        },
+        {
+            "key": "gestion_qualite",
+            "label": "Gestion qualité et sécurité",
+            "description": "Quality control procedures, safety measures, certifications mentioned"
+        },
+        {
+            "key": "references",
+            "label": "Références similaires",
+            "description": "Similar projects completed, with details on scope, client and outcome"
+        },
+        {
+            "key": "note_globale",
+            "label": "Note d'analyse globale",
+            "description": "Overall assessment: strengths, weaknesses, recommendation"
+        }
+    ]
+}

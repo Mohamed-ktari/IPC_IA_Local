@@ -1,0 +1,36 @@
+{
+    "name": "Analyse des Offres Entreprises",
+    "description": "Reading grid for analyzing company bids",
+    "sections": [
+        {
+            "key": "identification_entreprise",
+            "label": "Identification de l'entreprise",
+            "description": "Company name, contact, qualifications, references mentioned in the bid"
+        },
+        {
+            "key": "proposition_technique",
+            "label": "Proposition technique",
+            "description": "Summary of the technical approach, methods, materials proposed"
+        },
+        {
+            "key": "proposition_financiere",
+            "label": "Proposition financière",
+            "description": "Total price, breakdown if available, payment terms"
+        },
+        {
+            "key": "planning",
+            "label": "Planning et délais",
+            "description": "Proposed timeline, key milestones, delivery dates"
+        },
+        {
+            "key": "points_forts",
+            "label": "Points forts",
+            "description": "Notable advantages or differentiating elements of this bid"
+        },
+        {
+            "key": "points_vigilance",
+            "label": "Points de vigilance",
+            "description": "Gaps, missing information, unclear items or risks identified in the bid"
+        }
+    ]
+}
