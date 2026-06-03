@@ -41,7 +41,16 @@ async def check_chromadb() -> ServiceStatus:
                 f"http://{settings.CHROMA_HOST}:{settings.CHROMA_PORT}/api/v2/heartbeat"
             )
             if r.status_code == 200:
-                return ServiceStatus(status="ok", detail="chromadb reachable")
+                # Also check collections endpoint
+                r2 = await client.get(
+                    f"http://{settings.CHROMA_HOST}:{settings.CHROMA_PORT}"
+                    f"/api/v2/tenants/default_tenant/databases/default_database/collections"
+                )
+                count = len(r2.json()) if r2.status_code == 200 else "?"
+                return ServiceStatus(
+                    status="ok",
+                    detail=f"chromadb reachable — {count} collection(s)"
+                )
             return ServiceStatus(status="error", detail=f"status {r.status_code}")
     except Exception as e:
         return ServiceStatus(status="error", detail=str(e))

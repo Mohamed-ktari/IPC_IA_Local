@@ -160,29 +160,58 @@ def test_ingestion():
     print(f"Registry   : {len(all_docs)} document(s) total")
 
     # Add temporarily to test_ingestion() after ingestion completes
-    import chromadb
-    client = chromadb.HttpClient(host="localhost", port=8001)
-    collection = client.get_or_create_collection("documents")
-
-    # Count chunks stored for this document
-    results = collection.get(
-        where={"doc_id": metadata["doc_id"]}
-    )
-    print(f"\nChromaDB verification:")
-    print(f"  Chunks stored : {len(results['ids'])}")
-    print(f"  Expected      : {metadata['chunk_count']}")
-    print(f"  Match         : {len(results['ids']) == metadata['chunk_count']}")
-
-    # Check total characters across all chunks
-    total_chars = sum(len(doc) for doc in results['documents'])
-    print(f"  Total chars in ChromaDB : {total_chars}")
-    print(f"  Original doc chars      : {parsed['char_count']}")
-
-
+    # import chromadb
+    # client = chromadb.HttpClient(host="localhost", port=8001)
+    # collection = client.get_or_create_collection("documents")
+    #
+    # # Count chunks stored for this document
+    # results = collection.get(
+    #     where={"doc_id": metadata["doc_id"]}
+    # )
+    # print(f"\nChromaDB verification:")
+    # print(f"  Chunks stored : {len(results['ids'])}")
+    # print(f"  Expected      : {metadata['chunk_count']}")
+    # print(f"  Match         : {len(results['ids']) == metadata['chunk_count']}")
+    #
+    # # Check total characters across all chunks
+    # total_chars = sum(len(doc) for doc in results['documents'])
+    # print(f"  Total chars in ChromaDB : {total_chars}")
+    # print(f"  Original doc chars      : {parsed['char_count']}")
 
 
 
 
+
+###################### Retrieval #########################""""
+def test_retrieval():
+    print("\nTesting retrieval...")
+    from app.documents.retrieval import get_retriever
+
+    retriever = get_retriever()
+
+    # Use the doc_id from the document we ingested
+    # Replace this with the actual doc_id from your ingestion output
+    DOC_ID = "6f238643-ee1f-43c3-9d27-07b62a5001fa"  # your doc id
+
+    test_queries = [
+        "Quelles sont les recommandations pour la chaufferie ?",
+        "Quel est l'état de conservation des matériaux ?",
+        "Quelle est la date du diagnostic ?",
+        "Quels matériaux contiennent de l'amiante ?",
+    ]
+
+    for query in test_queries:
+        print(f"\nQuery: {query}")
+        results = retriever.retrieve(query, top_k=3, doc_id=DOC_ID)
+
+        if not results:
+            print("  No results found")
+            continue
+
+        for r in results:
+            print(f"  [{r.similarity_score:.0%}] chunk {r.chunk_index} "
+                  f"— {len(r.text.split())} words")
+            print(f"  Preview: {r.text[:120].strip()}...")
 
 
 
@@ -195,4 +224,5 @@ if __name__ == "__main__":
     #test_base_agent()
     #test_analysis_agent()
     #test_pdf_parser()
-    test_ingestion()
+    #test_ingestion()
+    test_retrieval()
