@@ -28,6 +28,7 @@ class Settings(BaseSettings):
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
     #OLLAMA_MODEL: str = "qwen2.5:14b"
     OLLAMA_MODEL: str = "mistral:7b-instruct-q4_K_M"
     OLLAMA_VISION_MODEL: str = "qwen2.5vl:7b"  # multimodal — for vision agent
@@ -110,7 +111,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]  # frontend URL
 
     class Config:
-        env_file = ".env"
+        env_file = str(BASE_DIR / ".env")
         env_file_encoding = "utf-8"
         extra = "ignore"  # silently ignore unknown keys in .env
 
@@ -128,3 +129,8 @@ def ensure_directories():
         settings.audit_log_path,
     ]:
         path.mkdir(parents=True, exist_ok=True)
+
+
+
+if __name__ == "__main__":
+    print("OLLAMA_MODEL =", settings.OLLAMA_MODEL)

@@ -53,8 +53,146 @@ def test_base_agent():
     print(f"Response   : {response.content}")
 
 
+######################## Feature 1 : Analysis ##########################
 
+def test_analysis_agent():
+    print("\nTesting AnalysisAgent...")
+    from app.agents.analysis_agent import AnalysisAgent
+
+    agent = AnalysisAgent()
+
+    # Fake document — simulates a short asbestos diagnostic
+    fake_document = """
+    RAPPORT DE DIAGNOSTIC AMIANTE
+    Bâtiment: Immeuble Le Corbusier, 12 rue des Architectes, 75001 Paris
+    Date du diagnostic: 15 mars 2024
+    Diagnostiqueur: Cabinet Durand Diagnostics
+
+    Matériaux identifiés contenant de l'amiante:
+    - Flocage de la chaufferie (sous-sol): état très dégradé, intervention urgente requise
+    - Dalles de sol du couloir RDC: bon état, surveillance annuelle recommandée
+    - Calorifugeage des canalisations: état dégradé, confinement recommandé
+
+    Recommandations:
+    - Retrait immédiat du flocage chaufferie par entreprise certifiée
+    - Surveillance annuelle des dalles de sol
+    - Confinement du calorifugeage dans les 6 mois
+
+    Prochaine visite de contrôle: mars 2025
+    """
+
+    response = agent.run(
+        document_text=fake_document,
+        template_name="amiante",
+    )
+
+    print(f"Agent    : {response.agent_type}")
+    print(f"Duration : {response.duration_seconds}s")
+    print(f"Response :\n{response.content}")
+
+################################### PDF Parser ################################
+def test_pdf_parser():
+    print("\nTesting PDFParser...")
+    from app.documents.parsers.pdf_parser import parse_pdf
+    import sys, time
+
+
+    if len(sys.argv) < 2:
+        print("No PDF path provided — skipping")
+        print("Usage: python test_llm.py path/to/document.pdf")
+        return
+
+    start = time.time()
+    result = parse_pdf(sys.argv[1])
+    duration = round(time.time() - start, 2)
+
+    print(f"File       : {result['file_name']}")
+    print(f"Pages      : {result['total_pages']} total / "
+          f"{result['scanned_pages']} scanned / "
+          f"{result['digital_pages']} digital")
+    print(f"Words      : {result['word_count']}")
+    print(f"First 500 chars:\n{result['full_text'][:500]}")
+    print(f"Time       : {duration}s")
+
+
+###################################### Ingesting Test ####################################
+def test_ingestion():
+    import sys
+    import time
+    print("\nTesting ingestion pipeline...")
+
+    if len(sys.argv) < 2:
+        print("No PDF path provided — skipping")
+        return
+
+    from app.documents.ingestion import ingest_document, list_documents
+
+    # Quick chunk preview before ingesting — reads original file directly
+    from app.documents.parsers.pdf_parser import parse_pdf
+    from app.documents.chunker import Chunker
+
+    print("\n--- Chunk preview ---")
+    parsed = parse_pdf(sys.argv[1])
+    chunker = Chunker()
+    chunks = chunker.chunk_for_retrieval(parsed["full_text"])
+    print(f"Total chunks: {len(chunks)}")
+    for i, chunk in enumerate(chunks):
+        print(f"  Chunk {i:2d}: {chunk['word_count']:4d} words, {len(chunk['text']):6d} chars")
+    print("--- End preview ---\n")
+
+    # Now run the full ingestion pipeline
+    start = time.time()
+    metadata = ingest_document(
+        file_path=sys.argv[1],
+        uploaded_by="test_user",
+    )
+    duration = round(time.time() - start, 2)
+
+    print(f"Doc ID     : {metadata['doc_id']}")
+    print(f"File       : {metadata['file_name']}")
+    print(f"Pages      : {metadata['total_pages']}")
+    print(f"Words      : {metadata['word_count']}")
+    print(f"Chunks     : {metadata['chunk_count']}")
+    print(f"Duration   : {duration}s")
+    print(f"Status     : {metadata['status']}")
+
+    all_docs = list_documents()
+    print(f"Registry   : {len(all_docs)} document(s) total")
+
+    # Add temporarily to test_ingestion() after ingestion completes
+    import chromadb
+    client = chromadb.HttpClient(host="localhost", port=8001)
+    collection = client.get_or_create_collection("documents")
+
+    # Count chunks stored for this document
+    results = collection.get(
+        where={"doc_id": metadata["doc_id"]}
+    )
+    print(f"\nChromaDB verification:")
+    print(f"  Chunks stored : {len(results['ids'])}")
+    print(f"  Expected      : {metadata['chunk_count']}")
+    print(f"  Match         : {len(results['ids']) == metadata['chunk_count']}")
+
+    # Check total characters across all chunks
+    total_chars = sum(len(doc) for doc in results['documents'])
+    print(f"  Total chars in ChromaDB : {total_chars}")
+    print(f"  Original doc chars      : {parsed['char_count']}")
+
+
+
+
+
+
+
+
+
+
+
+################################# Main ######################"
 if __name__ == "__main__":
-    test_chat()
-    test_stream()
-    test_base_agent()
+    #test_chat()
+    #test_stream()
+    #test_base_agent()
+    #test_analysis_agent()
+    #test_pdf_parser()
+    test_ingestion()

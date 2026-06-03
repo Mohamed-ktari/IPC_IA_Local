@@ -21,6 +21,9 @@ install:                          ## Install all Python dependencies
 venv:                             ## Create virtual environment
 	python3 -m venv $(VENV)
 
+docling-init:                     ## Download Docling models (run once after install)
+	cd $(BACKEND_DIR) && ../$(PYTHON) -c "from docling.document_converter import DocumentConverter; print('Docling ready')"
+
 setup: venv install               ## Full setup from scratch (venv + install)
 
 # ──────────────────────────────────────────
@@ -51,6 +54,7 @@ docker-ps:                        ## Show running containers
 
 ollama-pull:                      ## Pull the model inside the Ollama container
 	docker exec -it ollama ollama pull mistral:7b-instruct-q4_K_M
+	docker exec -it ollama ollama pull nomic-embed-text
 
 ollama-list:                      ## List models available in Ollama container
 	docker exec -it ollama ollama list

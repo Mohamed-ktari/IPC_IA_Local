@@ -91,3 +91,60 @@ DOCUMENT:
             message += f"\nADDITIONAL INSTRUCTIONS:\n{additional_instructions}\n"
 
         return message
+
+
+
+def run_on_long_document(
+    self,
+    document_text: str,
+    template_name: str,
+    chunk_size: int = 2000,
+) -> AgentResponse:
+    # For documents too long to fit in one LLM context window.
+    # Strategy: summarize each chunk → combine summaries → final synthesis
+    import time
+    from app.documents.chunker import Chunker
+
+    start = time.time()
+    chunker = Chunker()
+    chunks = chunker.chunk_for_summarization(document_text, chunk_size=chunk_size)
+
+    # If document fits in one call — use regular run()
+    if len(chunks) <= 1:
+        return self.run(document_text, template_name)
+
+    print(f"Long document: {len(chunks)} chunks — using map-reduce")
+
+    # MAP — summarize each chunk independently
+    chunk_summaries = []
+    for i, chunk in enumerate(chunks):
+        print(f"  Summarizing chunk {i+1}/{len(chunks)}...")
+        summary_response = self.chat(
+            user_message=f"Summarize the key information in this document excerpt:\n\n{chunk['text']}",
+            temperature=0.1,
+            max_tokens=500,
+        )
+        chunk_summaries.append(summary_response.content)
+
+    # REDUCE — combine all summaries into final structured synthesis
+    combined_summaries = "\n\n---\n\n".join([
+        f"Excerpt {i+1}:\n{summary}"
+        for i, summary in enumerate(chunk_summaries)
+    ])
+
+    template = self._load_template(template_name)
+    system_prompt = self._build_analysis_prompt(template)
+
+    final_response = self.chat(
+        user_message=self._build_user_message(
+            combined_summaries, template,
+            "This text is a combination of summaries from different parts of the document."
+        ),
+        temperature=0.1,
+        max_tokens=3000,
+        system_prompt_override=system_prompt,
+    )
+
+    duration = time.time() - start
+    final_response.duration_seconds = round(duration, 2)
+    return final_response
