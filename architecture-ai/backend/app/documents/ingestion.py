@@ -88,6 +88,7 @@ def ingest_document(
     print(f"[ingestion] Chunking text...")
     chunker = Chunker()
     chunks = chunker.chunk_for_retrieval(parsed["full_text"])
+    _store_bm25_index(doc_id, chunks, doc_dir)
     print(f"[ingestion] Created {len(chunks)} chunks")
 
     # 7. Store chunks in ChromaDB
@@ -151,6 +152,11 @@ def _parse_document(file_path: Path, max_pages: int | None) -> dict:
 def _store_in_chromadb(doc_id: str, chunks: list[dict], file_name: str):
     from app.documents.embedder import get_embedder
 
+    # Filter out chunks too small to be meaningful
+    MIN_CHUNK_WORDS = 30
+    chunks = [c for c in chunks if c["word_count"] >= MIN_CHUNK_WORDS]
+    print(f"[ingestion] {len(chunks)} chunks after filtering micro-chunks")
+
     collection = _get_chroma_collection()
     embedder = get_embedder()
 
@@ -180,6 +186,39 @@ def _store_in_chromadb(doc_id: str, chunks: list[dict], file_name: str):
             metadatas=metadatas[i:i + batch_size],
         )
     print(f"[ingestion] Stored {len(chunks)} chunks in ChromaDB")
+
+
+def _store_bm25_index(doc_id: str, chunks: list[dict], doc_dir: Path):
+    # Saves chunks as a JSON file for BM25 keyword search.
+    # BM25 is not stored in ChromaDB — it works directly on text.
+    # This file is loaded at retrieval time to build the BM25 index.
+    bm25_data = {
+        "doc_id": doc_id,
+        "chunks": [
+            {
+                "index": c["index"],
+                "text": c["text"],
+                "word_count": c["word_count"],
+            }
+            for c in chunks
+        ]
+    }
+    bm25_path = doc_dir / "bm25_chunks.json"
+    bm25_path.write_text(
+        json.dumps(bm25_data, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print(f"[ingestion] Saved BM25 index — {len(chunks)} chunks")
+
+
+
+
+
+
+
+
+
+
 
 def _register_document(metadata: dict):
     # Appends document metadata to the global registry.

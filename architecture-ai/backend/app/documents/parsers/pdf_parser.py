@@ -91,6 +91,7 @@ class PDFParser:
         # Export to markdown — preserves structure (headings, tables, lists)
         # much cleaner than plain text for LLM consumption
         full_text = doc.export_to_markdown()
+        full_text = self._clean_text(full_text)
 
         # Per-page breakdown for metadata
         pages_text = self._extract_pages(doc, full_text)
@@ -129,6 +130,11 @@ class PDFParser:
         except Exception:
             return 0
 
+    def _clean_text(self, text: str) -> str:
+        import re
+        text = re.sub(r'<!--\s*image\s*-->', '', text)
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        return text.strip()
 
 # Convenience function — used everywhere outside this file
 def parse_pdf(file_path: str | Path) -> dict:

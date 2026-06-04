@@ -184,14 +184,11 @@ def test_ingestion():
 
 ###################### Retrieval #########################""""
 def test_retrieval():
-    print("\nTesting retrieval...")
+    print("\nTesting hybrid retrieval...")
     from app.documents.retrieval import get_retriever
 
     retriever = get_retriever()
-
-    # Use the doc_id from the document we ingested
-    # Replace this with the actual doc_id from your ingestion output
-    DOC_ID = "6f238643-ee1f-43c3-9d27-07b62a5001fa"  # your doc id
+    DOC_ID = "f3835063-eec5-45d3-a774-d535b73575ba"
 
     test_queries = [
         "Quelles sont les recommandations pour la chaufferie ?",
@@ -209,13 +206,35 @@ def test_retrieval():
             continue
 
         for r in results:
-            print(f"  [{r.similarity_score:.0%}] chunk {r.chunk_index} "
-                  f"— {len(r.text.split())} words")
-            print(f"  Preview: {r.text[:120].strip()}...")
+            print(
+                f"  [hybrid:{r.hybrid_score:.0%} "
+                f"sem:{r.similarity_score:.0%} "
+                f"bm25:{r.bm25_score:.0%} "
+                f"src:{r.source}] "
+                f"chunk {r.chunk_index} — {len(r.text.split())} words"
+            )
+            print(f"  Preview: {r.text[:150].strip()}...")
 
 
 
+####################### RAG Test ##########################
+def test_analysis_rag():
+    print("\nTesting AnalysisAgent RAG mode...")
+    from app.agents.analysis_agent import AnalysisAgent
 
+    DOC_ID = "f3835063-eec5-45d3-a774-d535b73575ba"
+
+    agent = AnalysisAgent()
+    response = agent.run_rag(
+        doc_id=DOC_ID,
+        template_name="amiante",
+    )
+
+    print(f"Agent    : {response.agent_type}")
+    print(f"Duration : {response.duration_seconds}s")
+    print(f"\n{'='*60}")
+    print(response.content)
+    print('='*60)
 
 ################################# Main ######################"
 if __name__ == "__main__":
@@ -225,4 +244,5 @@ if __name__ == "__main__":
     #test_analysis_agent()
     #test_pdf_parser()
     #test_ingestion()
-    test_retrieval()
+    #test_retrieval()
+    test_analysis_rag()

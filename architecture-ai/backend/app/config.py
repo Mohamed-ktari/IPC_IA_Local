@@ -84,7 +84,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     CHUNK_SIZE: int = 512      # tokens per chunk
     CHUNK_OVERLAP: int = 64    # overlap between chunks to preserve context
-    RETRIEVAL_TOP_K: int = 5   # how many chunks to retrieve per query
+    RETRIEVAL_TOP_K: int = 10   # how many chunks to retrieve per query
 
     # ------------------------------------------------------------------
     # EXTERNAL SEARCH (regulatory agent only)

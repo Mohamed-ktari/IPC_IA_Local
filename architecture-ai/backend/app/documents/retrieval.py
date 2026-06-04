@@ -1,26 +1,31 @@
 # retrieval.py
-# Retrieves relevant document chunks from ChromaDB for a given query.
+# Hybrid retrieval — combines semantic search (ChromaDB) and
+# keyword search (BM25) for best results on technical documents.
 #
-# This is the "R" in RAG (Retrieval-Augmented Generation).
-# It is called by agents that need to answer questions about ingested documents.
+# Why hybrid?
+# - Semantic search finds conceptually similar chunks (good for prose)
+# - BM25 finds exact keyword matches (good for tables, form fields)
+# - Architecture diagnostics are 80% tables → BM25 is essential here
 #
-# Flow:
-#   1. Embed the user query using the same model used at ingestion time
-#   2. Search ChromaDB for the most similar chunks (cosine similarity)
-#   3. Optionally filter by specific document ID
-#   4. Return chunks formatted and ready for LLM context injection
+# The final score for each chunk is:
+#   hybrid_score = (semantic_weight * semantic_score)
+#                + (bm25_weight * bm25_score)
 #
-# Critical rule: the embedding model here MUST be identical to the one
-# used in embedder.py at ingestion time. If you change the model,
-# you must re-ingest all documents.
+# Default weights: 40% semantic, 60% BM25
+# Adjust in config based on document type.
+
+import json
+import math
+from pathlib import Path
 
 import chromadb
+from rank_bm25 import BM25Okapi
+
 from app.config import settings
 from app.documents.embedder import get_embedder
 
 
 class RetrievalResult:
-    # Represents a single retrieved chunk with its metadata
     def __init__(
         self,
         text: str,
@@ -28,24 +33,37 @@ class RetrievalResult:
         file_name: str,
         chunk_index: int,
         similarity_score: float,
+        bm25_score: float = 0.0,
+        hybrid_score: float = 0.0,
+        source: str = "hybrid",
     ):
         self.text = text
         self.doc_id = doc_id
         self.file_name = file_name
         self.chunk_index = chunk_index
         self.similarity_score = similarity_score
+        self.bm25_score = bm25_score
+        self.hybrid_score = hybrid_score
+        self.source = source  # "semantic" | "bm25" | "hybrid"
 
     def __repr__(self):
         return (
             f"RetrievalResult("
-            f"file='{self.file_name}', "
             f"chunk={self.chunk_index}, "
-            f"score={self.similarity_score:.3f}, "
+            f"hybrid={self.hybrid_score:.3f}, "
+            f"semantic={self.similarity_score:.3f}, "
+            f"bm25={self.bm25_score:.3f}, "
             f"words={len(self.text.split())})"
         )
 
 
 class Retriever:
+
+    # Weight balance between semantic and BM25
+    # 0.4/0.6 favors keyword matching — good for table-heavy docs
+    # Change to 0.7/0.3 for prose-heavy docs
+    SEMANTIC_WEIGHT = 0.3
+    BM25_WEIGHT = 0.7
 
     def __init__(self):
         self.embedder = get_embedder()
@@ -60,47 +78,86 @@ class Retriever:
             metadata={"hnsw:space": "cosine"},
         )
 
+    def _load_bm25_chunks(self, doc_id: str) -> list[dict]:
+        # Loads the BM25 chunk file saved at ingestion time
+        bm25_path = settings.upload_path / doc_id / "bm25_chunks.json"
+        if not bm25_path.exists():
+            return []
+        data = json.loads(bm25_path.read_text(encoding="utf-8"))
+        return data.get("chunks", [])
+
+    def _build_bm25_index(self, chunks: list[dict]) -> BM25Okapi:
+        # Tokenizes chunks and builds BM25 index
+        # Simple whitespace tokenization — works well for French technical docs
+        tokenized = [
+            chunk["text"].lower().split()
+            for chunk in chunks
+        ]
+        return BM25Okapi(tokenized)
+
+    def _normalize_scores(self, scores: list[float]) -> list[float]:
+        # Normalizes a list of scores to [0, 1] range
+        # Needed to make semantic and BM25 scores comparable
+        if not scores:
+            return scores
+        max_score = max(scores)
+        min_score = min(scores)
+        if max_score == min_score:
+            return [1.0] * len(scores)
+        return [
+            (s - min_score) / (max_score - min_score)
+            for s in scores
+        ]
+
     def retrieve(
         self,
         query: str,
         top_k: int | None = None,
         doc_id: str | None = None,
     ) -> list[RetrievalResult]:
-        # Main entry point.
-        # query   : the user's question in natural language
-        # top_k   : how many chunks to return (defaults to config value)
-        # doc_id  : if provided, only search within that specific document
-        #           if None, search across ALL ingested documents
-
         top_k = top_k or settings.RETRIEVAL_TOP_K
-        collection = self._get_collection()
 
-        # Embed the query — same model as ingestion
-        query_embedding = self.embedder.embed(query)
+        # Run both searches in parallel logic
+        semantic_results = self._semantic_search(query, top_k * 2, doc_id)
+        bm25_results = self._bm25_search(query, top_k * 2, doc_id)
 
-        # Build filter — optionally restrict to one document
-        where_filter = {"doc_id": doc_id} if doc_id else None
-
-        # Query ChromaDB
-        results = collection.query(
-            query_embeddings=[query_embedding],
-            n_results=top_k,
-            where=where_filter,
-            include=["documents", "metadatas", "distances"],
+        # Merge and rerank
+        merged = self._merge_results(
+            semantic_results,
+            bm25_results,
+            top_k,
         )
 
-        # Parse results into RetrievalResult objects
+        return merged
+
+    def _semantic_search(
+        self,
+        query: str,
+        top_k: int,
+        doc_id: str | None,
+    ) -> list[RetrievalResult]:
+        collection = self._get_collection()
+        query_embedding = self.embedder.embed(query)
+        where_filter = {"doc_id": doc_id} if doc_id else None
+
+        try:
+            results = collection.query(
+                query_embeddings=[query_embedding],
+                n_results=top_k,
+                where=where_filter,
+                include=["documents", "metadatas", "distances"],
+            )
+        except Exception:
+            return []
+
         retrieved = []
         if not results["ids"] or not results["ids"][0]:
             return retrieved
 
-        for i, chunk_id in enumerate(results["ids"][0]):
+        for i in range(len(results["ids"][0])):
             text = results["documents"][0][i]
             metadata = results["metadatas"][0][i]
             distance = results["distances"][0][i]
-
-            # ChromaDB returns cosine distance (0=identical, 2=opposite)
-            # Convert to similarity score (1=identical, 0=unrelated)
             similarity = 1 - (distance / 2)
 
             retrieved.append(RetrievalResult(
@@ -109,25 +166,116 @@ class Retriever:
                 file_name=metadata.get("file_name", ""),
                 chunk_index=metadata.get("chunk_index", i),
                 similarity_score=similarity,
+                source="semantic",
             ))
 
-        # Sort by similarity descending — best match first
-        retrieved.sort(key=lambda r: r.similarity_score, reverse=True)
         return retrieved
+
+    def _bm25_search(
+        self,
+        query: str,
+        top_k: int,
+        doc_id: str | None,
+    ) -> list[RetrievalResult]:
+        # Determine which documents to search
+        if doc_id:
+            doc_ids = [doc_id]
+        else:
+            # Search all ingested documents
+            from app.documents.ingestion import list_documents
+            doc_ids = [d["doc_id"] for d in list_documents()]
+
+        all_results = []
+
+        for did in doc_ids:
+            chunks = self._load_bm25_chunks(did)
+            if not chunks:
+                continue
+
+            # Filter micro chunks
+            chunks = [c for c in chunks if c["word_count"] >= 30]
+            if not chunks:
+                continue
+
+            bm25 = self._build_bm25_index(chunks)
+            tokenized_query = query.lower().split()
+            raw_scores = bm25.get_scores(tokenized_query)
+
+            # Get file name from metadata
+            meta_path = settings.upload_path / did / "metadata.json"
+            file_name = did
+            if meta_path.exists():
+                meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                file_name = meta.get("file_name", did)
+
+            for i, score in enumerate(raw_scores):
+                if score > 0:  # only include chunks with at least one match
+                    all_results.append(RetrievalResult(
+                        text=chunks[i]["text"],
+                        doc_id=did,
+                        file_name=file_name,
+                        chunk_index=chunks[i]["index"],
+                        similarity_score=0.0,  # filled in during merge
+                        bm25_score=score,
+                        source="bm25",
+                    ))
+
+        # Sort by BM25 score and return top_k
+        all_results.sort(key=lambda r: r.bm25_score, reverse=True)
+        return all_results[:top_k]
+
+    def _merge_results(
+        self,
+        semantic: list[RetrievalResult],
+        bm25: list[RetrievalResult],
+        top_k: int,
+    ) -> list[RetrievalResult]:
+        # Merge semantic and BM25 results using weighted hybrid scoring
+        # Key: chunk_index + doc_id — same chunk from both searches = one result
+
+        # Normalize scores to [0,1] for fair comparison
+        semantic_scores = self._normalize_scores(
+            [r.similarity_score for r in semantic]
+        )
+        bm25_scores = self._normalize_scores(
+            [r.bm25_score for r in bm25]
+        )
+
+        # Build lookup by (doc_id, chunk_index)
+        merged: dict[str, RetrievalResult] = {}
+
+        for i, result in enumerate(semantic):
+            key = f"{result.doc_id}_{result.chunk_index}"
+            result.similarity_score = semantic_scores[i]
+            result.hybrid_score = self.SEMANTIC_WEIGHT * semantic_scores[i]
+            merged[key] = result
+
+        for i, result in enumerate(bm25):
+            key = f"{result.doc_id}_{result.chunk_index}"
+            result.bm25_score = bm25_scores[i]
+            bm25_contribution = self.BM25_WEIGHT * bm25_scores[i]
+
+            if key in merged:
+                # Chunk found by both — combine scores
+                merged[key].bm25_score = result.bm25_score
+                merged[key].hybrid_score += bm25_contribution
+                merged[key].source = "hybrid"
+            else:
+                # Only found by BM25 — add it
+                result.hybrid_score = bm25_contribution
+                merged[key] = result
+
+        # Sort by hybrid score and return top_k
+        results = list(merged.values())
+        results.sort(key=lambda r: r.hybrid_score, reverse=True)
+        return results[:top_k]
 
     def format_context(
         self,
         results: list[RetrievalResult],
         min_score: float = 0.3,
     ) -> str:
-        # Formats retrieved chunks into a single context string
-        # ready to be injected into an LLM prompt.
-        #
-        # min_score: chunks below this similarity threshold are excluded
-        # 0.3 is a reasonable default — below this the chunk is likely
-        # not relevant to the query at all
-
-        filtered = [r for r in results if r.similarity_score >= min_score]
+        filtered = [r for r in results if r.hybrid_score >= min_score]
 
         if not filtered:
             return "Aucun document pertinent trouvé pour cette question."
@@ -137,7 +285,9 @@ class Retriever:
             parts.append(
                 f"[Source {i} — {result.file_name}, "
                 f"section {result.chunk_index}, "
-                f"pertinence: {result.similarity_score:.0%}]\n"
+                f"pertinence: {result.hybrid_score:.0%} "
+                f"(sémantique: {result.similarity_score:.0%}, "
+                f"mots-clés: {result.bm25_score:.0%})]\n"
                 f"{result.text}"
             )
 
@@ -150,15 +300,11 @@ class Retriever:
         doc_id: str | None = None,
         min_score: float = 0.3,
     ) -> tuple[str, list[RetrievalResult]]:
-        # Convenience method — retrieves and formats in one call.
-        # Returns both the formatted context string AND the raw results
-        # so the agent can log sources separately.
         results = self.retrieve(query, top_k=top_k, doc_id=doc_id)
         context = self.format_context(results, min_score=min_score)
         return context, results
 
 
-# Single instance — reuse across requests
 _retriever: Retriever | None = None
 
 def get_retriever() -> Retriever:
