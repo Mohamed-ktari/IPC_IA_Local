@@ -20,7 +20,7 @@ from app.agents.base_agent import BaseAgent, AgentResponse
 from app.documents.retrieval import get_retriever
 
 TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
-
+MAX_CONTEXT_WORDS = 2000
 
 class AnalysisAgent(BaseAgent):
 
@@ -85,7 +85,7 @@ class AnalysisAgent(BaseAgent):
 
             results = retriever.retrieve(
                 query=section_query,
-                top_k=3,  # 3 chunks per section
+                top_k=2,  # 3 chunks per section
                 doc_id=doc_id,
             )
 
@@ -111,7 +111,20 @@ class AnalysisAgent(BaseAgent):
             )
 
         # Combine all retrieved context
-        context = "\n\n---\n\n".join(all_context_parts)
+        # After building all_context_parts, add this before calling the LLM
+        total_words = 0
+        filtered_context_parts = []
+
+        for part in all_context_parts:
+            part_words = len(part.split())
+            if total_words + part_words <= MAX_CONTEXT_WORDS:
+                filtered_context_parts.append(part)
+                total_words += part_words
+            else:
+                break
+
+        print(f"[analysis_agent] Context: {total_words} words across {len(filtered_context_parts)} chunks")
+        context = "\n\n---\n\n".join(filtered_context_parts)
 
         print(
             f"[analysis_agent] RAG retrieved {len(all_context_parts)} "
@@ -210,23 +223,26 @@ class AnalysisAgent(BaseAgent):
             f"## {s['label']}\n{s['description']}"
             for s in template["sections"]
         ])
-        return f"""Tu es un assistant spécialisé dans l'analyse de documents techniques \
-pour un bureau d'études en architecture et ingénierie.
+        return f"""Tu es un assistant spécialisé dans l'analyse de documents techniques.
 
-Ta tâche est d'analyser le contenu fourni et de produire une synthèse structurée \
-selon ce modèle : {template['name']}.
+    INSTRUCTIONS CRITIQUES :
+    1. Tu dois produire une SYNTHÈSE STRUCTURÉE — pas une copie du texte source
+    2. Chaque section doit être rédigée par toi, en utilisant les informations extraites
+    3. Ne copie JAMAIS le texte source mot pour mot
+    4. Si une information n'est pas disponible, écris exactement : "Information non disponible"
+    5. Réponds UNIQUEMENT avec les sections demandées, rien d'autre
 
-Tu DOIS structurer ta réponse avec les sections suivantes dans l'ordre :
-{sections_text}
+    MODÈLE DE SYNTHÈSE : {template['name']}
 
-Règles :
-- Réponds en français
-- Sois fidèle au contenu source — n'invente jamais d'informations absentes du document
-- Si une section ne peut pas être renseignée, écris : "Information non disponible"
-- Sois concis et professionnel
-- Utilise des listes à puces pour les éléments multiples
-- Cite toujours la source quand tu extrais une information précise"""
+    SECTIONS À REMPLIR :
+    {sections_text}
 
+    FORMAT DE RÉPONSE OBLIGATOIRE :
+    ## [Nom de la section]
+    [Ton résumé synthétique ici]
+
+    ## [Section suivante]
+    [Ton résumé synthétique ici]"""
     def _build_user_message(
         self,
         document_text: str,
