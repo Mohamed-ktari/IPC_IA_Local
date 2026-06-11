@@ -137,13 +137,27 @@ class AnalysisAgent(BaseAgent):
             context, template, additional_instructions
         )
 
-        return self.chat(
+        # return self.chat(
+        #     user_message=user_message,
+        #     temperature=0.1,
+        #     max_tokens=3000,
+        #     system_prompt_override=system_prompt,
+        # )
+
+        raw_response = self.chat(
             user_message=user_message,
             temperature=0.1,
             max_tokens=3000,
             system_prompt_override=system_prompt,
         )
 
+        # Parse JSON and reformat into clean template structure
+        formatted_content = self._parse_and_format_response(
+            raw_response.content,
+            template,
+        )
+        raw_response.content = formatted_content
+        return raw_response
     # ----------------------------------------------------------------
     # MODE 3 — Long document map-reduce
     # ----------------------------------------------------------------
@@ -218,31 +232,98 @@ class AnalysisAgent(BaseAgent):
             )
         return json.loads(template_file.read_text(encoding="utf-8"))
 
+    # def _build_analysis_prompt(self, template: dict) -> str:
+    #     # Build exact section headers the LLM must use verbatim
+    #     sections_text = "\n".join([
+    #         f"## {s['label']}\n{s['description']}"
+    #         for s in template["sections"]
+    #     ])
+    #
+    #     # Build the expected output skeleton — LLM fills in the blanks
+    #     output_skeleton = "\n\n".join([
+    #         f"## {s['label']}\n[À compléter]"
+    #         for s in template["sections"]
+    #     ])
+    #
+    #     return f"""Tu es un assistant spécialisé dans l'analyse de documents techniques \
+    # pour un bureau d'études en architecture et ingénierie.
+    #
+    # TÂCHE : Analyser le contenu fourni et produire une synthèse structurée.
+    #
+    # RÈGLES STRICTES :
+    # 1. Tu DOIS utiliser EXACTEMENT ces titres de sections, dans cet ordre
+    # 2. Ne crée pas de nouvelles sections
+    # 3. Ne copie pas le texte source mot pour mot — synthétise
+    # 4. Si information absente : écris "Information non disponible"
+    # 5. Réponds en français, sois concis et professionnel
+    #
+    # SECTIONS OBLIGATOIRES :
+    # {sections_text}
+    #
+    # FORMAT DE RÉPONSE ATTENDU (remplace [À compléter] par ta synthèse) :
+    # {output_skeleton}"""
+
     def _build_analysis_prompt(self, template: dict) -> str:
-        sections_text = "\n".join([
-            f"## {s['label']}\n{s['description']}"
-            for s in template["sections"]
-        ])
+        # Build JSON schema the LLM must fill
+        json_schema = json.dumps(
+            {s["key"]: f"[{s['description']}]" for s in template["sections"]},
+            ensure_ascii=False,
+            indent=2
+        )
+
         return f"""Tu es un assistant spécialisé dans l'analyse de documents techniques.
 
-    INSTRUCTIONS CRITIQUES :
-    1. Tu dois produire une SYNTHÈSE STRUCTURÉE — pas une copie du texte source
-    2. Chaque section doit être rédigée par toi, en utilisant les informations extraites
-    3. Ne copie JAMAIS le texte source mot pour mot
-    4. Si une information n'est pas disponible, écris exactement : "Information non disponible"
-    5. Réponds UNIQUEMENT avec les sections demandées, rien d'autre
+    TÂCHE : Analyser le contenu et extraire les informations demandées.
 
-    MODÈLE DE SYNTHÈSE : {template['name']}
+    RÈGLE ABSOLUE : Ta réponse doit être UNIQUEMENT un objet JSON valide.
+    Aucun texte avant ou après le JSON. Pas de markdown. Pas de ```json.
+    Juste le JSON brut.
 
-    SECTIONS À REMPLIR :
-    {sections_text}
+    SCHEMA JSON À REMPLIR :
+    {json_schema}
 
-    FORMAT DE RÉPONSE OBLIGATOIRE :
-    ## [Nom de la section]
-    [Ton résumé synthétique ici]
+    RÈGLES :
+    - Remplis chaque champ avec les informations extraites du document
+    - Si information absente : "Information non disponible"
+    - Réponds en français
+    - Sois concis et précis"""
 
-    ## [Section suivante]
-    [Ton résumé synthétique ici]"""
+    def _parse_and_format_response(
+            self,
+            raw_response: str,
+            template: dict,
+    ) -> str:
+        import re
+
+        # Try to extract JSON from the response
+        # LLMs sometimes add text before/after even when told not to
+        json_match = re.search(r'\{.*\}', raw_response, re.DOTALL)
+        if not json_match:
+            # JSON extraction failed — return raw response as fallback
+            return raw_response
+
+        try:
+            data = json.loads(json_match.group())
+        except json.JSONDecodeError:
+            # JSON parsing failed — return raw response as fallback
+            return raw_response
+
+        # Format the JSON into a clean structured report
+        lines = [f"# {template['name']}\n"]
+        for section in template["sections"]:
+            key = section["key"]
+            label = section["label"]
+            value = data.get(key, "Information non disponible")
+            lines.append(f"## {label}")
+            lines.append(f"{value}\n")
+
+        return "\n".join(lines)
+
+
+
+
+
+
     def _build_user_message(
         self,
         document_text: str,
@@ -257,3 +338,7 @@ class AnalysisAgent(BaseAgent):
         if additional_instructions:
             message += f"\nINSTRUCTIONS SUPPLÉMENTAIRES :\n{additional_instructions}\n"
         return message
+
+
+
+

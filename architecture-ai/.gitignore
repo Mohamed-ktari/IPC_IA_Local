@@ -1,9 +1,30 @@
-backend/venv
-backend/.env.example
+# Python
+__pycache__/
+*.pyc
+*.pyo
+backend/venv/
+*.egg-info/
 
-
-
-
-
-
+# Environment
 .env
+backend/.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Logs / runtime artifacts
+*.log
+backend/app/output/*
+!backend/app/output/.gitkeep
+
+# Local search/vector indexes (adjust to your actual lib)
+backend/app/search/**/*.index
+backend/app/search/**/*.faiss
+backend/app/search/**/chroma*
+
+# Docker
+docker-compose.override.yml

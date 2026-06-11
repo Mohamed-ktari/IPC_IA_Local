@@ -1,0 +1,14 @@
+[
+  {
+    "doc_id": "f3835063-eec5-45d3-a774-d535b73575ba",
+    "file_name": "RAAT-595-BAT-1109L-BAT-ANNEXES_v1.pdf",
+    "file_path": "/home/mohamed/ENSEA/stage/architecture-ai/backend/data/uploads/f3835063-eec5-45d3-a774-d535b73575ba/RAAT-595-BAT-1109L-BAT-ANNEXES_v1.pdf",
+    "uploaded_by": "test_user",
+    "uploaded_at": "2026-06-04T08:22:11.804715+00:00",
+    "total_pages": 29,
+    "word_count": 10289,
+    "chunk_count": 24,
+    "ingestion_duration_seconds": 123.76,
+    "status": "ready"
+  }
+]
