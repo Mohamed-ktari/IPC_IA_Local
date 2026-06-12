@@ -21,7 +21,6 @@ services:
       - OLLAMA_KEEP_ALIVE=24h       # keeps model loaded in memory
     networks:
       - ai-network
-    # GPU support — comment this block out if running on CPU only
     deploy:
       resources:
         reservations:

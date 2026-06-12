@@ -20,7 +20,7 @@ from app.agents.base_agent import BaseAgent, AgentResponse
 from app.documents.retrieval import get_retriever
 
 TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
-MAX_CONTEXT_WORDS = 2000
+MAX_CONTEXT_WORDS = 4000
 
 class AnalysisAgent(BaseAgent):
 
@@ -85,7 +85,7 @@ class AnalysisAgent(BaseAgent):
 
             results = retriever.retrieve(
                 query=section_query,
-                top_k=2,  # 3 chunks per section
+                top_k=3,  # 3 chunks per section
                 doc_id=doc_id,
             )
 
@@ -232,61 +232,60 @@ class AnalysisAgent(BaseAgent):
             )
         return json.loads(template_file.read_text(encoding="utf-8"))
 
-    # def _build_analysis_prompt(self, template: dict) -> str:
-    #     # Build exact section headers the LLM must use verbatim
-    #     sections_text = "\n".join([
-    #         f"## {s['label']}\n{s['description']}"
-    #         for s in template["sections"]
-    #     ])
-    #
-    #     # Build the expected output skeleton — LLM fills in the blanks
-    #     output_skeleton = "\n\n".join([
-    #         f"## {s['label']}\n[À compléter]"
-    #         for s in template["sections"]
-    #     ])
-    #
-    #     return f"""Tu es un assistant spécialisé dans l'analyse de documents techniques \
-    # pour un bureau d'études en architecture et ingénierie.
-    #
-    # TÂCHE : Analyser le contenu fourni et produire une synthèse structurée.
-    #
-    # RÈGLES STRICTES :
-    # 1. Tu DOIS utiliser EXACTEMENT ces titres de sections, dans cet ordre
-    # 2. Ne crée pas de nouvelles sections
-    # 3. Ne copie pas le texte source mot pour mot — synthétise
-    # 4. Si information absente : écris "Information non disponible"
-    # 5. Réponds en français, sois concis et professionnel
-    #
-    # SECTIONS OBLIGATOIRES :
-    # {sections_text}
-    #
-    # FORMAT DE RÉPONSE ATTENDU (remplace [À compléter] par ta synthèse) :
-    # {output_skeleton}"""
-
     def _build_analysis_prompt(self, template: dict) -> str:
-        # Build JSON schema the LLM must fill
-        json_schema = json.dumps(
-            {s["key"]: f"[{s['description']}]" for s in template["sections"]},
-            ensure_ascii=False,
-            indent=2
-        )
+        # Build exact section headers the LLM must use verbatim
+        sections_text = "\n".join([
+            f"## {s['label']}\n{s['description']}"
+            for s in template["sections"]
+        ])
+    
+        # Build the expected output skeleton — LLM fills in the blanks
+        output_skeleton = "\n\n".join([
+            f"## {s['label']}\n[À compléter]"
+            for s in template["sections"]
+        ])
+    
+        return f"""Tu es un expert en analyse de documents techniques dans le secteur de la construction et de la réhabilitation de logements sociaux. \
+    
+    TÂCHE : Analyser le contenu fourni et produire une synthèse structurée.
+    
+    RÈGLES STRICTES :
+    1. Tu DOIS utiliser EXACTEMENT ces titres de sections, dans cet ordre
+    2. Ne crée pas de nouvelles sections
+    3. Ne copie pas le texte source mot pour mot — synthétise
+    4. Si information absente : écris "Information non disponible"
+    5. Réponds en français, sois concis et professionnel
+    
+    SECTIONS OBLIGATOIRES :
+    {sections_text}
+    
+    FORMAT DE RÉPONSE ATTENDU (remplace [À compléter] par ta synthèse) :
+    {output_skeleton}"""
 
-        return f"""Tu es un assistant spécialisé dans l'analyse de documents techniques.
+#     def _build_analysis_prompt(self, template: dict) -> str:
+#         # Build JSON schema the LLM must fill
+#         json_schema = json.dumps(
+#             {s["key"]: f"[{s['description']}]" for s in template["sections"]},
+#             ensure_ascii=False,
+#             indent=2
+#         )
 
-    TÂCHE : Analyser le contenu et extraire les informations demandées.
+#         return f"""Tu es un expert en analyse de documents techniques dans le secteur de la construction et de la réhabilitation de logements sociaux.
 
-    RÈGLE ABSOLUE : Ta réponse doit être UNIQUEMENT un objet JSON valide.
-    Aucun texte avant ou après le JSON. Pas de markdown. Pas de ```json.
-    Juste le JSON brut.
+#    TÂCHE PRINCIPALE : Analyser avec précision le document fourni et extraire les informations selon le schéma JSON demandé.
+    
+#     RÈGLE ABSOLUE : Ta réponse doit être UNIQUEMENT un objet JSON valide.
+#     Aucun texte avant ou après le JSON. Pas de markdown. Pas de ```json.
+#     Juste le JSON brut.
 
-    SCHEMA JSON À REMPLIR :
-    {json_schema}
+#     SCHEMA JSON À REMPLIR :
+#     {json_schema}
 
-    RÈGLES :
-    - Remplis chaque champ avec les informations extraites du document
-    - Si information absente : "Information non disponible"
-    - Réponds en français
-    - Sois concis et précis"""
+#     RÈGLES :
+#     - Remplis chaque champ avec les informations extraites du document
+#     - Si information absente : "Information non disponible"
+#     - Réponds en français
+#     - Sois concis et précis"""
 
     def _parse_and_format_response(
             self,

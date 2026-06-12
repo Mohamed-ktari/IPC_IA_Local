@@ -10,5 +10,17 @@
     "chunk_count": 24,
     "ingestion_duration_seconds": 123.76,
     "status": "ready"
+  },
+  {
+    "doc_id": "bbeaddba-f734-4c8f-b5dc-d2be282c450b",
+    "file_name": "0074_01_0006_RAAT.pdf",
+    "file_path": "/home/mohamed_ktari/IPC_IA_Local/architecture-ai/backend/data/uploads/bbeaddba-f734-4c8f-b5dc-d2be282c450b/0074_01_0006_RAAT.pdf",
+    "uploaded_by": "test_user",
+    "uploaded_at": "2026-06-11T13:47:25.424308+00:00",
+    "total_pages": 47,
+    "word_count": 11284,
+    "chunk_count": 40,
+    "ingestion_duration_seconds": 72.07,
+    "status": "ready"
   }
 ]
