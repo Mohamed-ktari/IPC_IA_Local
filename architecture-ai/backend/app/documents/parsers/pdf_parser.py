@@ -27,39 +27,14 @@ from docling.document_converter import PdfFormatOption
 _converter: DocumentConverter | None = None
 
 ###################### For GPU use case ################################
-# def _get_converter() -> DocumentConverter:
-#     # Lazy initialization — only created on first parse call
-#     # OCR is enabled by default in Docling for scanned pages
-#     global _converter
-#     if _converter is None:
-#         pipeline_options = PdfPipelineOptions()
-#         pipeline_options.do_ocr = True              # enable OCR for scanned pages
-#         pipeline_options.do_table_structure = True  # extract tables as structured text
-#
-#         _converter = DocumentConverter(
-#             format_options={
-#                 InputFormat.PDF: PdfFormatOption(
-#                     pipeline_options=pipeline_options
-#                 )
-#             }
-#         )
-#     return _converter
-
-
-###################### For CPU use case ################################
 def _get_converter() -> DocumentConverter:
+    # Lazy initialization — only created on first parse call
+    # OCR is enabled by default in Docling for scanned pages
     global _converter
     if _converter is None:
         pipeline_options = PdfPipelineOptions()
-        pipeline_options.do_ocr = True
-        pipeline_options.do_table_structure = True
-
-        # Force CPU — GPU is reserved for Ollama (the LLM)
-        # On the production server revisit this once you measure VRAM usage
-        pipeline_options.accelerator_options = AcceleratorOptions(
-            num_threads=4,
-            device=AcceleratorDevice.CPU,
-        )
+        pipeline_options.do_ocr = True              # enable OCR for scanned pages
+        pipeline_options.do_table_structure = True  # extract tables as structured text
 
         _converter = DocumentConverter(
             format_options={
@@ -69,6 +44,31 @@ def _get_converter() -> DocumentConverter:
             }
         )
     return _converter
+
+
+###################### For CPU use case ################################
+# def _get_converter() -> DocumentConverter:
+#     global _converter
+#     if _converter is None:
+#         pipeline_options = PdfPipelineOptions()
+#         pipeline_options.do_ocr = True
+#         pipeline_options.do_table_structure = True
+
+#         # Force CPU — GPU is reserved for Ollama (the LLM)
+#         # On the production server revisit this once you measure VRAM usage
+#         pipeline_options.accelerator_options = AcceleratorOptions(
+#             num_threads=4,
+#             device=AcceleratorDevice.CPU,
+#         )
+
+#         _converter = DocumentConverter(
+#             format_options={
+#                 InputFormat.PDF: PdfFormatOption(
+#                     pipeline_options=pipeline_options
+#                 )
+#             }
+#         )
+#     return _converter
 
 
 class PDFParser:

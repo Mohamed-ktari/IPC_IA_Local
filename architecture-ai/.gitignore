@@ -20,11 +20,16 @@ backend/.env
 *.log
 backend/app/output/*
 !backend/app/output/.gitkeep
+backend/app/data/logs
 
 # Local search/vector indexes (adjust to your actual lib)
 backend/app/search/**/*.index
 backend/app/search/**/*.faiss
 backend/app/search/**/chroma*
 
+
 # Docker
 docker-compose.override.yml
+
+#data
+data

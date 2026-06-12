@@ -189,6 +189,7 @@ def test_retrieval():
 
     retriever = get_retriever()
     DOC_ID = "f3835063-eec5-45d3-a774-d535b73575ba"
+    #DOC_ID = "bbeaddba-f734-4c8f-b5dc-d2be282c450b"
 
     test_queries = [
         "Quelles sont les recommandations pour la chaufferie ?",

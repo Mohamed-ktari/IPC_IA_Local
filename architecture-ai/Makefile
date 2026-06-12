@@ -53,8 +53,8 @@ docker-ps:                        ## Show running containers
 	docker compose ps
 
 ollama-pull:                      ## Pull the model inside the Ollama container
-	docker exec -it ollama ollama pull mistral:7b-instruct-q4_K_M
-	docker exec -it ollama ollama pull nomic-embed-text
+	docker exec -it ollama ollama pull qwen2.5:14b-instruct-q4_K_M
+	docker exec -it ollama ollama pull bge-m3
 
 ollama-list:                      ## List models available in Ollama container
 	docker exec -it ollama ollama list
