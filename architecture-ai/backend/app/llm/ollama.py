@@ -27,20 +27,25 @@ class OllamaLLM(BaseLLM):
         messages: list[Message],
         temperature: float = 0.3,
         max_tokens: int = 2048,
+        json_mode: bool = False,
     ) -> LLMResponse:
         try:
+            payload = {
+                "model": self.model,
+                "messages": self._format_messages(messages),
+                "stream": False,
+                "options": {
+                    "temperature": temperature,
+                    "num_predict": max_tokens,
+                },
+            }
+            if json_mode:
+                payload["format"] = "json"   # forces valid JSON output
+
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(
                     f"{self.base_url}/api/chat",
-                    json={
-                        "model": self.model,
-                        "messages": self._format_messages(messages),
-                        "stream": False,
-                        "options": {
-                            "temperature": temperature,
-                            "num_predict": max_tokens,
-                        },
-                    },
+                    json=payload,
                 )
                 response.raise_for_status()
                 data = response.json()
@@ -52,12 +57,8 @@ class OllamaLLM(BaseLLM):
                     prompt_tokens=data.get("prompt_eval_count", 0),
                     completion_tokens=data.get("eval_count", 0),
                 )
-
         except httpx.TimeoutException:
-            raise RuntimeError(
-                f"Ollama timed out after {self.timeout}s — "
-                f"model may still be loading, try again in a moment"
-            )
+            raise RuntimeError(f"Ollama timed out after {self.timeout}s")
         except httpx.HTTPStatusError as e:
             raise RuntimeError(f"Ollama HTTP error: {e.response.status_code} — {e.response.text}")
         except Exception as e:

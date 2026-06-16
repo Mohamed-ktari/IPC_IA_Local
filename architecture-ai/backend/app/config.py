@@ -86,12 +86,19 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP: int = 64    # overlap between chunks to preserve context
     RETRIEVAL_TOP_K: int = 10   # how many chunks to retrieve per query
 
+    # Generation defaults
+    DEFAULT_TEMPERATURE: float = 0.1
+    DEFAULT_MAX_TOKENS: int = 4096
     # ------------------------------------------------------------------
     # EXTERNAL SEARCH (regulatory agent only)
     # ------------------------------------------------------------------
     BRAVE_API_KEY: str = ""
     SEARCH_ENABLED: bool = False  # disabled until search gateway is built
     SEARCH_MAX_RESULTS: int = 5
+
+
+    EXTRACTION_PAGES_PER_GROUP: int = 5
+    EXTRACTION_WORDS_PER_PAGE: int = 300
 
     # ------------------------------------------------------------------
     # AUDIT / RGPD
