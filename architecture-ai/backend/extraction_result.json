@@ -1,0 +1,16 @@
+{
+  "template": "Diagnostic Amiante - DTA",
+  "header": {
+    "adresse_immeuble": "42 rue des Panoyaux, Esc. A; Etage 1; Porte 83, 75020 PARIS - 20EME",
+    "reference_dossier": "33155_2",
+    "date_reperage": "21/10/2024",
+    "operateur": "HEBRI Malik, Opérateur de repérage, DEKRA Certification Immeuble la Boursidière - Porte I - Rue de La Boursidière 92350 LE PLESSIS-ROBINSON, Obtention : 06/04/2023 Échéance : 05/04/2030 N° de certification : 2035",
+    "laboratoire": null
+  },
+  "materiaux": [],
+  "stats": {
+    "total_materiaux": 0,
+    "presence_amiante": 0,
+    "absence_amiante": 0
+  }
+}

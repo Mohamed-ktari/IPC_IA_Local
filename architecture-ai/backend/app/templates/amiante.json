@@ -1,31 +1,28 @@
 {
-    "name": "Diagnostic Amiante",
-    "description": "Template for asbestos diagnostic report analysis",
-    "sections": [
-        {
-            "key": "informations_generales",
-            "label": "Informations générales",
-            "description": "Identify the building address, date of diagnostic, name of the diagnostician and the issuing company"
-        },
-        {
-            "key": "materiaux_concernes",
-            "label": "Matériaux et produits contenant de l'amiante",
-            "description": "List all materials identified as containing asbestos, their location in the building, and their condition"
-        },
-        {
-            "key": "etat_conservation",
-            "label": "État de conservation",
-            "description": "Describe the conservation state of each asbestos-containing material (bon état, dégradé, très dégradé)"
-        },
-        {
-            "key": "recommandations",
-            "label": "Recommandations et actions requises",
-            "description": "List all recommended actions: surveillance, confinement, or removal with urgency level"
-        },
-        {
-            "key": "prochaine_echeance",
-            "label": "Prochaine échéance",
-            "description": "Date of next required inspection or action deadline if mentioned"
-        }
-    ]
+  "name": "Diagnostic Amiante - DTA",
+  "description": "Extraction structurée de tous les matériaux analysés dans un rapport DTA",
+  "type": "extraction",
+  "header_fields": {
+    "adresse_immeuble": "adresse complète du bâtiment",
+    "reference_dossier": "référence du dossier (ex: 24/ABD/15322/ROC)",
+    "date_reperage": "date du repérage au format DD/MM/YYYY",
+    "operateur": "nom et certification de l'opérateur de repérage",
+    "laboratoire": "nom du laboratoire et accréditation (ex: COFRAC)"
+  },
+  "materiau_schema": {
+    "id": "identifiant du matériau (ex: M001)",
+    "tour": "bâtiment concerné: ORIENT, OCCIDENT, COMMUN, ou combinaison",
+    "localisation": "localisation précise dans le bâtiment",
+    "description_materiau": "description du matériau",
+    "composant": "catégorie de composant (ex: Flocages, Clapets / volets coupe-feu, Planchers...)",
+    "reference_echantillon": "référence de l'échantillon ou null si absent",
+    "reference_labo": "référence laboratoire ou null si absent",
+    "resultat": "Absence d'amiante ou PRÉSENCE AMIANTE",
+    "etat_conservation": "code état de conservation (EP, AC1, AC2...) ou - si non applicable",
+    "preconisation": "action recommandée (Aucune action requise, Évaluation périodique, Action corrective 1er niveau, Action corrective 2nd niveau)"
+  },
+  "locaux_non_visites_schema": {
+    "localisation": "localisation non visitée",
+    "raison": "raison (ex: Absence de clef)"
+  }
 }

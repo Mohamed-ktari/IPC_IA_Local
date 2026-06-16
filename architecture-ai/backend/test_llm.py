@@ -237,6 +237,72 @@ def test_analysis_rag():
     print(response.content)
     print('='*60)
 
+
+
+
+
+
+############################## Extraction agent ##############################
+def test_extraction_agent():
+    import sys
+    import json
+    import time
+    from pathlib import Path
+
+    print("\nTesting ExtractionAgent...")
+
+    if len(sys.argv) < 2:
+        print("No PDF path provided — skipping")
+        return
+
+    # Cache parsed text to avoid re-parsing on every test run
+    cache_path = Path("parsed_cache.json")
+
+    if cache_path.exists():
+        print("Loading from cache (skipping PDF parse)...")
+        with open(cache_path, encoding="utf-8") as f:
+            parsed = json.load(f)
+        print(f"Loaded: {parsed['total_pages']} pages, {parsed['word_count']} words")
+    else:
+        from app.documents.parsers.pdf_parser import parse_pdf
+        print("Parsing PDF (this will take a few minutes)...")
+        start = time.time()
+        parsed = parse_pdf(sys.argv[1])
+        print(f"Parsed: {parsed['total_pages']} pages, "
+              f"{parsed['word_count']} words "
+              f"in {round(time.time()-start, 1)}s")
+        # Save cache
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(parsed, f, ensure_ascii=False)
+        print(f"Saved to cache: {cache_path}")
+
+    from app.agents.extraction_agent import ExtractionAgent
+    agent = ExtractionAgent()
+    response = agent.run_extraction(
+        document_text=parsed["full_text"],
+        template_name="amiante",
+    )
+
+    result = json.loads(response.content)
+    print(f"\n{'='*60}")
+    print(f"Duration      : {response.duration_seconds}s")
+    print(f"Header        : {result['header']}")
+    print(f"Materials     : {result['stats']['total_materiaux']} total")
+    print(f"  PRÉSENCE    : {result['stats']['presence_amiante']}")
+    print(f"  ABSENCE     : {result['stats']['absence_amiante']}")
+    # print(f"Non visités   : {result['stats']['locaux_non_visites']}")
+    print(f"\nFirst 3 materials:")
+    for m in result['materiaux'][:3]:
+        print(f"  {m}")
+    print(f"{'='*60}")
+
+    with open("extraction_result.json", "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+    print(f"\nFull result saved to: extraction_result.json")
+
+
+
+
 ################################# Main ######################"
 if __name__ == "__main__":
     #test_chat()
@@ -246,4 +312,5 @@ if __name__ == "__main__":
     #test_pdf_parser()
     #test_ingestion()
     #test_retrieval()
-    test_analysis_rag()
+    #test_analysis_rag()
+    test_extraction_agent()
