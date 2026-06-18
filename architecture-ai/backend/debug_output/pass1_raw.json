@@ -1,0 +1,334 @@
+{
+  "description": "Pass-1 output: verbatim rows as the LLM saw them in each group, using the source table's own column names.",
+  "total_rows": 49,
+  "rows": [
+    {
+      "col_1": "Colle non bitumineuse + chape ciment",
+      "col_2": "(Entrée)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de ciment + peinture",
+      "col_2": "(mur de circulation) (Entrée)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de ciment + peinture",
+      "col_2": "(mur de refend) (Entrée)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de plâtre + bande calicot + peinture",
+      "col_2": "(mur cloison) (Entrée)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de ciment + peinture",
+      "col_2": "(plafond) (Entrée)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de plâtre + bande calicot + peinture",
+      "col_2": "(mur de facade) (Chambre 1)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Colle non bitumineuse + chape ciment",
+      "col_2": "(Salle d'eau)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Colle de faïence 30X20 (mur)",
+      "col_2": "(Salle d'eau)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de plâtre + bande calicot + peinture",
+      "col_2": "(mur cloison) (Salle d'eau)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de ciment + peinture",
+      "col_2": "(mur de refend) (Salle d'eau)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de ciment + peinture",
+      "col_2": "(plafond) (Salle d'eau)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de plâtre + bande calicot + peinture",
+      "col_2": "(mur de facade) (Cuisine)",
+      "col_3": ""
+    },
+    {
+      "col_1": "Enduit à base de plâtre + bande calicot + peinture",
+      "col_2": "(mur de facade) (Séjour)",
+      "col_3": ""
+    },
+    {
+      "col_1": "M002",
+      "col_2": "Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur de circulation))",
+      "col_3": "Entrée",
+      "col_4": "1",
+      "col_5": "Identifiant :M002 Description :Enduit à base de ciment + peinture (mur de circulation) Résultat : Absence d'amiante",
+      "col_6": "Oui",
+      "col_7": "P002"
+    },
+    {
+      "col_1": "M003",
+      "col_2": "Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur de refend))",
+      "col_3": "Entrée",
+      "col_4": "1",
+      "col_5": "Identifiant :M003 Description :Enduit à base de ciment + peinture (mur de refend) Résultat : Absence d'amiante",
+      "col_6": "Oui",
+      "col_7": "P003"
+    },
+    {
+      "col_1": "M004",
+      "col_2": "Enduit à base de plâtre lissé ou taloché (Enduit à base de plâtre + bande calicot + peinture (mur cloison))",
+      "col_3": "Entrée",
+      "col_4": "1",
+      "col_5": "Identifiant :M004 Description :Enduit à base de plâtre + bande calicot + peinture (mur cloison) Résultat : Absence d'amiante",
+      "col_6": "Oui",
+      "col_7": "P004"
+    },
+    {
+      "col_1": "M006",
+      "col_2": "Enduit à base de plâtre lissé ou taloché (Enduit à base de plâtre + bande calicot + peinture (mur de facade))",
+      "col_3": "Chambre 1",
+      "col_4": "",
+      "col_5": "",
+      "col_6": "",
+      "col_7": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "taloché (Enduit à base de ciment + peinture (mur de circulation))",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M002 : Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur de circulation))",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Entrée",
+      "Localisation": "Entrée",
+      "n° de sondage": "1",
+      "Description": "Identifiant :M002 Description :Enduit à base de ciment + peinture (mur de circulation) Résultat : Absence d'amiante",
+      "Echantillon": "Oui Entrée",
+      "N° Echantillon": "P002",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M003 : Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur de refend))",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Entrée",
+      "Localisation": "Entrée",
+      "n° de sondage": "1",
+      "Description": "Identifiant :M003 Description :Enduit à base de ciment + peinture (mur de refend) Résultat : Absence d'amiante",
+      "Echantillon": "Oui Entrée",
+      "N° Echantillon": "P003",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M004 : Partie à inspecter : Enduit à base de plâtre lissé ou taloché (Enduit à base de plâtre + bande calicot + peinture (mur cloison))",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Entrée",
+      "Localisation": "Entrée",
+      "n° de sondage": "1",
+      "Description": "Identifiant :M004 Description :Enduit à base de plâtre + bande calicot + peinture (mur cloison) Résultat : Absence d'amiante",
+      "Echantillon": "Oui Entrée",
+      "N° Echantillon": "P004",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M006 : Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur))",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Salle d'eau",
+      "Localisation": "Salle d'eau",
+      "n° de sondage": "1",
+      "Description": "Identifiant :M006 Description :Enduit à base de ciment + peinture (mur) Résultat : Absence d'amiante",
+      "Echantillon": "",
+      "N° Echantillon": "",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M005 : Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (plafond))",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Entrée",
+      "Localisation": "Entrée",
+      "n° de sondage": "1",
+      "Description": "Identifiant :M005 Description :Enduit à base de ciment + peinture (plafond) Résultat : Absence d'amiante",
+      "Echantillon": "Oui Entrée idem PS",
+      "N° Echantillon": "P005",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M011 : Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (plafond))",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Salle d'eau",
+      "Localisation": "Salle d'eau",
+      "n° de sondage": "1",
+      "Description": "Identifiant :M011 Description :Enduit à base de ciment + peinture (plafond) Résultat : Absence d'amiante",
+      "Echantillon": "Oui Salle d'eau",
+      "N° Echantillon": "P011",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Wc",
+      "Localisation": "Wc",
+      "n° de sondage": "2",
+      "Description": "Identifiant :M011 Description :Enduit à base de ciment + peinture (plafond) Résultat : Absence d'amiante",
+      "Echantillon": "",
+      "N° Echantillon": "",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Cuisine",
+      "Localisation": "Cuisine",
+      "n° de sondage": "3",
+      "Description": "Identifiant :M011 Description :Enduit à base de ciment + peinture (plafond) Résultat : Absence d'amiante",
+      "Echantillon": "",
+      "N° Echantillon": "",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M001 : Partie à inspecter : Sol coulé à base ciment (terrazolith…) (Colle non bitumineuse + chape ciment)",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Entrée",
+      "Localisation": "Entrée",
+      "n° de sondage": "1",
+      "Description": "Identifiant :M001 Description :Colle non bitumineuse + chape ciment Résultat : Absence d'amiante",
+      "Echantillon": "Oui Entrée",
+      "N° Echantillon": "P001",
+      "Photo": ""
+    },
+    {
+      "source_group": 2,
+      "col_1": "M007 : Partie à inspecter : Sol coulé à base ciment (terrazolith…) (Colle non bitumineuse + chape ciment)",
+      "col_2": "",
+      "col_3": ""
+    },
+    {
+      "source_group": 2,
+      "Pièces": "Salle",
+      "Localisation": "Salle",
+      "n° de sondage": "",
+      "Description": "",
+      "Echantillon": "",
+      "N° Echantillon": "",
+      "Photo": ""
+    },
+    {
+      "Localisation": "Entrée",
+      "Description": "Colle non bitumineuse + chape ciment Résultat : Absence d'amiante",
+      "Echantillon": "Oui",
+      "N° Echantillon": "P001"
+    },
+    {
+      "Localisation": "Salle d'eau",
+      "Description": "Colle non bitumineuse + chape ciment Résultat : Absence d'amiante",
+      "Echantillon": "Oui Salle d'eau",
+      "N° Echantillon": "P007"
+    },
+    {
+      "Localisation": "Cuisine",
+      "Description": "Colle non bitumineuse + chape ciment Résultat : Absence d'amiante",
+      "Echantillon": "Aucun prélèvement",
+      "N° Echantillon": ""
+    },
+    {
+      "Localisation": "Wc",
+      "Description": "Colle non bitumineuse + chape ciment Résultat : Absence d'amiante",
+      "Echantillon": "Aucun prélèvement",
+      "N° Echantillon": ""
+    },
+    {
+      "Zone": "M001",
+      "Identifiant + Description": "Localisation : Entrée Echantillons : P001 Description : Colle non bitumineuse + chape ciment",
+      "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire)"
+    },
+    {
+      "Zone": "M002",
+      "Identifiant + Description": "Localisation : Entrée Echantillons : P002 Description : Enduit à base de ciment + peinture (mur de circulation)",
+      "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire)"
+    },
+    {
+      "Zone": "M003",
+      "Identifiant + Description": "Localisation : Entrée Echantillons : P003 Description : Enduit à base de ciment + peinture (mur de refend)",
+      "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire)"
+    },
+    {
+      "Zone": "M004",
+      "Identifiant + Description": "Localisation : Entrée Echantillons : P004 Description : Enduit à base de plâtre + bande calicot + peinture (mur cloison)",
+      "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire)"
+    },
+    {
+      "Zone": "M005",
+      "Identifiant + Description": "Localisation : Entrée Echantillons : P005 Description : Enduit à base de ciment + peinture (plafond)",
+      "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire)"
+    },
+    {
+      "Zone": "M006",
+      "Identifiant + Description": "Localisation : Cuisine Echantillons : P012 Description : Enduit à base de plâtre + bande calicot + peinture (mur de facade)",
+      "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire)"
+    },
+    {
+      "Zone": "M007",
+      "Identifiant + Description": "Localisation : Séjour Echantillons : P013 Description : Enduit à base de plâtre + bande calicot + peinture (mur de facade)",
+      "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire)"
+    },
+    {
+      "Identifiant et prélèvement": "M001-P001",
+      "Localisation": "Entrée",
+      "Composant de la construction": "5 - Planchers et planchers techniques - Revêtements de sols",
+      "Parties du composant": "Sol coulé à base ciment (terrazolith...)",
+      "Description": "Colle non bitumineuse + chape ciment Réf. laboratoire: 24NM040445-001"
+    },
+    {
+      "Identifiant et prélèvement": "M002-P002",
+      "Localisation": "Entrée",
+      "Composant de la construction": "3 - Parois verticales intérieures - Murs et cloisons maçonnés",
+      "Parties du composant": "Enduit à base de ciment lissé ou taloché",
+      "Description": "Enduit à base de ciment + peinture (mur de circulation) Réf. laboratoire: 24NM040445-002"
+    }
+  ]
+}

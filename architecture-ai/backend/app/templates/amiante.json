@@ -1,6 +1,6 @@
 {
   "name": "Diagnostic Amiante - DTA",
-  "description": "Extraction structurée de tous les matériaux analysés dans un rapport DTA",
+  "description": "Extraction structurée de tous les matériaux analysés dans un rapport DTA ou RAAT",
   "type": "extraction",
   "header_fields": {
     "adresse_immeuble": "adresse complète du bâtiment",
@@ -10,16 +10,16 @@
     "laboratoire": "nom du laboratoire et accréditation (ex: COFRAC)"
   },
   "materiau_schema": {
-    "id": "identifiant du matériau (ex: M001)",
-    "tour": "bâtiment concerné: ORIENT, OCCIDENT, COMMUN, ou combinaison",
-    "localisation": "localisation précise dans le bâtiment",
-    "description_materiau": "description du matériau",
-    "composant": "catégorie de composant (ex: Flocages, Clapets / volets coupe-feu, Planchers...)",
-    "reference_echantillon": "référence de l'échantillon ou null si absent",
-    "reference_labo": "référence laboratoire ou null si absent",
-    "resultat": "Absence d'amiante ou PRÉSENCE AMIANTE",
-    "etat_conservation": "code état de conservation (EP, AC1, AC2...) ou - si non applicable",
-    "preconisation": "action recommandée (Aucune action requise, Évaluation périodique, Action corrective 1er niveau, Action corrective 2nd niveau)"
+    "id": "identifiant du matériau (ex: M001) — extrait par regex, ne pas inventer",
+    "localisation": "localisation précise dans le bâtiment (ex: Sous-Sol -2 - ORIENT - Couloir/Dégag)",
+    "description_materiau": "description physique du matériau (ex: Flocages, Enduit à base de ciment...)",
+    "composant": "catégorie de composant (ex: Flocages, Calorifugeages, Faux plafonds, Clapets / volets coupe-feu...)",
+    "reference_echantillon": "référence de l'échantillon (ex: P001, 24/ABD/15322/ROC/M001-P001) — extrait par regex, ne pas inventer",
+    "reference_labo": "référence laboratoire (ex: 24FP006107-001) — extrait par regex, ne pas inventer",
+    "resultat": "UNIQUEMENT 'presence' ou 'absence' — extrait par regex, ne pas inventer",
+    "etat_conservation": "code état de conservation (EP, AC1, AC2, -) ou null si absent",
+    "preconisation": "action recommandée parmi: 'Aucune action requise', 'Évaluation périodique', 'Action corrective 1er niveau', 'Action corrective 2nd niveau' — ou null si absent",
+    "others": "objet JSON avec TOUS les champs présents dans la source qui ne correspondent à aucun champ du schéma ci-dessus. Ex: {\"Partie à sonder\": \"Flocages\", \"Sondage\": \"Déchirement\", \"Localisation sur croquis\": \"M001\"}. Mettre null si rien à capturer."
   },
   "locaux_non_visites_schema": {
     "localisation": "localisation non visitée",

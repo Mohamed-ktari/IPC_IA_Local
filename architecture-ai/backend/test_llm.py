@@ -244,61 +244,111 @@ def test_analysis_rag():
 
 ############################## Extraction agent ##############################
 def test_extraction_agent():
+    """
+    Test script for ExtractionAgent.
+    
+    Usage:
+        python test_extraction.py path/to/report.pdf [--no-cache] [--debug]
+    
+    Outputs:
+        extraction_result.json          — final normalised result
+        debug_output/pass1_raw.json     — (with --debug) raw LLM output, pass 1
+        debug_output/pass2_normalised.json — (with --debug) normalised rows, pass 2
+    """
+    
     import sys
     import json
     import time
+    import argparse
     from pathlib import Path
 
-    print("\nTesting ExtractionAgent...")
-
-    if len(sys.argv) < 2:
-        print("No PDF path provided — skipping")
-        return
-
-    # Cache parsed text to avoid re-parsing on every test run
+    parser = argparse.ArgumentParser()
+    parser.add_argument("pdf", nargs="?", help="Path to PDF file")
+    parser.add_argument("--no-cache", action="store_true", help="Force re-parse even if cache exists")
+    parser.add_argument("--debug", action="store_true", help="Write pass-1 and pass-2 debug files")
+    parser.add_argument("--template", default="amiante", help="Template name (default: amiante)")
+    args = parser.parse_args()
+ 
+    print("\n" + "=" * 60)
+    print("ExtractionAgent test")
+    print("=" * 60)
+ 
+    # ── 1. Parse PDF (or load cache) ────────────────────────────────────────
     cache_path = Path("parsed_cache.json")
-
-    if cache_path.exists():
-        print("Loading from cache (skipping PDF parse)...")
+ 
+    if cache_path.exists() and not args.no_cache:
+        print(f"\n[cache] Loading from {cache_path} (use --no-cache to force re-parse)")
         with open(cache_path, encoding="utf-8") as f:
             parsed = json.load(f)
-        print(f"Loaded: {parsed['total_pages']} pages, {parsed['word_count']} words")
-    else:
+        print(f"[cache] {parsed['total_pages']} pages, {parsed['word_count']} words")
+ 
+    elif args.pdf:
         from app.documents.parsers.pdf_parser import parse_pdf
-        print("Parsing PDF (this will take a few minutes)...")
-        start = time.time()
-        parsed = parse_pdf(sys.argv[1])
-        print(f"Parsed: {parsed['total_pages']} pages, "
-              f"{parsed['word_count']} words "
-              f"in {round(time.time()-start, 1)}s")
-        # Save cache
-        with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(parsed, f, ensure_ascii=False)
-        print(f"Saved to cache: {cache_path}")
-
+        print(f"\n[parse] Parsing {args.pdf}…")
+        t0 = time.time()
+        parsed = parse_pdf(args.pdf)
+        elapsed = round(time.time() - t0, 1)
+        print(f"[parse] Done in {elapsed}s — "
+              f"{parsed['total_pages']} pages, {parsed['word_count']} words")
+        cache_path.write_text(
+            json.dumps(parsed, ensure_ascii=False), encoding="utf-8"
+        )
+        print(f"[cache] Saved to {cache_path}")
+ 
+    else:
+        print("\nNo PDF provided and no cache found. Pass a PDF path as first argument.")
+        sys.exit(1)
+ 
+    # ── 2. Run extraction ────────────────────────────────────────────────────
     from app.agents.extraction_agent import ExtractionAgent
     agent = ExtractionAgent()
+ 
+    print(f"\n[extraction] Starting (debug={args.debug}, template={args.template})…\n")
+    t0 = time.time()
     response = agent.run_extraction(
         document_text=parsed["full_text"],
-        template_name="amiante",
+        template_name=args.template,
+        debug=args.debug,
     )
-
+    elapsed = round(time.time() - t0, 1)
+ 
+    # ── 3. Report ────────────────────────────────────────────────────────────
     result = json.loads(response.content)
-    print(f"\n{'='*60}")
-    print(f"Duration      : {response.duration_seconds}s")
-    print(f"Header        : {result['header']}")
-    print(f"Materials     : {result['stats']['total_materiaux']} total")
-    print(f"  PRÉSENCE    : {result['stats']['presence_amiante']}")
-    print(f"  ABSENCE     : {result['stats']['absence_amiante']}")
-    # print(f"Non visités   : {result['stats']['locaux_non_visites']}")
-    print(f"\nFirst 3 materials:")
-    for m in result['materiaux'][:3]:
-        print(f"  {m}")
-    print(f"{'='*60}")
-
-    with open("extraction_result.json", "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
-    print(f"\nFull result saved to: extraction_result.json")
+    stats  = result["stats"]
+ 
+    print(f"\n{'=' * 60}")
+    print(f"  Duration        : {elapsed}s")
+    print(f"  Header          : {result['header']}")
+    print(f"  Total matériaux : {stats['total_materiaux']}")
+    print(f"  ✅ Présence      : {stats['presence_amiante']}")
+    print(f"  ✅ Absence       : {stats['absence_amiante']}")
+    print(f"  ⚠️  Inconnu       : {stats.get('resultat_inconnu', '—')}")
+ 
+    # Show a sample of items where resultat is still null (useful to spot gaps)
+    unknown_items = [
+        m for m in result["materiaux"]
+        if not m.get("resultat")
+    ]
+    if unknown_items:
+        print(f"\n  ⚠️  {len(unknown_items)} items without 'resultat' (first 3):")
+        for m in unknown_items[:3]:
+            print(f"     {m}")
+ 
+    print(f"\n  First 3 normalised items:")
+    for m in result["materiaux"][:3]:
+        print(f"     {m}")
+    print("=" * 60)
+ 
+    # ── 4. Save final result ─────────────────────────────────────────────────
+    out_path = Path("extraction_result.json")
+    out_path.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(f"\n[output] Full result → {out_path}")
+ 
+    if args.debug:
+        print("[output] Debug files → debug_output/pass1_raw.json")
+        print("[output]               debug_output/pass2_normalised.json")
 
 
 

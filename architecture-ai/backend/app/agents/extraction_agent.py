@@ -1,4 +1,3 @@
-# extraction_agent.py
 import json
 import time
 import re
@@ -6,8 +5,11 @@ from pathlib import Path
 
 from app.agents.base_agent import BaseAgent, AgentResponse
 from app.config import settings
+from app.documents.parsers.document_cleaner import DocumentCleaner
 
 TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
+
+DEBUG_DIR = Path("debug_output")
 
 
 class ExtractionAgent(BaseAgent):
@@ -22,55 +24,91 @@ class ExtractionAgent(BaseAgent):
         self,
         document_text: str,
         template_name: str = "amiante",
+        debug: bool = False,
     ) -> AgentResponse:
         start = time.time()
         template = self._load_template(template_name)
 
-        print(f"[extraction_agent] Starting extraction with template: {template['name']}")
-        print(f"[extraction_agent] Document: {len(document_text.split())} words")
+        # ── Clean: keep only cover block + section 5 ────────────────────
+        cleaner = DocumentCleaner(debug=debug)
+        if debug:
+            print(f"[extraction_agent] Cleaner stats: {cleaner.stats(document_text)}")
+        document_text = cleaner.clean(document_text)
 
+        print(f"[extraction_agent] Starting extraction — template: {template['name']}")
+        print(f"[extraction_agent] Document (cleaned): {len(document_text.split())} words")
+
+        # ── Header ──────────────────────────────────────────────────────
         print(f"[extraction_agent] Step 1: extracting header...")
         header = self._extract_header(document_text, template)
         print(f"[extraction_agent] Header: {header}")
 
+        # ── Split ───────────────────────────────────────────────────────
         groups = self._split_into_groups(document_text)
-        print(f"[extraction_agent] Step 2: {len(groups)} page groups to process")
+        print(f"[extraction_agent] Step 2: {len(groups)} groups to process")
 
-        # No ID-based dedup. The same material description (e.g. "Enduits projetés")
-        # legitimately repeats across different locations/apartments in the building,
-        # so every occurrence found in every group is kept as-is. A human reviews the
-        # final list afterward, so duplicates (including ones caused purely by the
-        # overlap window between adjacent groups) are an acceptable cost here.
-        all_materiaux = []
-
+        # ── Pass 1 — free-form extraction ───────────────────────────────
+        raw_materiaux: list[dict] = []
         for i, group_text in enumerate(groups):
-            print(f"[extraction_agent] Processing group {i+1}/{len(groups)}...")
-            materiaux = self._extract_materiaux_from_group(
-                group_text, template, group_index=i
-            )
-            all_materiaux.extend(materiaux)
-            print(f"[extraction_agent] Group {i+1}: found {len(materiaux)} matériaux "
-                  f"(total so far: {len(all_materiaux)})")
+            print(f"[extraction_agent] Pass-1 group {i+1}/{len(groups)}...")
+            raw = self._extract_raw_from_group(group_text, group_index=i)
+            raw_materiaux.extend(raw)
+            print(f"[extraction_agent]   +{len(raw)} rows (total raw: {len(raw_materiaux)})")
 
+        if debug:
+            self._write_debug("pass1_raw.json", {
+                "description": "Pass-1 output: verbatim rows before any processing.",
+                "total_rows": len(raw_materiaux),
+                "rows": raw_materiaux,
+            })
+
+        # ── Pre-processing: regex extraction + deduplication ─────────────
+        # 1. Parse deterministic fields (id, refs, resultat) from
+        #    the embedded Description string — faster and more reliable
+        #    than asking the LLM to do it.
+        # 2. Deduplicate by material ID — section 5 produces 2-3 rows
+        #    per material (one from 5.1 detail table, one from 5.2 recap).
+        #    We keep the richest row per ID.
+        print(f"[extraction_agent] Step 3: pre-processing {len(raw_materiaux)} raw rows...")
+        enriched = [self._parse_known_fields(row) for row in raw_materiaux]
+        deduped  = self._deduplicate_raw(enriched)
+        print(f"[extraction_agent] After dedup: {len(deduped)} unique materials")
+
+        if debug:
+            self._write_debug("pass1_enriched_deduped.json", {
+                "description": (
+                    "After regex extraction of id/refs/resultat "
+                    "and deduplication by material ID."
+                ),
+                "total_rows": len(deduped),
+                "rows": deduped,
+            })
+
+        # ── Pass 2 — normalisation ───────────────────────────────────────
+        print(f"[extraction_agent] Step 4: normalising {len(deduped)} rows...")
+        all_materiaux = self._normalise_batch(deduped, template)
+        print(f"[extraction_agent] Normalised: {len(all_materiaux)} items")
+
+        if debug:
+            self._write_debug("pass2_normalised.json", {
+                "description": "Pass-2 output: canonical schema with others field.",
+                "total_rows": len(all_materiaux),
+                "rows": all_materiaux,
+            })
+
+        # ── Stats ────────────────────────────────────────────────────────
         result = {
             "template": template["name"],
             "header": header,
             "materiaux": all_materiaux,
-            "stats": {
-                "total_materiaux": len(all_materiaux),
-                "presence_amiante": sum(
-                    1 for m in all_materiaux
-                    if "PRÉSENCE" in self._get_resultat(m).upper()
-                ),
-                "absence_amiante": sum(
-                    1 for m in all_materiaux
-                    if "ABSENCE" in self._get_resultat(m).upper()
-                ),
-            }
+            "stats": self._compute_stats(all_materiaux),
         }
 
         duration = round(time.time() - start, 2)
-        print(f"[extraction_agent] Done in {duration}s — {len(all_materiaux)} extracted")
+        print(f"[extraction_agent] Done in {duration}s — "
+              f"{result['stats']['total_materiaux']} items | "
+              f"présence: {result['stats']['presence_amiante']} | "
+              f"absence: {result['stats']['absence_amiante']}")
 
         return AgentResponse(
             content=json.dumps(result, ensure_ascii=False, indent=2),
@@ -79,19 +117,369 @@ class ExtractionAgent(BaseAgent):
             duration_seconds=duration,
         )
 
-    def _split_into_groups(self, text: str) -> list[str]:
-        words = text.split()
-        group_size = settings.EXTRACTION_WORDS_PER_PAGE * settings.EXTRACTION_PAGES_PER_GROUP
-        overlap = settings.EXTRACTION_WORDS_PER_PAGE
+    # ────────────────────────────────────────────────────────────────────────
+    # Pre-processing — regex extraction of deterministic fields
+    # ────────────────────────────────────────────────────────────────────────
 
+    # Regex patterns — compiled once at class level for performance
+    _RE_ID = re.compile(
+        r'(?:Identifiant\s*[:\s]+|Zone\s*[:\s]+)?\b(M\d{3,4})\b',
+        re.IGNORECASE,
+    )
+    _RE_REF_ECH = re.compile(
+        r'(?:R[ée]f\.?\s*[ée]chantillon\s*[:\s]+|[ée]chantillon(?:s)?\s*[:\s]+)([\w/\-\.]+)',
+        re.IGNORECASE,
+    )
+    _RE_REF_LABO = re.compile(
+        r'R[ée]f\.?\s*(?:de\s+)?laboratoire\s*[:\s]+([\w/\-\.]+)',
+        re.IGNORECASE,
+    )
+    _RE_RESULTAT_PRESENCE = re.compile(
+        r'pr[ée]sence\s+d\'?amiante|PRÉSENCE|presence|\bEP\b|\bAC[12]\b',
+        re.IGNORECASE,
+    )
+    _RE_RESULTAT_ABSENCE = re.compile(
+        r'absence\s+d\'?amiante|non\s+d[ée]tect[ée]|ABSENCE',
+        re.IGNORECASE,
+    )
+
+    def _parse_known_fields(self, row: dict) -> dict:
+        """
+        Runs regex over all string values in a raw row to extract
+        deterministic fields: id, reference_echantillon, reference_labo,
+        resultat.
+
+        These are set directly on the row so Pass 2 normalisation
+        receives pre-filled canonical keys and only needs to handle
+        the semantic/variable fields (localisation, composant, others...).
+
+        The original keys are preserved so Pass 2 still has full context.
+        """
+        # Concatenate all string values for a single-pass search
+        blob = " ".join(str(v) for v in row.values() if v)
+
+        row = dict(row)  # shallow copy — don't mutate caller's data
+
+        # ── id ──────────────────────────────────────────────────────────
+        if not row.get("id"):
+            # Prefer 'Zone' key (5.2 rows) — most reliable source
+            zone_val = row.get("Zone") or row.get("zone")
+            if zone_val and re.match(r'^M\d{3,4}$', str(zone_val).strip()):
+                row["id"] = str(zone_val).strip()
+            else:
+                m = self._RE_ID.search(blob)
+                if m:
+                    row["id"] = m.group(1).upper()
+
+        # ── reference_echantillon ────────────────────────────────────────
+        if not row.get("reference_echantillon"):
+            # First try explicit "N° Echantillon" column (RAAT format)
+            nech = row.get("N° Echantillon") or row.get("N° echantillon")
+            if nech and str(nech).strip():
+                row["reference_echantillon"] = str(nech).strip()
+            else:
+                m = self._RE_REF_ECH.search(blob)
+                if m:
+                    ref = m.group(1).strip().rstrip(".,;")
+                    # Sanity check: skip generic words like "Oui", "Non"
+                    if ref.lower() not in ("oui", "non", "aucun"):
+                        row["reference_echantillon"] = ref
+
+        # ── reference_labo ───────────────────────────────────────────────
+        if not row.get("reference_labo"):
+            m = self._RE_REF_LABO.search(blob)
+            if m:
+                row["reference_labo"] = m.group(1).strip().rstrip(".,;")
+
+        # ── resultat ─────────────────────────────────────────────────────
+        # Only set if not already a canonical value from a previous pass
+        current_res = str(row.get("resultat") or "").strip().lower()
+        if current_res not in ("presence", "absence"):
+            if self._RE_RESULTAT_PRESENCE.search(blob):
+                row["resultat"] = "presence"
+            elif self._RE_RESULTAT_ABSENCE.search(blob):
+                row["resultat"] = "absence"
+            # else: leave as-is, Pass 2 will try to resolve
+
+        return row
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Pre-processing — deduplication by material ID
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _deduplicate_raw(self, rows: list[dict]) -> list[dict]:
+        """
+        Keeps the single richest row per material ID.
+
+        Scoring (higher = preferred):
+          +3  row has a 'Zone' key  (5.2 recap — cleanest structure)
+          +2  row has named columns like 'Localisation', 'Description'
+          +1  row has col_N columns (5.1 detail — more fields but noisier)
+          +N  one point per non-empty value (rewards information density)
+
+        Rows without any detectable ID are kept as-is (rare edge cases).
+        """
+        by_id: dict[str, dict] = {}
+        no_id: list[dict] = []
+
+        for row in rows:
+            mat_id = row.get("id")
+            if not mat_id:
+                no_id.append(row)
+                continue
+
+            score = self._row_score(row)
+
+            if mat_id not in by_id:
+                row["_score"] = score
+                by_id[mat_id] = row
+            else:
+                existing_score = by_id[mat_id].get("_score", 0)
+                if score > existing_score:
+                    row["_score"] = score
+                    by_id[mat_id] = row
+
+        # Strip internal scoring key before returning
+        result = []
+        for row in by_id.values():
+            clean = {k: v for k, v in row.items() if k != "_score"}
+            result.append(clean)
+
+        # Sort by ID so output is deterministic and easy to read
+        result.sort(key=lambda r: r.get("id", ""))
+
+        if no_id:
+            print(f"[extraction_agent] {len(no_id)} rows had no detectable ID "
+                  f"and were dropped during deduplication")
+
+        return result
+
+    def _row_score(self, row: dict) -> int:
+        """Assigns a quality score to a raw row for deduplication."""
+        score = 0
+        keys = set(row.keys())
+
+        if "Zone" in keys:
+            score += 3
+        elif "Localisation" in keys or "localisation" in keys:
+            score += 2
+        elif any(k.startswith("col_") for k in keys):
+            score += 1
+
+        # Reward information density
+        score += sum(1 for v in row.values() if v and str(v).strip())
+
+        return score
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Splitting
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _split_into_groups(self, text: str) -> list[str]:
+        """
+        Prefer docling page markers (\f or <!-- page N -->).
+        Fallback: word-window with overlap.
+        Each group is prefixed with the last table-header row seen so far.
+        """
+        page_splits = re.split(r'\f|<!-- page \d+ -->', text)
+        if len(page_splits) > 1:
+            pages = [p.strip() for p in page_splits if p.strip()]
+        else:
+            words = text.split()
+            group_size = settings.EXTRACTION_WORDS_PER_PAGE * settings.EXTRACTION_PAGES_PER_GROUP
+            overlap    = settings.EXTRACTION_WORDS_PER_PAGE
+            pages = []
+            i = 0
+            while i < len(words):
+                pages.append(" ".join(words[i:i + group_size]))
+                i += group_size - overlap
+            return pages
+
+        pgs_per_group = getattr(settings, "EXTRACTION_PAGES_PER_GROUP", 3)
         groups = []
-        i = 0
-        while i < len(words):
-            group_words = words[i:i + group_size]
-            groups.append(" ".join(group_words))
-            i += group_size - overlap
+        last_header = ""
+        for i in range(0, len(pages), pgs_per_group):
+            chunk = "\n\n".join(pages[i:i + pgs_per_group])
+            m = re.search(r'^(?:[^\n|]*\|){3,}[^\n]*$', chunk, re.MULTILINE)
+            if m:
+                last_header = m.group(0).strip()
+            prefix = (f"[CONTEXTE — EN-TÊTE DE TABLEAU DE LA PAGE PRÉCÉDENTE] : "
+                      f"{last_header}\n\n") if last_header else ""
+            groups.append(prefix + chunk)
 
         return groups
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Pass 1 — free-form extraction
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _extract_raw_from_group(
+        self,
+        group_text: str,
+        group_index: int,
+    ) -> list[dict]:
+        """
+        No schema imposed. Model uses source column names verbatim.
+        Pure recall: better to over-extract than miss rows.
+        """
+        prompt = f"""Tu es un expert en lecture de rapports DTA (Dossier Technique Amiante) et RAAT (Repérage Amiante Avant Travaux).
+
+MISSION : extraire TOUTES les lignes qui décrivent un matériau ou produit physique
+repéré dans le bâtiment. Privilégie le RAPPEL : mieux vaut extraire trop que manquer
+une ligne.
+
+INCLURE — si la ligne contient AU MOINS 2 de ces éléments :
+  • description d'un matériau de construction
+    (flocage, dalle, joint, enduit, volet coupe-feu, calorifugeage, panneau, conduit…)
+  • localisation dans le bâtiment (étage, local, couloir, cage d'escalier…)
+  • résultat d'analyse (présence, absence, EP, AC1, AC2…)
+  • référence d'échantillon ou de laboratoire
+  • identifiant de type M001, M002…
+
+EXCLURE — ne PAS extraire :
+  • titres de sections / catégories pures sans localisation ni résultat
+  • lignes 100 % administratives sans matériau identifié
+  • lignes totalement vides
+  • la liste normative NF X 46-020 (liste de composants génériques sans résultat)
+
+FORMAT DE SORTIE :
+  • Tableau JSON uniquement ([] si rien à extraire)
+  • Conserve les clés EXACTES du tableau source (ne traduis pas, ne renomme pas)
+  • Si une colonne n'a pas de libellé clair → "col_1", "col_2"…
+  • Ne génère aucune donnée inventée
+
+TEXTE :
+{group_text}"""
+
+        response = self.chat(
+            user_message=prompt,
+            temperature=0.0,
+            max_tokens=settings.DEFAULT_MAX_TOKENS,
+            json_mode=True,
+        )
+        parsed = self._safe_parse_json(response.content, default=[])
+        return self._to_list(parsed, expected_keys=set())
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Pass 2 — normalisation
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _normalise_batch(
+        self,
+        raw_items: list[dict],
+        template: dict,
+        batch_size: int = 30,
+    ) -> list[dict]:
+        if not raw_items:
+            return []
+
+        schema     = template["materiau_schema"]
+        empty_item = {k: None for k in schema.keys()}
+        normalised: list[dict] = []
+
+        for start in range(0, len(raw_items), batch_size):
+            batch  = raw_items[start:start + batch_size]
+            result = self._normalise_single_batch(batch, schema, empty_item)
+            normalised.extend(result)
+            print(f"[extraction_agent]   normalised batch "
+                  f"{start//batch_size + 1}: {len(result)}/{len(batch)} items")
+
+        return normalised
+
+    def _normalise_single_batch(
+        self,
+        batch: list[dict],
+        schema: dict,
+        empty_item: dict,
+    ) -> list[dict]:
+        prompt = f"""Tu es un expert en normalisation de données de rapports DTA et RAAT.
+
+Tu reçois {len(batch)} items déjà pré-traités : les champs "id", "resultat",
+"reference_echantillon" et "reference_labo" ont déjà été extraits par regex
+quand ils étaient présents — NE LES MODIFIE PAS s'ils sont déjà remplis.
+
+MISSION : convertir CHAQUE item vers le schéma cible. Tu dois retourner
+exactement {len(batch)} items.
+
+SCHÉMA CIBLE (utilise EXACTEMENT ces clés) :
+{json.dumps(empty_item, ensure_ascii=False, indent=2)}
+
+DESCRIPTION DE CHAQUE CHAMP :
+{json.dumps(schema, ensure_ascii=False, indent=2)}
+
+RÈGLES DE MAPPING :
+
+1. "id" → si déjà rempli (ex: "M001"), CONSERVER tel quel sans modification.
+   Sinon chercher un identifiant de type M001 dans les données source.
+
+2. "resultat" → si déjà rempli ("presence" ou "absence"), CONSERVER tel quel.
+   Sinon mapper OBLIGATOIREMENT vers l'une des deux valeurs exactes :
+     "presence"  si : présence / PRÉSENCE / EP / AC1 / AC2 / Sur décision / positif
+     "absence"   si : absence / ABSENCE / non détecté / aucune fibre
+     null        si vraiment aucune information disponible
+
+3. "reference_echantillon" → si déjà rempli, CONSERVER.
+   Sinon extraire la référence d'échantillon (ex: P001, 24/ABD/15322/ROC/M001-P001).
+
+4. "reference_labo" → si déjà rempli, CONSERVER.
+   Sinon extraire la référence laboratoire.
+
+5. "localisation" → la localisation dans le bâtiment.
+   Ex: "Sous-Sol -2 - ORIENT - Couloir/Dégag", "Entrée", "Salle d'eau".
+   Pour les 5.2 (Zone rows), chercher dans "Identifiant + Description".
+
+6. "description_materiau" → la description physique du matériau uniquement.
+   Ex: "Flocages", "Enduit à base de ciment + peinture (mur de circulation)".
+   NE PAS inclure la localisation ou le résultat dans ce champ.
+
+7. "composant" → la catégorie NF X 46-020 si présente.
+   Ex: "Flocages, Calorifugeages, Faux plafonds", "Clapets / volets coupe-feu".
+   null si absent.
+
+8. "etat_conservation" → code brut (EP, AC1, AC2, "-") ou null.
+
+9. "preconisation" → normalise vers l'une de ces valeurs si possible :
+     "Aucune action requise"
+     "Évaluation périodique"
+     "Action corrective 1er niveau"
+     "Action corrective 2nd niveau"
+   null si absent.
+
+10. "others" → objet JSON contenant TOUS les champs présents dans la source
+    qui ne correspondent à aucun des champs du schéma ci-dessus.
+    EXEMPLES de champs qui vont dans others :
+      - "Partie à sonder", "Sondage", "Localisation sur croquis"
+      - "n° de sondage", "Echantillon" (la colonne Oui/Non pas la référence)
+      - "tour", "bâtiment", tout champ spécifique à l'entreprise
+    null si vraiment rien à capturer.
+    IMPORTANT : ne jamais perdre d'information — si elle n'a pas de champ
+    dédié dans le schéma, elle va dans others.
+
+DONNÉES SOURCE :
+{json.dumps(batch, ensure_ascii=False, indent=2)}
+
+Réponds UNIQUEMENT avec un tableau JSON de {len(batch)} objets normalisés.
+Pas de texte avant ou après. Pas de markdown."""
+
+        response = self.chat(
+            user_message=prompt,
+            temperature=0.0,
+            max_tokens=settings.DEFAULT_MAX_TOKENS,
+            json_mode=True,
+        )
+        parsed = self._safe_parse_json(response.content, default=[])
+        result = self._to_list(parsed, expected_keys=set(empty_item.keys()))
+
+        if not result:
+            print(f"[extraction_agent] Warning: normalisation batch returned nothing "
+                  f"— keeping {len(batch)} pre-processed items as fallback")
+            return batch
+
+        return result
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Header
+    # ────────────────────────────────────────────────────────────────────────
 
     def _extract_header(self, text: str, template: dict) -> dict:
         first_section = " ".join(text.split()[:1000])
@@ -101,13 +489,13 @@ class ExtractionAgent(BaseAgent):
 
 Extrait les informations d'en-tête de ce début de rapport.
 
-SCHÉMA JSON À REMPLIR (réponds UNIQUEMENT avec le JSON, sans texte autour) :
+SCHÉMA JSON À REMPLIR :
 {schema}
 
 RÈGLES :
 - Si une information est absente, mets null
 - Pour la date, format DD/MM/YYYY
-- Réponds uniquement avec un objet JSON valide
+- Réponds uniquement avec un objet JSON valide, sans texte autour
 
 TEXTE :
 {first_section}"""
@@ -120,96 +508,49 @@ TEXTE :
         )
         return self._safe_parse_json(response.content, default={})
 
-    def _extract_materiaux_from_group(
-        self,
-        group_text: str,
-        template: dict,
-        group_index: int,
-    ) -> list[dict]:
-        materiau_schema = template["materiau_schema"]
-        empty_item = {k: None for k in materiau_schema.keys()}
+    # ────────────────────────────────────────────────────────────────────────
+    # Stats
+    # ────────────────────────────────────────────────────────────────────────
 
-        prompt = f"""Tu es un expert en extraction de données de rapports DTA (Dossier Technique Amiante).
+    def _compute_stats(self, materiaux: list[dict]) -> dict:
+        presence = 0
+        absence  = 0
+        unknown  = 0
+        for m in materiaux:
+            r = self._get_resultat(m)
+            if "PRÉSENCE" in r.upper():
+                presence += 1
+            elif "ABSENCE" in r.upper():
+                absence += 1
+            else:
+                unknown += 1
+        return {
+            "total_materiaux":  len(materiaux),
+            "presence_amiante": presence,
+            "absence_amiante":  absence,
+            "resultat_inconnu": unknown,
+        }
 
-Extrait UNIQUEMENT les lignes décrivant des matériaux ou produits physiques repérés dans le bâtiment.
-
-UN MATÉRIAU VALIDE SE RECONNAÎT PAR :
-- Une description physique d'un matériau de construction (ex: "Flocages", "Enduits projetés", 
-  "Volets coupe-feu", "Dalles de sol", "Calorifugeages", "Panneaux collés", "Joints")
-- Une localisation dans le bâtiment (étage, local, zone)
-- Un résultat d'analyse (présence ou absence d'amiante)
-
-NE PAS EXTRAIRE — ces lignes ne sont PAS des matériaux :
-- Lignes de catégorie (LISTE A, LISTE B, Flocages/Calorifugeages...)
-- Lignes de suivi ou d'évaluation périodique sans matériau identifié
-- Données administratives (références de dossier, contacts, dates seules)
-- Lignes dont la description est vide ou ne correspond pas à un matériau physique
-
-SCHÉMA D'UN ÉLÉMENT (utilise EXACTEMENT ces clés) :
-{json.dumps(empty_item, ensure_ascii=False, indent=2)}
-
-DESCRIPTION DES CHAMPS :
-{json.dumps(materiau_schema, ensure_ascii=False, indent=2)}
-
-RÈGLES :
-- Réponds UNIQUEMENT avec un tableau JSON
-- Si aucun matériau valide n'est présent, réponds avec : []
-- Pour les champs absents, utilise null
-- Ne génère pas de données fictives
-
-TEXTE :
-{group_text}"""
-        response = self.chat(
-            user_message=prompt,
-            temperature=0.0,
-            max_tokens=settings.DEFAULT_MAX_TOKENS,
-            json_mode=True,
-        )
-
-        parsed = self._safe_parse_json(response.content, default=[])
-        return self._to_list(parsed, expected_keys=set(materiau_schema.keys()))
-
-    def _to_list(self, parsed, expected_keys: set) -> list[dict]:
-        if isinstance(parsed, list):
-            return [
-                item for item in parsed
-                if isinstance(item, dict)
-                and any(k in item for k in expected_keys)
-            ]
-
-        if isinstance(parsed, dict):
-            for v in parsed.values():
-                if isinstance(v, list) and len(v) > 0:
-                    candidates = [
-                        item for item in v
-                        if isinstance(item, dict)
-                        and any(k in item for k in expected_keys)
-                    ]
-                    if candidates:
-                        return candidates
-            return []
-
-        return []
+    # ────────────────────────────────────────────────────────────────────────
+    # Helpers
+    # ────────────────────────────────────────────────────────────────────────
 
     def _get_resultat(self, m: dict) -> str:
-        # Canonical path: the prompt now forces "resultat" to be exactly
-        # "presence" or "absence". Everything below is just a safety net for
-        # older templates or any single entry that still drifts from the schema.
         raw = str(m.get("resultat") or "").strip().lower()
 
-        if raw in ("presence", "présence"):
+        if raw == "presence":
             return "PRÉSENCE AMIANTE"
         if raw == "absence":
             return "Absence d'amiante"
 
-        fallback = (
-            m.get("conclusion") or
-            m.get("presence_of_asbestos") or
-            m.get("conclusion_justification") or
-            m.get("analysis_result") or
-            ""
-        )
-        blob = (raw + " " + str(fallback)).lower()
+        # Fallback for rows where normalisation failed
+        fallback = " ".join(filter(None, [
+            str(m.get("conclusion") or ""),
+            str(m.get("resultat_analyse") or ""),
+            str(m.get("Conclusion (justification)") or ""),
+            str(m.get("analysis_result") or ""),
+        ])).lower()
+        blob = raw + " " + fallback
         if "présence" in blob or "presence" in blob:
             return "PRÉSENCE AMIANTE"
         if "absence" in blob:
@@ -218,37 +559,53 @@ TEXTE :
             return "PRÉSENCE AMIANTE"
         return raw
 
-    def _safe_parse_json(self, text: str, default):
-        text = text.strip()
-        text = re.sub(r'```json\s*', '', text)
-        text = re.sub(r'```\s*', '', text)
-        text = text.strip()
+    def _to_list(self, parsed, expected_keys: set) -> list[dict]:
+        if isinstance(parsed, list):
+            if not expected_keys:
+                return [item for item in parsed if isinstance(item, dict)]
+            return [
+                item for item in parsed
+                if isinstance(item, dict) and any(k in item for k in expected_keys)
+            ]
+        if isinstance(parsed, dict):
+            for v in parsed.values():
+                if isinstance(v, list):
+                    candidates = [
+                        i for i in v
+                        if isinstance(i, dict)
+                        and (not expected_keys or any(k in i for k in expected_keys))
+                    ]
+                    if candidates:
+                        return candidates
+        return []
 
+    def _safe_parse_json(self, text: str, default):
+        text = re.sub(r'```json\s*', '', text.strip())
+        text = re.sub(r'```\s*', '', text).strip()
         try:
             return json.loads(text)
         except json.JSONDecodeError:
             pass
-
-        array_match = re.search(r'\[.*\]', text, re.DOTALL)
-        if array_match:
-            try:
-                return json.loads(array_match.group())
-            except json.JSONDecodeError:
-                pass
-
-        obj_match = re.search(r'\{.*\}', text, re.DOTALL)
-        if obj_match:
-            try:
-                parsed = json.loads(obj_match.group())
-                if isinstance(parsed, dict):
-                    for v in parsed.values():
-                        if isinstance(v, list):
-                            return v
-            except json.JSONDecodeError:
-                pass
-
-        print(f"[extraction_agent] Warning: could not parse JSON from: {text[:200]}")
+        for pattern in (r'\[.*\]', r'\{.*\}'):
+            m = re.search(pattern, text, re.DOTALL)
+            if m:
+                try:
+                    parsed = json.loads(m.group())
+                    if isinstance(parsed, dict):
+                        for v in parsed.values():
+                            if isinstance(v, list):
+                                return v
+                    return parsed
+                except json.JSONDecodeError:
+                    pass
+        print(f"[extraction_agent] Warning: could not parse JSON: {text[:200]}")
         return default
+
+    def _write_debug(self, filename: str, data: dict) -> None:
+        DEBUG_DIR.mkdir(exist_ok=True)
+        path = DEBUG_DIR / filename
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"[extraction_agent] Debug file written: {path}")
 
     def _load_template(self, template_name: str) -> dict:
         template_file = TEMPLATES_DIR / f"{template_name}.json"
