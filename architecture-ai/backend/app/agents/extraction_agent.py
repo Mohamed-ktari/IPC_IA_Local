@@ -366,25 +366,16 @@ TEXTE :
     # ────────────────────────────────────────────────────────────────────────
 
     def _normalise_batch(
-        self,
-        raw_items: list[dict],
-        template: dict,
-        batch_size: int = 30,
-    ) -> list[dict]:
+    self,
+    raw_items: list[dict],
+    template: dict,
+) -> list[dict]:
         if not raw_items:
             return []
+
         schema     = template["materiau_schema"]
         empty_item = {k: None for k in schema.keys()}
-        normalised: list[dict] = []
-
-        for start in range(0, len(raw_items), batch_size):
-            batch  = raw_items[start:start + batch_size]
-            result = self._normalise_single_batch(batch, schema, empty_item)
-            normalised.extend(result)
-            print(f"[extraction_agent]   normalised batch "
-                  f"{start//batch_size + 1}: {len(result)}/{len(batch)} items")
-
-        return normalised
+        return self._normalise_per_item(raw_items, schema, empty_item)
 
     def _normalise_single_batch(
         self,
@@ -462,20 +453,16 @@ Réponds UNIQUEMENT avec un tableau JSON de {len(batch)} objets normalisés.
 Pas de texte avant ou après. Pas de markdown."""
 
         response = self.chat(
-            user_message=prompt,
-            temperature=0.0,
-            max_tokens=settings.DEFAULT_MAX_TOKENS,
-            json_mode=True,
+        user_message=prompt,
+        temperature=0.0,
+        max_tokens=settings.DEFAULT_MAX_TOKENS,
+        json_mode=True,
         )
-        print("RAW PASS2 RESPONSE:", response.content[:2000])
         parsed = self._safe_parse_json(response.content, default=[])
         result = self._to_list(parsed, expected_keys=set(empty_item.keys()))
-        if result and len(result) != len(batch):
-            print(f"[extraction_agent] Batch size mismatch: got {len(result)}, expected {len(batch)} — falling back to per-item normalisation")
-            return self._normalise_per_item(batch, schema, empty_item)
+
         if not result:
-            print(f"[extraction_agent] Warning: normalisation batch returned nothing "
-                  f"— keeping {len(batch)} pre-processed items as fallback")
+            print(f"[extraction_agent] Warning: normalisation failed for item — keeping raw")
             return batch
 
         return result
