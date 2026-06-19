@@ -70,7 +70,8 @@ class ExtractionAgent(BaseAgent):
         #    per material (one from 5.1 detail table, one from 5.2 recap).
         #    We keep the richest row per ID.
         print(f"[extraction_agent] Step 3: pre-processing {len(raw_materiaux)} raw rows...")
-        enriched = [self._parse_known_fields(row) for row in raw_materiaux]
+        remapped = self._remap_col_rows(raw_materiaux)
+        enriched = [self._parse_known_fields(row) for row in remapped]
         deduped  = self._deduplicate_raw(enriched)
         print(f"[extraction_agent] After dedup: {len(deduped)} unique materials")
 
@@ -372,7 +373,6 @@ TEXTE :
     ) -> list[dict]:
         if not raw_items:
             return []
-
         schema     = template["materiau_schema"]
         empty_item = {k: None for k in schema.keys()}
         normalised: list[dict] = []
@@ -467,15 +467,29 @@ Pas de texte avant ou après. Pas de markdown."""
             max_tokens=settings.DEFAULT_MAX_TOKENS,
             json_mode=True,
         )
+        print("RAW PASS2 RESPONSE:", response.content[:2000])
         parsed = self._safe_parse_json(response.content, default=[])
         result = self._to_list(parsed, expected_keys=set(empty_item.keys()))
-
+        if result and len(result) != len(batch):
+            print(f"[extraction_agent] Batch size mismatch: got {len(result)}, expected {len(batch)} — falling back to per-item normalisation")
+            return self._normalise_per_item(batch, schema, empty_item)
         if not result:
             print(f"[extraction_agent] Warning: normalisation batch returned nothing "
                   f"— keeping {len(batch)} pre-processed items as fallback")
             return batch
 
         return result
+
+
+
+
+
+    def _normalise_per_item(self, batch: list[dict], schema: dict, empty_item: dict) -> list[dict]:
+        results = []
+        for item in batch:
+            single_result = self._normalise_single_batch([item], schema, empty_item)
+            results.extend(single_result if single_result else [item])
+        return results
 
     # ────────────────────────────────────────────────────────────────────────
     # Header
@@ -560,6 +574,8 @@ TEXTE :
         return raw
 
     def _to_list(self, parsed, expected_keys: set) -> list[dict]:
+        if isinstance(parsed, dict) and ("id" in parsed or any(k in parsed for k in expected_keys)):
+            return [parsed]
         if isinstance(parsed, list):
             if not expected_keys:
                 return [item for item in parsed if isinstance(item, dict)]
@@ -600,6 +616,53 @@ TEXTE :
                     pass
         print(f"[extraction_agent] Warning: could not parse JSON: {text[:200]}")
         return default
+
+
+    def _remap_col_rows(self, rows: list[dict]) -> list[dict]:
+        result = []
+        for row in rows:
+            col_keys = [k for k in row if re.match(r'^col_\d+$', k)]
+            if not col_keys:
+                result.append(row)
+                continue
+            result.append(self._infer_col_mapping(row, col_keys))
+        return result
+
+    def _infer_col_mapping(self, row: dict, col_keys: list) -> dict:
+        # Sort col_1, col_2... in order
+        sorted_cols = sorted(col_keys, key=lambda k: int(k.split('_')[1]))
+        values = [row[k] for k in sorted_cols]
+        
+        mapped = {}
+        for val in values:
+            s = str(val).strip()
+            # M001 pattern → id
+            if re.match(r'^M\d{3,4}$', s):
+                mapped['id'] = s
+            # "Partie à inspecter" → composant hint, skip
+            elif s.startswith('Partie à inspecter'):
+                mapped['_partie_inspecter'] = s
+            # Pxxx pattern → reference_echantillon
+            elif re.match(r'^P\d{3,4}$', s):
+                mapped['reference_echantillon'] = s
+            # "Identifiant :Mxxx..." → the description blob
+            elif 'Identifiant' in s or 'Résultat' in s:
+                mapped['_description_blob'] = s
+            # "Oui ..." or "Aucun prélèvement" → echantillon flag
+            elif s.startswith('Oui') or 'prélèvement' in s.lower():
+                mapped['_echantillon_flag'] = s
+            # Pure digit → n° de sondage
+            elif re.match(r'^\d+$', s):
+                mapped['n° de sondage'] = s
+            # Remaining string → localisation candidate
+            elif s:
+                mapped.setdefault('Localisation', s)
+        
+        # Preserve originals for Pass 2 context
+        for k in col_keys:
+            mapped[k] = row[k]
+        
+        return mapped
 
     def _write_debug(self, filename: str, data: dict) -> None:
         DEBUG_DIR.mkdir(exist_ok=True)
