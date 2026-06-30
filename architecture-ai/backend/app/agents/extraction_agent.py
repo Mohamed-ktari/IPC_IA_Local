@@ -25,6 +25,7 @@ class ExtractionAgent(BaseAgent):
         document_text: str,
         template_name: str = "amiante",
         debug: bool = False,
+        config: dict | None = None
     ) -> AgentResponse:
         start = time.time()
         template = self._load_template(template_name)
@@ -32,8 +33,8 @@ class ExtractionAgent(BaseAgent):
         # ── Clean: keep only cover block + section 5 ────────────────────
         cleaner = DocumentCleaner(debug=debug)
         if debug:
-            print(f"[extraction_agent] Cleaner stats: {cleaner.stats(document_text)}")
-        document_text = cleaner.clean(document_text)
+            print(f"[extraction_agent] Cleaner stats: {cleaner.stats(document_text, config=config)}")
+        document_text = cleaner.clean(document_text, config=config)
 
         print(f"[extraction_agent] Starting extraction — template: {template['name']}")
         print(f"[extraction_agent] Document (cleaned): {len(document_text.split())} words")
@@ -51,7 +52,8 @@ class ExtractionAgent(BaseAgent):
         raw_materiaux: list[dict] = []
         for i, group_text in enumerate(groups):
             print(f"[extraction_agent] Pass-1 group {i+1}/{len(groups)}...")
-            raw = self._extract_raw_from_group(group_text, group_index=i)
+            columns = (config or {}).get("columns_to_extract")
+            raw = self._extract_raw_from_group(group_text, group_index=i, columns_to_extract=columns)
             raw_materiaux.extend(raw)
             print(f"[extraction_agent]   +{len(raw)} rows (total raw: {len(raw_materiaux)})")
 
@@ -103,6 +105,7 @@ class ExtractionAgent(BaseAgent):
             "header": header,
             "materiaux": all_materiaux,
             "stats": self._compute_stats(all_materiaux),
+            "extraction_config": config or {}, 
         }
 
         duration = round(time.time() - start, 2)
@@ -124,7 +127,7 @@ class ExtractionAgent(BaseAgent):
 
     # Regex patterns — compiled once at class level for performance
     _RE_ID = re.compile(
-        r'(?:Identifiant\s*[:\s]+|Zone\s*[:\s]+)?\b(M\d{3,4})\b',
+        r'(?:Identifiant\s*[:\s]+|Zone\s*[:\s]+)?\b((?:ZPSO-?\d+|M\d{3,4}))\b',
         re.IGNORECASE,
     )
     _RE_REF_ECH = re.compile(
@@ -163,10 +166,13 @@ class ExtractionAgent(BaseAgent):
 
         # ── id ──────────────────────────────────────────────────────────
         if not row.get("id"):
-            # Prefer 'Zone' key (5.2 rows) — most reliable source
             zone_val = row.get("Zone") or row.get("zone")
-            if zone_val and re.match(r'^M\d{3,4}$', str(zone_val).strip()):
-                row["id"] = str(zone_val).strip()
+            identifiant_val = row.get("Identifiant") or row.get("identifiant")
+
+            if zone_val and re.match(r'^(M\d{3,4}|ZPSO-?\d+)$', str(zone_val).strip(), re.IGNORECASE):
+                row["id"] = str(zone_val).strip().upper()
+            elif identifiant_val and re.match(r'^(M\d{3,4}|ZPSO-?\d+)$', str(identifiant_val).strip(), re.IGNORECASE):
+                row["id"] = str(identifiant_val).strip().upper()
             else:
                 m = self._RE_ID.search(blob)
                 if m:
@@ -209,17 +215,6 @@ class ExtractionAgent(BaseAgent):
     # ────────────────────────────────────────────────────────────────────────
 
     def _deduplicate_raw(self, rows: list[dict]) -> list[dict]:
-        """
-        Keeps the single richest row per material ID.
-
-        Scoring (higher = preferred):
-          +3  row has a 'Zone' key  (5.2 recap — cleanest structure)
-          +2  row has named columns like 'Localisation', 'Description'
-          +1  row has col_N columns (5.1 detail — more fields but noisier)
-          +N  one point per non-empty value (rewards information density)
-
-        Rows without any detectable ID are kept as-is (rare edge cases).
-        """
         by_id: dict[str, dict] = {}
         no_id: list[dict] = []
 
@@ -228,30 +223,44 @@ class ExtractionAgent(BaseAgent):
             if not mat_id:
                 no_id.append(row)
                 continue
-
             score = self._row_score(row)
-
-            if mat_id not in by_id:
+            if mat_id not in by_id or score > by_id[mat_id].get("_score", 0):
                 row["_score"] = score
                 by_id[mat_id] = row
-            else:
-                existing_score = by_id[mat_id].get("_score", 0)
-                if score > existing_score:
-                    row["_score"] = score
-                    by_id[mat_id] = row
 
-        # Strip internal scoring key before returning
+        # NEW: try composite-key dedup for rows with no ID
+        composite_groups: dict[str, dict] = {}
+        truly_unmatched: list[dict] = []
+
+        for row in no_id:
+            loc = str(row.get("Localisation") or row.get("localisation") or "").strip().lower()
+            desc = str(row.get("Description") or row.get("description_materiau") or "").strip().lower()
+            key = f"{loc}|{desc}"
+
+            if loc and desc:
+                score = self._row_score(row)
+                if key not in composite_groups or score > composite_groups[key].get("_score", 0):
+                    row["_score"] = score
+                    composite_groups[key] = row
+            else:
+                truly_unmatched.append(row)
+
+        # Assign synthetic IDs to whatever still has no identity at all
+        for i, row in enumerate(truly_unmatched, start=1):
+            row["id"] = f"ROW_{i:03d}"
+
         result = []
         for row in by_id.values():
-            clean = {k: v for k, v in row.items() if k != "_score"}
-            result.append(clean)
+            result.append({k: v for k, v in row.items() if k != "_score"})
+        for row in composite_groups.values():
+            result.append({k: v for k, v in row.items() if k != "_score"})
+        result.extend(truly_unmatched)
 
-        # Sort by ID so output is deterministic and easy to read
         result.sort(key=lambda r: r.get("id", ""))
 
-        if no_id:
-            print(f"[extraction_agent] {len(no_id)} rows had no detectable ID "
-                  f"and were dropped during deduplication")
+        if truly_unmatched:
+            print(f"[extraction_agent] {len(truly_unmatched)} rows had no ID and no "
+                f"matchable localisation/description — assigned synthetic IDs")
 
         return result
 
@@ -318,11 +327,21 @@ class ExtractionAgent(BaseAgent):
         self,
         group_text: str,
         group_index: int,
+        columns_to_extract: list[str] | None = None,
     ) -> list[dict]:
         """
         No schema imposed. Model uses source column names verbatim.
         Pure recall: better to over-extract than miss rows.
         """
+        if columns_to_extract:
+            cols_hint = ", ".join(f'"{c}"' for c in columns_to_extract)
+            columns_instruction = (
+                f"\nCOLONNES À EXTRAIRE — extrait UNIQUEMENT ces colonnes si elles sont présentes :\n"
+                f"  {cols_hint}\n"
+                f"Ignore toutes les autres colonnes non listées ci-dessus.\n"
+            )
+        else:
+            columns_instruction = ""
         prompt = f"""Tu es un expert en lecture de rapports DTA (Dossier Technique Amiante) et RAAT (Repérage Amiante Avant Travaux).
 
 MISSION : extraire TOUTES les lignes qui décrivent un matériau ou produit physique
@@ -342,7 +361,7 @@ EXCLURE — ne PAS extraire :
   • lignes 100 % administratives sans matériau identifié
   • lignes totalement vides
   • la liste normative NF X 46-020 (liste de composants génériques sans résultat)
-
+{columns_instruction}
 FORMAT DE SORTIE :
   • Tableau JSON uniquement ([] si rien à extraire)
   • Conserve les clés EXACTES du tableau source (ne traduis pas, ne renomme pas)
@@ -624,7 +643,7 @@ TEXTE :
         for val in values:
             s = str(val).strip()
             # M001 pattern → id
-            if re.match(r'^M\d{3,4}$', s):
+            if re.match(r'^(M\d{3,4}|ZPSO-?\d+)$', s, re.IGNORECASE):
                 mapped['id'] = s
             # "Partie à inspecter" → composant hint, skip
             elif s.startswith('Partie à inspecter'):

@@ -1,214 +1,28 @@
 {
   "template": "Diagnostic Amiante - DTA",
   "header": {
-    "adresse_immeuble": "42 rue des Panoyaux, Esc. A; Etage 1; Porte 83, 75020 PARIS - 20EME",
-    "reference_dossier": "33155_2",
-    "date_reperage": "21/10/2024",
-    "operateur": "HEBRI Malik, Opérateur de repérage, DEKRA Certification Immeuble la Boursidière - Porte I - Rue de La Boursidière 92350 LE PLESSIS-ROBINSON, Obtention : 06/04/2023 Échéance : 05/04/2030 N° de certification : 2035",
+    "adresse_immeuble": "22 rue des Panoyaux, Bat. A; Esc. 1; Etage 2, 75020 PARIS - 20EME",
+    "reference_dossier": "33153_6",
+    "date_reperage": "16/09/2024",
+    "operateur": "DULIN Nicolas, Opérateur de repérage, BUREAU VERITAS CERTIFICATION France 1 place Zaha Hadid 92400 COURBEVOIE, Obtention : 31/05/2023 Échéance : 18/04/2030 N° de certification : 8053942 et 15476985",
     "laboratoire": null
   },
-  "materiaux": [
-    {
-      "id": "M001",
-      "localisation": null,
-      "description_materiau": "Colle non bitumineuse + chape ciment",
-      "composant": null,
-      "reference_echantillon": null,
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {}
-    },
-    {
-      "id": "M002",
-      "localisation": "Entrée",
-      "description_materiau": "Enduit à base de ciment + peinture (mur de circulation)",
-      "composant": null,
-      "reference_echantillon": "P002",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "_partie_inspecter": "Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur de circulation)).",
-        "n° de sondage": "1",
-        "_description_blob": "Identifiant :M002 Description :Enduit à base de ciment + peinture (mur de circulation) Résultat : Absence d'amiante",
-        "_echantillon_flag": "Oui Entrée"
-      }
-    },
-    {
-      "id": "M003",
-      "localisation": "Entrée",
-      "description_materiau": "Enduit à base de ciment + peinture (mur de refend)",
-      "composant": null,
-      "reference_echantillon": "P003",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "_partie_inspecter": "Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur de refend)).",
-        "_description_blob": "Identifiant :M003 Description :Enduit à base de ciment + peinture (mur de refend) Résultat : Absence d'amiante",
-        "_echantillon_flag": "Oui Entrée"
-      }
-    },
-    {
-      "id": "M004",
-      "localisation": "Entrée",
-      "description_materiau": "Enduit à base de plâtre + bande calicot + peinture (mur cloison)",
-      "composant": null,
-      "reference_echantillon": "P004",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1"
-      }
-    },
-    {
-      "id": "M005",
-      "localisation": "Entrée",
-      "description_materiau": "Enduit à base de ciment + peinture (plafond)",
-      "composant": null,
-      "reference_echantillon": "P005",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "Echantillon": "Oui Entrée idem PH"
-      }
-    },
-    {
-      "id": "M006",
-      "localisation": "Chambre 1",
-      "description_materiau": "Enduit à base de plâtre + bande calicot + peinture (mur de facade)",
-      "composant": null,
-      "reference_echantillon": "P006",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "_partie_inspecter": "Partie à inspecter : Enduit à base de plâtre lissé ou taloché (Enduit à base de plâtre + bande calicot + peinture (mur de facade))."
-      }
-    },
-    {
-      "id": "M007",
-      "localisation": "Salle d'eau",
-      "description_materiau": "Colle non bitumineuse + chape ciment",
-      "composant": null,
-      "reference_echantillon": "P007",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "Echantillon": "Oui Salle d'eau"
-      }
-    },
-    {
-      "id": "M008",
-      "localisation": "Salle d'eau",
-      "description_materiau": "Colle de faïence 30X20 (mur)",
-      "composant": null,
-      "reference_echantillon": "P008",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "_partie_inspecter": "Partie à inspecter : Colle de faïence (Colle de faïence 30X20 (mur)).",
-        "_echantillon_flag": "Oui Salle d'eau idem PH"
-      }
-    },
-    {
-      "id": "M009",
-      "localisation": "Salle d'eau",
-      "description_materiau": "Enduit à base de plâtre + bande calicot + peinture (mur cloison)",
-      "composant": null,
-      "reference_echantillon": "P009",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "_partie_inspecter": "Partie à inspecter : Enduit à base de plâtre lissé ou taloché (Enduit à base de plâtre + bande calicot + peinture (mur cloison))."
-      }
-    },
-    {
-      "id": "M010",
-      "localisation": "Salle d'eau",
-      "description_materiau": "Enduit à base de ciment + peinture (mur de refend)",
-      "composant": null,
-      "reference_echantillon": "P010",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "_partie_inspecter": "Partie à inspecter : Enduit à base de ciment lissé ou taloché (Enduit à base de ciment + peinture (mur de refend)).",
-        "_echantillon_flag": "Oui Salle d'eau"
-      }
-    },
-    {
-      "id": "M011",
-      "localisation": null,
-      "description_materiau": "Enduit à base de ciment + peinture (plafond)",
-      "composant": null,
-      "reference_echantillon": null,
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "Conclusion (justification)": "Absence d'amiante (Après analyse en laboratoire; sur zone présentant des similitudes d'ouvrages)"
-      }
-    },
-    {
-      "id": "M012",
-      "localisation": "Cuisine",
-      "description_materiau": "Enduit à base de plâtre + bande calicot + peinture (mur de facade)",
-      "composant": null,
-      "reference_echantillon": "P012",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "Echantillon": "Oui Cuisine"
-      }
-    },
-    {
-      "id": "M013",
-      "localisation": "Séjour",
-      "description_materiau": "Enduit à base de plâtre + bande calicot + peinture (mur de facade)",
-      "composant": null,
-      "reference_echantillon": "P013",
-      "reference_labo": null,
-      "resultat": "absence",
-      "etat_conservation": null,
-      "preconisation": null,
-      "others": {
-        "n° de sondage": "1",
-        "Echantillon": "Oui Séjour"
-      }
-    }
-  ],
+  "materiaux": [],
   "stats": {
-    "total_materiaux": 13,
+    "total_materiaux": 0,
     "presence_amiante": 0,
-    "absence_amiante": 13,
+    "absence_amiante": 0,
     "resultat_inconnu": 0
+  },
+  "extraction_config": {
+    "page_start": 8,
+    "page_end": 13,
+    "columns_to_extract": [
+      "Localisation",
+      "n de sondage",
+      "Description",
+      "Echantillon",
+      "N Echantillon"
+    ]
   }
 }
