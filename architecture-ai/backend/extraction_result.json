@@ -1,28 +1,273 @@
 {
-  "template": "Diagnostic Amiante - DTA",
   "header": {
-    "adresse_immeuble": "22 rue des Panoyaux, Bat. A; Esc. 1; Etage 2, 75020 PARIS - 20EME",
-    "reference_dossier": "33153_6",
-    "date_reperage": "16/09/2024",
-    "operateur": "DULIN Nicolas, Opérateur de repérage, BUREAU VERITAS CERTIFICATION France 1 place Zaha Hadid 92400 COURBEVOIE, Obtention : 31/05/2023 Échéance : 18/04/2030 N° de certification : 8053942 et 15476985",
+    "adresse_immeuble": "2-4 rue Corot 91380 CHILLY-MAZARIN",
+    "reference_dossier": "RAAT-595-BAT-1109L-BAT-A_v1",
+    "date_reperage": null,
+    "operateur": "Julien DETOUL Certificat délivré par ICERT CPDI 5590 V002 délivré le 17/06/2020 et expirant le 16/06/2027",
     "laboratoire": null
   },
-  "materiaux": [],
+  "materiaux": [
+    {
+      "localisation": "Bâtiment A - Toiture- terrasse",
+      "description": "Revêtement étanchéité",
+      "reference_echantillon": "Toiture/P33",
+      "localisation_2": "Sol",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - Toiture- terrasse",
+      "description": "Revêtement étanchéité + isolant type mousse",
+      "reference_echantillon": "Toiture/P34",
+      "localisation_2": "Sol",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - Toiture- terrasse",
+      "description": "Revêtement bitumineux pare vapeur",
+      "reference_echantillon": "Toiture/P35",
+      "localisation_2": "Sol",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - Toiture- terrasse",
+      "description": "Remontée d'étanchéité pax alu",
+      "reference_echantillon": "Toiture/P36",
+      "localisation_2": "Mur",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - extérieur",
+      "description": "Colle de carrelage + peinture",
+      "reference_echantillon": "A/P01",
+      "localisation_2": "Façade avant",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Calorifuge",
+      "reference_echantillon": "A/P02",
+      "localisation_2": "Plafond R-1",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - extérieur",
+      "description": "Enduit + peinture + isolant sur ITE",
+      "reference_echantillon": "A/P03",
+      "localisation_2": "Pignon gauche",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit",
+      "reference_echantillon": "A/P04",
+      "localisation_2": "Mur gaine technique R+3",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Fibralith",
+      "reference_echantillon": "A/P05",
+      "localisation_2": "Plafond cave",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - extérieur",
+      "description": "Joint de dilatation",
+      "reference_echantillon": "A/P06",
+      "localisation_2": "Façade avant",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P07",
+      "localisation_2": "Mur RDC",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P08",
+      "localisation_2": "Plafond RDC",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P09",
+      "localisation_2": "Sous-face escalier RDC",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P10",
+      "localisation_2": "Mur R+2",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P11",
+      "localisation_2": "Plafond r R+2",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P12",
+      "localisation_2": "Sous-face escalier R+2",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Peinture",
+      "reference_echantillon": "A/P13",
+      "localisation_2": "Garde-corps RDC",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit",
+      "reference_echantillon": "A/P14",
+      "localisation_2": "Mur cave",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Fibralith",
+      "reference_echantillon": "A/P15",
+      "localisation_2": "Plafond cave",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Calorifuge",
+      "reference_echantillon": "A/P16",
+      "localisation_2": "Plafond R-1",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit",
+      "reference_echantillon": "A/P17",
+      "localisation_2": "Mur gaine technique R-1",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P18",
+      "localisation_2": "Mur local OM",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Fibralith",
+      "reference_echantillon": "A/P19",
+      "localisation_2": "Plafond local OM",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Peinture",
+      "reference_echantillon": "A/P20",
+      "localisation_2": "Sol local OM",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Tampon bitumineux",
+      "reference_echantillon": "A/P21",
+      "localisation_2": "Trappe local OM",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Isolant type laine de verre",
+      "reference_echantillon": "A/P22",
+      "localisation_2": "Trappe local OM",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 2",
+      "description": "Joint sur conduit",
+      "reference_echantillon": "A/P23",
+      "localisation_2": "Conduit vide-ordure local OM",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P24",
+      "localisation_2": "Mur R+1",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P25",
+      "localisation_2": "Plafond R+1",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P26",
+      "localisation_2": "Sous-face escalier R+1",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P27",
+      "localisation_2": "Mur R+3",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P28",
+      "localisation_2": "Plafond R+3",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit + peinture",
+      "reference_echantillon": "A/P29",
+      "localisation_2": "Sous-face escalier R+3",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Peinture",
+      "reference_echantillon": "A/P30",
+      "localisation_2": "Garde-corps R+3",
+      "resultat": "Amiante non détecté"
+    },
+    {
+      "localisation": "Bâtiment A - entrée 4",
+      "description": "Enduit",
+      "reference_echantillon": "A/P31",
+      "localisation_2": "Mur cave",
+      "resultat": "Amiante non détecté"
+    }
+  ],
   "stats": {
-    "total_materiaux": 0,
+    "total_materiaux": 35,
     "presence_amiante": 0,
-    "absence_amiante": 0,
+    "absence_amiante": 35,
     "resultat_inconnu": 0
   },
   "extraction_config": {
-    "page_start": 8,
-    "page_end": 13,
-    "columns_to_extract": [
-      "Localisation",
-      "n de sondage",
-      "Description",
-      "Echantillon",
-      "N Echantillon"
-    ]
+    "page_start": 11,
+    "page_end": 11,
+    "column_mapping": {
+      "Localisation": "localisation",
+      "Description": "description",
+      "Reference de l'Echantillon": "reference_echantillon",
+      "Localisation 2": "localisation_2",
+      "RESULTAT": "resultat"
+    }
   }
 }

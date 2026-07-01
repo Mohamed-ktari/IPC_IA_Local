@@ -248,12 +248,12 @@ def test_extraction_agent():
     Test script for ExtractionAgent.
 
     Usage:
-        python test_extraction.py path/to/report.pdf [--config config.xlsx] [--no-cache] [--debug]
+        python test_extraction.py path/to/report.pdf --config config.xlsx [--no-cache] [--debug]
 
     Outputs:
-        extraction_result.json             — final normalised result
-        debug_output/pass1_raw.json        — (with --debug) raw LLM output, pass 1
-        debug_output/pass2_normalised.json — (with --debug) normalised rows, pass 2
+        extraction_result.json        — final result
+        debug_output/pass1_raw.json   — (with --debug) raw rows before dedup
+        debug_output/pass2_deduped.json — (with --debug) final deduped rows
     """
 
     import sys
@@ -264,27 +264,27 @@ def test_extraction_agent():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("pdf", nargs="?", help="Path to PDF file")
-    parser.add_argument("--config", help="Path to Excel config file (.xlsx)")
+    parser.add_argument("--config", required=True, help="Path to Excel config file (.xlsx)")
     parser.add_argument("--no-cache", action="store_true", help="Force re-parse even if cache exists")
-    parser.add_argument("--debug", action="store_true", help="Write pass-1 and pass-2 debug files")
-    parser.add_argument("--template", default="amiante", help="Template name (default: amiante)")
+    parser.add_argument("--debug", action="store_true", help="Write debug files")
     args = parser.parse_args()
 
     print("\n" + "=" * 60)
     print("ExtractionAgent test")
     print("=" * 60)
 
-    # ── 0. Load config if provided ───────────────────────────────────────────
-    config = None
-    if args.config:
-        from app.documents.parsers.config_reader import ConfigReader
-        print(f"\n[config] Reading {args.config}…")
-        config = ConfigReader().read(args.config)
-        print(f"[config] page_start        : {config.get('page_start')}")
-        print(f"[config] page_end          : {config.get('page_end')}")
-        print(f"[config] columns_to_extract: {config.get('columns_to_extract')}")
-    else:
-        print("\n[config] No config file provided — auto-detection mode")
+    # ── 0. Load config (now required — no more auto-detection mode) ─────────
+    from app.documents.parsers.config_reader import ConfigReader
+    print(f"\n[config] Reading {args.config}…")
+    config = ConfigReader().read(args.config)
+    print(f"[config] page_start    : {config.get('page_start')}")
+    print(f"[config] page_end      : {config.get('page_end')}")
+    print(f"[config] column_mapping: {config.get('column_mapping')}")
+
+    if not config.get("column_mapping"):
+        print("\n[config] ERROR: no column_mapping found — check the Excel "
+              "'Colonne source / Colonne normalisée' table.")
+        sys.exit(1)
 
     # ── 1. Parse PDF (or load cache) ─────────────────────────────────────────
     cache_path = Path("parsed_cache.json")
@@ -316,12 +316,11 @@ def test_extraction_agent():
     from app.agents.extraction_agent import ExtractionAgent
     agent = ExtractionAgent()
 
-    print(f"\n[extraction] Starting (debug={args.debug}, template={args.template})…\n")
+    print(f"\n[extraction] Starting (debug={args.debug})…\n")
     t0 = time.time()
     response = agent.run_extraction(
         document_text=parsed["full_text"],
-        template_name=args.template,
-        config=config,           # None when no --config flag → auto-detection
+        config=config,
         debug=args.debug,
     )
     elapsed = round(time.time() - t0, 1)
@@ -334,25 +333,27 @@ def test_extraction_agent():
     print(f"  Duration        : {elapsed}s")
     print(f"  Header          : {result['header']}")
     print(f"  Total matériaux : {stats['total_materiaux']}")
-    print(f"  ✅ Présence      : {stats['presence_amiante']}")
-    print(f"  ✅ Absence       : {stats['absence_amiante']}")
-    print(f"  ⚠️  Inconnu       : {stats.get('resultat_inconnu', '—')}")
+    if "presence_amiante" in stats:
+        print(f"  ✅ Présence      : {stats['presence_amiante']}")
+        print(f"  ✅ Absence       : {stats['absence_amiante']}")
+        print(f"  ⚠️  Inconnu       : {stats.get('resultat_inconnu', '—')}")
+    else:
+        print(f"  (pas de champ 'resultat' dans le mapping — stats présence/absence indisponibles)")
 
-    # Show config that was actually used (echoed back by the agent)
-    if "extraction_config" in result:
-        ec = result["extraction_config"]
-        print(f"\n  Config used:")
-        print(f"    page_start        : {ec.get('page_start')}")
-        print(f"    page_end          : {ec.get('page_end')}")
-        print(f"    columns_to_extract: {ec.get('columns_to_extract')}")
+    ec = result.get("extraction_config", {})
+    print(f"\n  Config used:")
+    print(f"    page_start     : {ec.get('page_start')}")
+    print(f"    page_end       : {ec.get('page_end')}")
+    print(f"    column_mapping : {ec.get('column_mapping')}")
 
-    unknown_items = [m for m in result["materiaux"] if not m.get("resultat")]
-    if unknown_items:
-        print(f"\n  ⚠️  {len(unknown_items)} items without 'resultat' (first 3):")
-        for m in unknown_items[:3]:
-            print(f"     {m}")
+    if "presence_amiante" in stats:
+        unknown_items = [m for m in result["materiaux"] if not m.get("resultat")]
+        if unknown_items:
+            print(f"\n  ⚠️  {len(unknown_items)} items without 'resultat' (first 3):")
+            for m in unknown_items[:3]:
+                print(f"     {m}")
 
-    print(f"\n  First 3 normalised items:")
+    print(f"\n  First 3 items:")
     for m in result["materiaux"][:3]:
         print(f"     {m}")
     print("=" * 60)
@@ -366,8 +367,7 @@ def test_extraction_agent():
 
     if args.debug:
         print("[output] Debug files → debug_output/pass1_raw.json")
-        print("[output]               debug_output/pass2_normalised.json")
-
+        print("[output]               debug_output/pass2_deduped.json")
 
 
 
@@ -378,11 +378,18 @@ def generate_excel_file():
     from app.output.excel_writer import ExcelWriter
     import json
 
+    result_path = Path("extraction_result.json")
+    if not result_path.exists():
+        print("No extraction_result.json found — run extraction first.")
+        return
+
     print("\nGenerating Excel file...")
-    extraction_result = json.loads(Path("extraction_result.json").read_text(encoding="utf-8"))
+    extraction_result = json.loads(result_path.read_text(encoding="utf-8"))
     writer = ExcelWriter()
     path = writer.write(extraction_result, output_path="rapport.xlsx")
     print(f"Excel file written to: {path}")
+    print(f"  {len(extraction_result.get('materiaux', []))} rows")
+    print(f"  Columns: {list(extraction_result['materiaux'][0].keys()) if extraction_result.get('materiaux') else 'none'}")
 
 
 ################################# Main ######################"
@@ -395,5 +402,6 @@ if __name__ == "__main__":
     #test_ingestion()
     #test_retrieval()
     #test_analysis_rag()
-    test_extraction_agent()
-    # generate_excel_file()
+    #test_extraction_agent()
+    generate_excel_file()
+    

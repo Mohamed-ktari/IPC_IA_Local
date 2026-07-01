@@ -39,6 +39,8 @@ class BaseLLM(ABC):
         messages: list[Message],
         temperature: float = 0.3,
         max_tokens: int = 2048,
+        json_mode: bool = False,
+        json_schema: dict | None = None,
     ) -> LLMResponse:
         # Sends a list of messages and returns a complete response.
         # Use this for: document analysis, proofreading, generation.

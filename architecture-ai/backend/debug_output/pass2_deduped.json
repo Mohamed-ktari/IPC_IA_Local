@@ -1,6 +1,6 @@
 {
-  "description": "Raw rows, already in target schema, before dedup.",
-  "total_rows": 38,
+  "description": "After exact-duplicate removal — final output.",
+  "total_rows": 35,
   "rows": [
     {
       "localisation": "Bâtiment A - Toiture- terrasse",
@@ -246,27 +246,6 @@
       "reference_echantillon": "A/P31",
       "localisation_2": "Mur cave",
       "resultat": "Amiante non détecté"
-    },
-    {
-      "localisation": null,
-      "description": null,
-      "reference_echantillon": null,
-      "localisation_2": null,
-      "resultat": null
-    },
-    {
-      "localisation": null,
-      "description": null,
-      "reference_echantillon": null,
-      "localisation_2": null,
-      "resultat": null
-    },
-    {
-      "localisation": null,
-      "description": null,
-      "reference_echantillon": null,
-      "localisation_2": null,
-      "resultat": null
     }
   ]
 }
