@@ -87,23 +87,26 @@ class BaseAgent(ABC):
         return self.llm.build_messages(prompt, user_message, history)
 
     def chat(
-    self,
-    user_message: str,
-    history: list[Message] | None = None,
-    temperature: float = 0.3,
-    max_tokens: int = 2048,
-    system_prompt_override: str | None = None,
-    json_mode: bool = False,   
+        self,
+        user_message: str,
+        history: list[Message] | None = None,
+        temperature: float = 0.3,
+        max_tokens: int = 2048,
+        system_prompt_override: str | None = None,
+        json_mode: bool = False,
+        json_schema: dict | None = None,
     ) -> AgentResponse:
-        # Main entry point for all agents
-        # Handles timing, error catching, and audit logging automatically
         start = time.time()
         try:
             messages = self._build_messages(
                 user_message, history, system_prompt_override
             )
             llm_response: LLMResponse = self.llm.chat(
-                messages, temperature=temperature, max_tokens=max_tokens,json_mode=json_mode,
+                messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                json_mode=json_mode,
+                json_schema=json_schema,
             )
             duration = time.time() - start
 

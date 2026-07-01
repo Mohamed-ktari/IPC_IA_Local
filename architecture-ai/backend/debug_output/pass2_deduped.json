@@ -1,12 +1,7 @@
 {
-  "header": {
-    "adresse_immeuble": "2-4 rue Corot 91380 CHILLY-MAZARIN",
-    "reference_dossier": "RAAT-595-BAT-1109L-BAT-A_v1",
-    "date_reperage": null,
-    "operateur": "Julien DETOUL Certificat délivré par ICERT CPDI 5590 V002 délivré le 17/06/2020 et expirant le 16/06/2027",
-    "laboratoire": null
-  },
-  "materiaux": [
+  "description": "After exact-duplicate removal — final output.",
+  "total_rows": 35,
+  "rows": [
     {
       "localisation": "Bâtiment A - Toiture- terrasse",
       "description": "Revêtement étanchéité",
@@ -252,22 +247,5 @@
       "localisation_2": "Mur cave",
       "resultat": "Amiante non détecté"
     }
-  ],
-  "stats": {
-    "total_materiaux": 35,
-    "presence_amiante": 0,
-    "absence_amiante": 35,
-    "resultat_inconnu": 0
-  },
-  "extraction_config": {
-    "page_start": 11,
-    "page_end": 11,
-    "column_mapping": {
-      "Localisation": "localisation",
-      "Description": "description",
-      "Reference de l'Echantillon": "reference_echantillon",
-      "Localisation 2": "localisation_2",
-      "RESULTAT": "resultat"
-    }
-  }
+  ]
 }

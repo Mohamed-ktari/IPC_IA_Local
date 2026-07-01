@@ -28,6 +28,7 @@ class OllamaLLM(BaseLLM):
         temperature: float = 0.3,
         max_tokens: int = 2048,
         json_mode: bool = False,
+        json_schema: dict | None = None,
     ) -> LLMResponse:
         try:
             payload = {
@@ -37,19 +38,18 @@ class OllamaLLM(BaseLLM):
                 "options": {
                     "temperature": temperature,
                     "num_predict": max_tokens,
+                    "seed": 42,
                 },
             }
-            if json_mode:
-                payload["format"] = "json"   # forces valid JSON output
+            if json_schema is not None:
+                payload["format"] = json_schema   # full JSON Schema — forces structure, not just validity
+            elif json_mode:
+                payload["format"] = "json"        # fallback: valid JSON only, no shape guarantee
 
             with httpx.Client(timeout=self.timeout) as client:
-                response = client.post(
-                    f"{self.base_url}/api/chat",
-                    json=payload,
-                )
+                response = client.post(f"{self.base_url}/api/chat", json=payload)
                 response.raise_for_status()
                 data = response.json()
-
                 return LLMResponse(
                     content=data["message"]["content"],
                     model=self.model,

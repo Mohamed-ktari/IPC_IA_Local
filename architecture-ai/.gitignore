@@ -26,7 +26,8 @@ backend/app/data/logs
 backend/app/search/**/*.index
 backend/app/search/**/*.faiss
 backend/app/search/**/chroma*
-
+backend/app/debug_output
+backend/app/data/logs
 
 # Docker
 docker-compose.override.yml
