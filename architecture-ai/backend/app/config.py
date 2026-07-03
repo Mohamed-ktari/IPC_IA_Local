@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "qwen2.5:14b-instruct-q4_K_M"
     OLLAMA_VISION_MODEL: str = "qwen2.5vl:7b"  # multimodal — for vision agent
     OLLAMA_TIMEOUT: int = 120  # seconds — 14B can be slow on first token
+    OLLAMA_NUM_CTX: int =8192
 
     # Mistral (fallback only)
     MISTRAL_API_KEY: str = ""
