@@ -155,7 +155,6 @@ class RCAgent(BaseAgent):
                 "raw_text": None,
                 "structure": None,
             }
-
         user_message = (
             f"Voici le texte de la section « {match['heading']} » extraite "
             f"du règlement de consultation :\n\n{match['text']}\n\n"

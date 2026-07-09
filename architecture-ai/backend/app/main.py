@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 from app.config  import settings, ensure_directories
-from app.api.routes import health, documents, agents, chat, search
+from app.api.routes import health, documents, agents, chat, search, rc
 
 
 # ------------------------------------------------------------------
@@ -70,6 +70,7 @@ def create_app() -> FastAPI:
     app.include_router(agents.router,     prefix="/agents",    tags=["agents"])
     app.include_router(chat.router,       prefix="/chat",      tags=["chat"])
     app.include_router(search.router,     prefix="/search",    tags=["search"])
+    app.include_router(rc.router,         prefix="/rc",        tags=["rc"])
 
     return app
 
