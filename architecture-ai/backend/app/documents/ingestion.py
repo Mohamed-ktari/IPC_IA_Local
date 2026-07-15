@@ -211,15 +211,6 @@ def _store_bm25_index(doc_id: str, chunks: list[dict], doc_dir: Path):
     print(f"[ingestion] Saved BM25 index — {len(chunks)} chunks")
 
 
-
-
-
-
-
-
-
-
-
 def _register_document(metadata: dict):
     # Appends document metadata to the global registry.
     # Registry is a simple JSON array — one entry per document.
@@ -253,6 +244,25 @@ def get_document_metadata(doc_id: str) -> dict | None:
     # Returns metadata for a specific document by ID.
     docs = list_documents()
     return next((d for d in docs if d["doc_id"] == doc_id), None)
+
+
+def get_document_full_text(doc_id: str) -> str | None:
+    # Returns the full parsed markdown text for a document (page markers
+    # included), read from the parsed.json saved at ingestion time.
+    #
+    # This is distinct from the chunked/embedded content in ChromaDB —
+    # agents that need the WHOLE document (RCAgent's summary + structure
+    # extraction, not RAG) go through this instead of the retrieval layer.
+    doc_dir = settings.upload_path / doc_id
+    parsed_path = doc_dir / "parsed.json"
+    if not parsed_path.exists():
+        return None
+    try:
+        parsed = json.loads(parsed_path.read_text(encoding="utf-8"))
+        return parsed.get("full_text")
+    except Exception as e:
+        print(f"[ingestion] Failed to read parsed text for {doc_id}: {e}")
+        return None
 
 
 def delete_document(doc_id: str) -> bool:

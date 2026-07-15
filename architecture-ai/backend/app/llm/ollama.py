@@ -12,11 +12,17 @@ from app.config import settings
 
 class OllamaLLM(BaseLLM):
 
-    def __init__(self, model: str | None = None):
+    def __init__(self, model: str | None = None, num_ctx: int | None = None):
         # Allow overriding model per agent (e.g. vision agent uses different model)
         self.model = model or settings.OLLAMA_MODEL
         self.base_url = settings.OLLAMA_BASE_URL
         self.timeout = settings.OLLAMA_TIMEOUT
+        # IMPORTANT: Ollama defaults num_ctx to 2048 if not set explicitly,
+        # regardless of what the model actually supports. For long documents
+        # (15-page RC files, map-reduce chunks) this silently truncates input
+        # with no error. Always set this explicitly. Qwen2.5-14B supports up
+        # to 32K natively — 8192-16384 is a safe working range on a 16GB card.
+        self.num_ctx = num_ctx or getattr(settings, "OLLAMA_NUM_CTX", 8192)
 
     def _format_messages(self, messages: list[Message]) -> list[dict]:
         # Ollama expects plain dicts, not Pydantic models
@@ -38,6 +44,7 @@ class OllamaLLM(BaseLLM):
                 "options": {
                     "temperature": temperature,
                     "num_predict": max_tokens,
+                    "num_ctx": self.num_ctx,
                     "seed": 42,
                 },
             }
@@ -82,6 +89,7 @@ class OllamaLLM(BaseLLM):
                         "options": {
                             "temperature": temperature,
                             "num_predict": max_tokens,
+                            "num_ctx": self.num_ctx,
                         },
                     },
                 ) as response:

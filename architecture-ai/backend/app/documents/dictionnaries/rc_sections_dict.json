@@ -1,0 +1,43 @@
+{
+  "structure_memoire": {
+    "label": "Structure du mémoire technique",
+    "variants": [
+      "structure du mémoire technique",
+      "structure de mémoire",
+      "structure du mémoire",
+      "structure attendue du mémoire technique",
+      "sommaire attendu du mémoire technique",
+      "plan attendu du mémoire",
+      "plan du mémoire technique",
+      "contenu attendu du mémoire technique",
+      "composition du mémoire technique",
+      "contenu du mémoire technique"
+    ]
+  },
+  "criteres_jugement": {
+    "label": "Critères de jugement des offres",
+    "variants": [
+      "critères de jugement des offres",
+      "critère de jugement",
+      "critères de jugement",
+      "jugement des offres",
+      "critères d'attribution",
+      "critères de notation",
+      "pondération des critères",
+      "modalités de jugement des offres",
+      "critères d'évaluation des offres"
+      
+    ]
+  },
+  "criteres_selection": {
+    "label": "Critères de sélection des candidatures",
+    "variants": [
+      "critères de sélection",
+      "critère de sélection",
+      "critères de sélection des candidatures",
+      "conditions de recevabilité des candidatures",
+      "conditions de participation",
+      "capacités techniques et professionnelles"
+    ]
+  }
+}

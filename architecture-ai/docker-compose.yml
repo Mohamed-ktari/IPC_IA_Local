@@ -79,6 +79,29 @@ services:
     networks:
       - ai-network
 
+  
+  # ────────────────────────────────────────
+  # CADDY — Reverse proxy
+  # ────────────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    networks:
+      - ai-network
+
 # ────────────────────────────────────────
 # VOLUMES — persistent data survives container restarts
 # ────────────────────────────────────────
@@ -87,6 +110,8 @@ volumes:
   chroma_data:
   redis_data:
   postgres_data:
+  caddy_data:
+  caddy_config:
 
 # ────────────────────────────────────────
 # NETWORK — isolated internal bridge

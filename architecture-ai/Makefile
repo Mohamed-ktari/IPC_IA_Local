@@ -31,10 +31,16 @@ setup: venv install               ## Full setup from scratch (venv + install)
 # ──────────────────────────────────────────
 
 dev:                              ## Start backend in development mode (hot reload)
-	cd $(BACKEND_DIR) && ../$(UVICORN) app.main:app --reload --port 8000
+	cd $(BACKEND_DIR) && ../$(UVICORN) app.main:app \
+		--host 0.0.0.0 \
+		--port 8000 \
+		--reload
 
 start:                            ## Start backend in production mode
-	cd $(BACKEND_DIR) && ../$(UVICORN) app.main:app --port 8000 --workers 2
+	cd $(BACKEND_DIR) && ../$(UVICORN) app.main:app \
+		--host 0.0.0.0 \
+		--port 8000 \
+		--workers 2
 
 # ──────────────────────────────────────────
 # DOCKER

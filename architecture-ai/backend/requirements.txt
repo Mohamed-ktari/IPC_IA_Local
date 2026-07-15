@@ -44,6 +44,7 @@ httpx==0.28.1
 huggingface_hub==1.17.0
 idna==3.17
 importlib_resources==7.1.0
+iniconfig==2.3.0
 Jinja2==3.1.6
 jsonlines==4.0.0
 jsonref==1.1.0
@@ -109,6 +110,7 @@ pylatexenc==2.10
 pypdfium2==5.9.0
 PyPika==0.51.1
 pyproject_hooks==1.2.0
+pytest==9.1.1
 python-dateutil==2.9.0.post0
 python-docx==1.2.0
 python-dotenv==1.2.2
@@ -117,6 +119,7 @@ python-pptx==1.0.2
 PyYAML==6.0.3
 rank-bm25==0.2.2
 rapidocr==3.8.1
+redis==8.0.1
 referencing==0.37.0
 regex==2026.5.9
 requests==2.34.2

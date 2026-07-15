@@ -392,6 +392,113 @@ def generate_excel_file():
     print(f"  Columns: {list(extraction_result['materiaux'][0].keys()) if extraction_result.get('materiaux') else 'none'}")
 
 
+
+
+
+
+##################### RC agent test ##########################
+def test_rc_agent():
+    """
+    Test script for RCAgent.
+
+    Usage:
+        python test_rc_agent.py path/to/rc.pdf --prompt "Insiste sur les délais" [--no-cache]
+        python test_rc_agent.py path/to/rc.pdf   (no prompt → no target section hint, no emphasis)
+
+    Outputs:
+        rc_parsed_cache.json   — cached PDFParser output (skip re-parsing on reruns)
+        rc_result.json         — final RCAgentResponse
+    """
+
+    import sys
+    import json
+    import time
+    import argparse
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("pdf", nargs="?", help="Path to the RC PDF file")
+    parser.add_argument("--prompt", default="", help="User prompt (section hint / emphasis)")
+    parser.add_argument("--no-cache", action="store_true", help="Force re-parse even if cache exists")
+    args = parser.parse_args()
+
+    print("\n" + "=" * 60)
+    print("RCAgent test")
+    print("=" * 60)
+
+    # ── 1. Parse PDF (or load cache) ─────────────────────────────────────────
+    cache_path = Path("rc_parsed_cache.json")
+
+    if cache_path.exists() and not args.no_cache:
+        print(f"\n[cache] Loading from {cache_path} (use --no-cache to force re-parse)")
+        with open(cache_path, encoding="utf-8") as f:
+            parsed = json.load(f)
+        print(f"[cache] {parsed['total_pages']} pages, {parsed['word_count']} words")
+
+    elif args.pdf:
+        from app.documents.parsers.pdf_parser import parse_pdf
+        print(f"\n[parse] Parsing {args.pdf}…")
+        t0 = time.time()
+        parsed = parse_pdf(args.pdf)
+        elapsed = round(time.time() - t0, 1)
+        print(f"[parse] Done in {elapsed}s — "
+              f"{parsed['total_pages']} pages, {parsed['word_count']} words")
+        cache_path.write_text(
+            json.dumps(parsed, ensure_ascii=False), encoding="utf-8"
+        )
+        print(f"[cache] Saved to {cache_path}")
+
+    else:
+        print("\nNo PDF provided and no cache found. Pass a PDF path as first argument.")
+        sys.exit(1)
+
+    # ── 2. Run RCAgent ────────────────────────────────────────────────────────
+    from app.agents.rc_agent import RCAgent
+    agent = RCAgent()
+
+    print(f"\n[rc_agent] user_prompt = {args.prompt!r}")
+    print("[rc_agent] Starting…\n")
+    t0 = time.time()
+    response = agent.run(
+        document_markdown=parsed["full_text"],
+        user_prompt=args.prompt,
+    )
+    elapsed = round(time.time() - t0, 1)
+    result = response.to_dict()
+
+    # ── 3. Report ─────────────────────────────────────────────────────────────
+    print(f"\n{'=' * 60}")
+    print(f"  Duration          : {elapsed}s")
+    print(f"  Model             : {result['model']}")
+
+    intent = result["intent"]
+    print(f"\n  Intent parsed:")
+    print(f"    target_section_label : {intent['target_section_label']}")
+    print(f"    emphasis_instructions: {intent['emphasis_instructions']}")
+
+    structure = result["structure"]
+    print(f"\n  Structure extraction:")
+    if structure["found"]:
+        print(f"    ✅ heading      : {structure['heading']}")
+        print(f"    match_score     : {structure['match_score']}")
+        print(f"\n  --- Structure ---")
+        print(structure["structure"])
+    else:
+        print(f"    ⚠️  No matching section found (threshold not met)")
+
+    print(f"\n  --- Summary ({len(result['summary'].split())} words) ---")
+    print(result["summary"])
+    print("=" * 60)
+
+    # ── 4. Save final result ──────────────────────────────────────────────────
+    out_path = Path("rc_result.json")
+    out_path.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(f"\n[output] Full result → {out_path}")
+    
+
+
 ################################# Main ######################"
 if __name__ == "__main__":
     #test_chat()
@@ -403,5 +510,6 @@ if __name__ == "__main__":
     #test_retrieval()
     #test_analysis_rag()
     #test_extraction_agent()
-    generate_excel_file()
+    #generate_excel_file()
+    test_rc_agent()
     

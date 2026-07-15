@@ -107,7 +107,7 @@ class PDFParser:
             })
             # Prefix each chunk with its page marker so DocumentCleaner
             # can split by page number when a config specifies a page range
-            page_chunks.append(
+            page_chunks.append( 
                 f"{PAGE_BREAK_MARKER.format(page_no=page_no)}\n{page_md}"
             )
 
