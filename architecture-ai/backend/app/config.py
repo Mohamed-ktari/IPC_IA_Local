@@ -55,6 +55,12 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
 
+    # How long a Q&A conversation's history is kept in Redis before expiring.
+    # Refreshed on every new message (see conversations/store.py) — so an
+    # active conversation never expires mid-use, only ones abandoned for
+    # this long. 7 days is a starting guess, not a validated number.
+    CONVERSATION_TTL_SECONDS: int = 60 * 60 * 24 * 7
+
     # Postgres
     POSTGRES_USER: str = "archai"
     POSTGRES_PASSWORD: str = "changeme"
@@ -85,7 +91,14 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     CHUNK_SIZE: int = 512      # tokens per chunk
     CHUNK_OVERLAP: int = 64    # overlap between chunks to preserve context
-    RETRIEVAL_TOP_K: int = 10   # how many chunks to retrieve per query
+    RETRIEVAL_TOP_K: int = 10   # how many chunks to retrieve per query (AnalysisAgent)
+
+    # Q&A conversational retrieval — deliberately smaller than
+    # RETRIEVAL_TOP_K above. AnalysisAgent wants comprehensive coverage for
+    # a structured synthesis; Q&A wants a few focused chunks for a direct
+    # answer. Starting value, not yet validated against real usage.
+    QA_RETRIEVAL_TOP_K: int = 5
+    QA_MIN_SCORE: float = 0.3
 
     # Generation defaults
     DEFAULT_TEMPERATURE: float = 0.1
