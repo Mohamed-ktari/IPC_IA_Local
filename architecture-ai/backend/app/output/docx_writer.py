@@ -100,3 +100,97 @@ def generate_memoire_docx(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(output_path)
     return output_path
+
+
+
+
+    # --- appended to docx_writer.py ---
+# Fills an EXISTING structure doc's sections with generated content, as
+# opposed to generate_memoire_docx() which builds the empty skeleton from
+# scratch. Used by generation_agent, never by rc_agent.
+#
+# Matching is done by (level, title, occurrence_index) rather than pure
+# title string, so two sections that happen to share a title (rare, but
+# possible after user edits) each still get their own generated content
+# rather than the first match winning twice.
+
+def fill_memoire_docx(
+    structure_docx_path: str | Path,
+    filled_sections: list[dict],
+    output_path: str | Path,
+) -> Path:
+    """
+    structure_docx_path: the structure .docx the user uploaded (same file
+        parse_structure_docx() was called on).
+    filled_sections: list of {"level", "title", "content"} in the SAME
+        order as parse_structure_docx()'s output — content is the
+        generated text (or the user's own existing_content if generation
+        was skipped for that section).
+    output_path: where to save the filled .docx.
+    """
+    structure_docx_path = Path(structure_docx_path)
+    output_path = Path(output_path)
+
+    doc = Document(structure_docx_path)
+
+    # Build (paragraph_index, level, title) for every heading paragraph,
+    # in document order — mirrors parse_structure_docx()'s walk exactly so
+    # the i-th heading found here lines up with filled_sections[i].
+    heading_positions = []
+    for idx, p in enumerate(doc.paragraphs):
+        level = _heading_level_for_writer(p)
+        if level is not None:
+            heading_positions.append(idx)
+
+    if len(heading_positions) != len(filled_sections):
+        raise ValueError(
+            f"Structure mismatch: found {len(heading_positions)} headings "
+            f"in the document but received {len(filled_sections)} filled "
+            f"sections. The document may have been edited between parsing "
+            f"and filling — re-parse before filling."
+        )
+
+    # Walk headings in REVERSE so earlier insertions don't shift the
+    # paragraph indices of headings we haven't processed yet.
+    for pos, section in zip(reversed(heading_positions), reversed(filled_sections)):
+        heading_para = doc.paragraphs[pos]
+
+        # Remove existing content paragraphs between this heading and the
+        # next heading (or end of doc) — these are the blank/instruction
+        # paragraphs from the original skeleton.
+        next_pos = None
+        for later in heading_positions:
+            if later > pos:
+                next_pos = later
+                break
+        end = next_pos if next_pos is not None else len(doc.paragraphs)
+
+        for p in doc.paragraphs[pos + 1:end]:
+            p._element.getparent().remove(p._element)
+
+        # Insert generated content as a new paragraph right after the heading
+        new_para = heading_para.insert_paragraph_before("")  # placeholder position trick
+        # insert_paragraph_before inserts BEFORE heading_para — we actually
+        # want after, so move the heading's XML before our new paragraph.
+        heading_para._element.addnext(new_para._element)
+        new_para.text = section["content"]
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    doc.save(output_path)
+    return output_path
+
+
+def _heading_level_for_writer(paragraph) -> int | None:
+    # Same detection logic as docx_parser._heading_level — duplicated
+    # (not imported) to keep docx_writer.py's existing zero-dependency-
+    # on-docx_parser property intact, since rc_agent must never be
+    # affected by anything generation_agent needs.
+    import re
+    style_name = paragraph.style.name if paragraph.style else ""
+    m = re.match(r"^Heading (\d+)$", style_name)
+    if m:
+        return int(m.group(1))
+    m2 = re.match(r"^Titre\s*(\d+)$", style_name, re.IGNORECASE)
+    if m2:
+        return int(m2.group(1))
+    return None

@@ -54,18 +54,27 @@ body { padding: 16px; }
 <div class="row"><span class="path agent">│   ├── report_agent.py</span><span class="sep">—</span><span class="desc">Feature 6 — receives raw data files (Excel, notes), applies report template, generates full structured report</span></div>
 <div class="row"><span class="path agent">│   ├── diagram_agent.py</span><span class="sep">—</span><span class="desc">Feature 8 — receives natural language description, generates Mermaid or SVG diagram, exports to file</span></div>
 <div class="row"><span class="path agent">│   └── vision_agent.py</span><span class="sep">—</span><span class="desc">Feature 9 — receives image file, calls multimodal Qwen-VL model via Ollama, returns structured description</span></div>
+<div class="row"><span class="path agent">│   └── extraction_agent.py</span><span class="sep">—</span><span class="desc"></span></div>
+<div class="row"><span class="path agent">│   └── rc_agent.py</span><span class="sep">—</span><span class="desc"></span></div>
+<div class="row"><span class="path agent">│   └── qa_agent.py</span><span class="sep">—</span><span class="desc"></span></div>
+
 
 <div class="section">Documents — ingestion & retrieval pipeline</div>
 <div class="row"><span class="path dir">├── documents/</span></div>
 <div class="row"><span class="path">│   ├── ingestion.py</span><span class="sep">—</span><span class="desc">Orchestrates the full pipeline: receive file → call right parser → chunk → embed → store in ChromaDB</span></div>
 <div class="row"><span class="path">│   ├── chunker.py</span><span class="sep">—</span><span class="desc">Splits extracted text into chunks — configurable size/overlap, aware of document type (technical docs need larger chunks)</span></div>
 <div class="row"><span class="path">│   ├── retrieval.py</span><span class="sep">—</span><span class="desc">Queries ChromaDB with an embedding, returns top-k most relevant chunks, optional reranking</span></div>
+<div class="row"><span class="path">│   ├── embedder.py</span><span class="sep">—</span><span class="desc"></span></div>
+<div class="row"><span class="path">│   ├── section_matcher.py</span><span class="sep">—</span><span class="desc"></span></div>
+<div class="row"><span class="path">│   ├── test_section_matcher.py</span><span class="sep">—</span><span class="desc"></span></div>
 <div class="row"><span class="path dir">│   └── parsers/</span><span class="sep">—</span><span class="desc">Each parser handles one file type and returns clean plain text</span></div>
 <div class="row"><span class="path">│       ├── pdf_parser.py</span><span class="sep">—</span><span class="desc">Extracts text from PDF — uses pdfplumber for digital PDFs, falls back to pytesseract OCR for scanned ones</span></div>
 <div class="row"><span class="path">│       ├── docx_parser.py</span><span class="sep">—</span><span class="desc">Extracts text and structure from Word documents using python-docx, preserves headings hierarchy</span></div>
 <div class="row"><span class="path">│       ├── excel_parser.py</span><span class="sep">—</span><span class="desc">Reads Excel sheets with openpyxl, converts tables to structured text or JSON for LLM consumption</span></div>
 <div class="row"><span class="path">│       ├── image_parser.py</span><span class="sep">—</span><span class="desc">Pre-processes images with OpenCV (contrast, denoise), then runs pytesseract OCR to extract any text</span></div>
 <div class="row"><span class="path">│       └── bim_parser.py</span><span class="sep">—</span><span class="desc">Parses IFC files with ifcopenshell — extracts element names, properties, materials as queryable text</span></div>
+<div class="row"><span class="path">│       └── document_cleaner.py</span><span class="sep">—</span><span class="desc"></span></div>
+<div class="row"><span class="path">│       └── config_reader.py</span><span class="sep">—</span><span class="desc"></span></div>
 
 <div class="section">Templates — company document structures</div>
 <div class="row"><span class="path dir">├── templates/</span><span class="sep">—</span><span class="desc">JSON files defining the expected output structure for each document type — edited by the company, not by devs</span></div>
@@ -96,6 +105,8 @@ body { padding: 16px; }
 <div class="row"><span class="path">│       ├── documents.py</span><span class="sep">—</span><span class="desc">POST /documents/upload — receives file, triggers ingestion pipeline, returns doc ID</span></div>
 <div class="row"><span class="path">│       ├── agents.py</span><span class="sep">—</span><span class="desc">GET /agents — returns list of available agents with descriptions for the frontend selector UI</span></div>
 <div class="row"><span class="path">│       ├── search.py</span><span class="sep">—</span><span class="desc">POST /search — triggers regulatory_agent with external search, returns sourced results</span></div>
+<div class="row"><span class="path">│       ├── qa.py</span><span class="sep">—</span><span class="desc"></span></div>
+<div class="row"><span class="path">│       ├── rc.py</span><span class="sep">—</span><span class="desc"></span></div>
 <div class="row"><span class="path">│       └── health.py</span><span class="sep">—</span><span class="desc">GET /health — checks Ollama, ChromaDB, Redis are reachable — used by Docker healthcheck</span></div>
 
 <div class="section">Audit — RGPD compliance</div>
