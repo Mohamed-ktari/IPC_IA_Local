@@ -11,7 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 from app.config  import settings, ensure_directories
-from app.api.routes import health, documents, agents, chat, search, rc, qa
+from app.db.session import create_all_tables
+from app.api.routes import health, documents, agents, chat, search, rc, qa, projects, generation
 
 
 # ------------------------------------------------------------------
@@ -27,6 +28,11 @@ async def lifespan(app: FastAPI):
 
     # Create data directories if they don't exist
     ensure_directories()
+
+    # Create Postgres tables that don't exist yet (dev-only — no
+    # migrations yet, see app/db/session.py for the Alembic note)
+    create_all_tables()
+    print("Database tables ready")
 
     # TODO: initialize ChromaDB connection here (week 2)
     # TODO: warm up Ollama model with a dummy request (avoids cold start)
@@ -72,6 +78,8 @@ def create_app() -> FastAPI:
     app.include_router(search.router,     prefix="/search",    tags=["search"])
     app.include_router(rc.router,         prefix="/rc",        tags=["rc"])
     app.include_router(qa.router,         prefix="/qa",        tags=["qa"])
+    app.include_router(projects.router,   prefix="/projects",  tags=["projects"])
+    app.include_router(generation.router, prefix="/generation", tags=["generation"])
 
     return app
 

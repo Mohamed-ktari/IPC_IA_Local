@@ -160,7 +160,6 @@ class RCAgent(BaseAgent):
             f"du règlement de consultation :\n\n{match['text']}\n\n"
             "Génère la structure du mémoire technique attendue."
         )
-
         response = self.chat(
             user_message=user_message,
             temperature=0.0,

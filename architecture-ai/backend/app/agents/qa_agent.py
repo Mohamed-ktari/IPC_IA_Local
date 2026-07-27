@@ -39,7 +39,7 @@ class QAAgent(BaseAgent):
         "ingéré, en conversation multi-tours (RAG)."
     )
 
-    def start_conversation(self, doc_id: str) -> str:
+    def start_conversation(self, doc_ids: list[str]) -> str:
         return conversation_store.create_conversation(doc_id)
 
     def ask(self, conversation_id: str, question: str) -> dict:
@@ -47,7 +47,7 @@ class QAAgent(BaseAgent):
         if conversation is None:
             raise ValueError(f"Conversation '{conversation_id}' not found")
 
-        doc_id = conversation["doc_id"]
+        doc_ids = conversation["doc_ids"]
         raw_history = conversation["messages"]  # [{"role", "content"}, ...]
 
         history_messages = [
@@ -66,7 +66,7 @@ class QAAgent(BaseAgent):
         context, results = retriever.retrieve_and_format(
             query=standalone_query,
             top_k=settings.QA_RETRIEVAL_TOP_K,
-            doc_id=doc_id,
+            doc_id=doc_ids,
             min_score=settings.QA_MIN_SCORE,
         )
 

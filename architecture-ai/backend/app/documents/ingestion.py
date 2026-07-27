@@ -13,7 +13,6 @@
 # This is the single entry point for ALL document ingestion.
 # Agents never call parsers or chunkers directly — they always
 # go through the retrieval layer which reads from ChromaDB.
-
 import json
 import time
 import uuid
@@ -24,12 +23,15 @@ from datetime import datetime, timezone
 from app.config import settings
 from app.documents.parsers.pdf_parser import PDFParser
 from app.documents.chunker import Chunker
+from app.documents.doc_type import DocType
 import chromadb
 
 
 # Registry file — tracks all ingested documents
 # One JSON file, one entry per document
 REGISTRY_FILE = settings.upload_path / "registry.json"
+
+
 
 
 def _get_chroma_collection():
@@ -50,10 +52,22 @@ def ingest_document(
     file_path: str | Path,
     uploaded_by: str = "unknown",
     max_pages: int | None = None,
+    doc_type: DocType = DocType.unspecified,   # NEW — "memoire" | "programme" | "rc" | "unspecified"
+    project_id: str | None = None,   # NEW — required in practice for "programme", optional otherwise
 ) -> dict:
     # Main entry point.
     # file_path: path to the file to ingest (already saved to disk)
     # uploaded_by: user identifier for audit log
+    # doc_type: what kind of document this is — drives retrieval lane
+    #     filtering later (see retrieval.py's `where` param). Defaults to
+    #     "unspecified" so existing call sites (rc_agent, qa_agent) keep
+    #     working unmodified — those chunks just won't match any
+    #     doc_type-scoped filter, which is correct: they were never meant
+    #     to be lane-filtered in the first place.
+    # project_id: which project this document belongs to. Required in
+    #     practice for "programme" docs (that's the whole point of the
+    #     lane), meaningless for "memoire" docs (memoires are intentionally
+    #     searched cross-project), optional/None otherwise.
     # Returns: document metadata dict
 
     file_path = Path(file_path)
@@ -93,7 +107,7 @@ def ingest_document(
 
     # 7. Store chunks in ChromaDB
     print(f"[ingestion] Storing in ChromaDB...")
-    _store_in_chromadb(doc_id, chunks, file_path.name)
+    _store_in_chromadb(doc_id, chunks, file_path.name, doc_type, project_id)
 
     # 8. Build and save metadata
     duration = round(time.time() - start, 2)
@@ -108,6 +122,8 @@ def ingest_document(
         "chunk_count": len(chunks),
         "ingestion_duration_seconds": duration,
         "status": "ready",
+        "doc_type": doc_type,        # NEW — persisted so list_documents()/
+        "project_id": project_id,    # NEW — registry entries carry this too
     }
 
     # Save metadata alongside the parsed file
@@ -123,7 +139,6 @@ def ingest_document(
     print(f"[ingestion] Done in {duration}s — document ready for querying")
     return metadata
 
-
 def _parse_document(file_path: Path, max_pages: int | None) -> dict:
     # Routes to the correct parser based on file extension.
     # Currently only PDF — DOCX and Excel parsers will plug in here later.
@@ -135,9 +150,9 @@ def _parse_document(file_path: Path, max_pages: int | None) -> dict:
 
     # Placeholder for future parsers
     elif suffix in [".docx", ".doc"]:
-        raise NotImplementedError(
-            "DOCX parser not implemented yet — coming in next iteration"
-        )
+        from app.documents.parsers.docx_parser import parse_for_ingestion
+        return parse_for_ingestion(file_path)
+
     elif suffix in [".xlsx", ".xls"]:
         raise NotImplementedError(
             "Excel parser not implemented yet — coming in next iteration"
@@ -149,7 +164,13 @@ def _parse_document(file_path: Path, max_pages: int | None) -> dict:
         )
 
 
-def _store_in_chromadb(doc_id: str, chunks: list[dict], file_name: str):
+def _store_in_chromadb(
+    doc_id: str,
+    chunks: list[dict],
+    file_name: str,
+    doc_type: DocType = DocType.unspecified,  # NEW
+    project_id: str | None = None,    # NEW
+):
     from app.documents.embedder import get_embedder
 
     # Filter out chunks too small to be meaningful
@@ -162,15 +183,22 @@ def _store_in_chromadb(doc_id: str, chunks: list[dict], file_name: str):
 
     ids = [f"{doc_id}_chunk_{chunk['index']}" for chunk in chunks]
     documents = [chunk["text"] for chunk in chunks]
-    metadatas = [
-        {
+
+    # Chroma metadata values can't be None — omit project_id entirely
+    # when it's None rather than storing a null, so `where` filters that
+    # check its presence/absence behave predictably.
+    metadatas = []
+    for chunk in chunks:
+        meta = {
             "doc_id": doc_id,
             "file_name": file_name,
             "chunk_index": chunk["index"],
             "word_count": chunk["word_count"],
+            "doc_type": doc_type.value,
         }
-        for chunk in chunks
-    ]
+        if project_id is not None:
+            meta["project_id"] = project_id
+        metadatas.append(meta)
 
     # Embed explicitly — never let ChromaDB embed silently
     print(f"[ingestion] Embedding {len(chunks)} chunks with {settings.OLLAMA_EMBEDDING_MODEL}...")
@@ -186,7 +214,6 @@ def _store_in_chromadb(doc_id: str, chunks: list[dict], file_name: str):
             metadatas=metadatas[i:i + batch_size],
         )
     print(f"[ingestion] Stored {len(chunks)} chunks in ChromaDB")
-
 
 def _store_bm25_index(doc_id: str, chunks: list[dict], doc_dir: Path):
     # Saves chunks as a JSON file for BM25 keyword search.

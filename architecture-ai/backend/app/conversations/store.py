@@ -44,12 +44,12 @@ def get_redis_client() -> redis.Redis:
     return _client
 
 
-def create_conversation(doc_id: str) -> str:
+def create_conversation(doc_ids: list[str]) -> str:
     conversation_id = str(uuid.uuid4())
     client = get_redis_client()
     data = {
         "conversation_id": conversation_id,
-        "doc_id": doc_id,
+        "doc_ids": doc_ids,
         "created_at": time.time(),
         "messages": [],
     }
@@ -58,9 +58,24 @@ def create_conversation(doc_id: str) -> str:
         json.dumps(data),
         ex=settings.CONVERSATION_TTL_SECONDS,
     )
-    client.sadd(DOC_CONVERSATIONS_KEY.format(doc_id=doc_id), conversation_id)
+    for doc_id in doc_ids:
+        client.sadd(
+            DOC_CONVERSATIONS_KEY.format(doc_id=doc_id),
+            conversation_id,
+        )
     return conversation_id
 
+def add_document(conversation_id: str, doc_id: str) -> None:
+    # NEW — appends a doc_id to an existing conversation, for when a
+    # second file is uploaded mid-chat rather than at conversation start.
+    conversation = get_conversation(conversation_id)
+    if conversation is None:
+        raise ValueError(f"Conversation '{conversation_id}' not found")
+    if doc_id not in conversation["doc_ids"]:
+        conversation["doc_ids"].append(doc_id)
+        _save_conversation(conversation_id, conversation)  # however store persists updates
+        client = get_redis_client()
+        client.sadd(DOC_CONVERSATIONS_KEY.format(doc_id=doc_id), conversation_id)  # NEW
 
 def get_conversation(conversation_id: str) -> dict | None:
     client = get_redis_client()
@@ -95,5 +110,14 @@ def delete_conversation(conversation_id: str) -> bool:
         return False
     data = json.loads(raw)
     client.delete(key)
-    client.srem(DOC_CONVERSATIONS_KEY.format(doc_id=data["doc_id"]), conversation_id)
+    for doc_id in data["doc_ids"]:
+        client.srem(DOC_CONVERSATIONS_KEY.format(doc_id=doc_id), conversation_id)
     return True
+
+def _save_conversation(conversation_id: str, data: dict) -> None:
+    client = get_redis_client()
+    client.set(
+        CONVERSATION_KEY.format(conversation_id=conversation_id),
+        json.dumps(data),
+        ex=settings.CONVERSATION_TTL_SECONDS,
+    )

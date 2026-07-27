@@ -22,7 +22,9 @@ import re
 from pathlib import Path
 
 from docx import Document
+import re
 
+GUIDANCE_RE = re.compile(r"<<(.*?)>>", re.DOTALL)
 HEADING_STYLE_RE = re.compile(r"^Heading (\d+)$")
 
 
@@ -126,3 +128,40 @@ def parse_structure_docx(file_path: str | Path) -> list[dict]:
         nodes.append(current)
 
     return nodes
+
+# Addition to docx_parser.py (or a small shared util — I'd put it here
+# since it's about interpreting structure-doc content, same family as
+# parse_structure_docx)
+
+
+
+
+def parse_section_content(existing_content: str) -> list[dict]:
+    """
+    Splits a section's existing_content into ordered segments:
+        {"type": "guidance", "content": "..."}  — text that was inside <<>>
+        {"type": "text", "content": "..."}      — plain text, kept as-is
+
+    Order is preserved exactly as it appears in the original paragraph, so
+    "<<specify the date>> Le projet démarre..." becomes
+        [{"type": "guidance", ...}, {"type": "text", "content": "Le projet démarre..."}]
+    and the caller reconstructs output in the same order, substituting
+    generated content for each guidance segment.
+    """
+    segments = []
+    last_end = 0
+
+    for m in GUIDANCE_RE.finditer(existing_content):
+        if m.start() > last_end:
+            plain = existing_content[last_end:m.start()].strip()
+            if plain:
+                segments.append({"type": "text", "content": plain})
+        segments.append({"type": "guidance", "content": m.group(1).strip()})
+        last_end = m.end()
+
+    if last_end < len(existing_content):
+        plain = existing_content[last_end:].strip()
+        if plain:
+            segments.append({"type": "text", "content": plain})
+
+    return segments

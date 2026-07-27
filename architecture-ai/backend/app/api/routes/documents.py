@@ -68,19 +68,25 @@ async def upload_document(file: UploadFile = File(...)):
     # Receives a file upload, saves it temporarily, then runs
     # the full ingestion pipeline (parse → chunk → embed → store).
     #
-    # Currently only PDF is supported (enforced inside ingestion.py)
+    # Supported types are enforced here at the boundary (fast, clear
+    # error) AND in ingestion.py's _parse_document (defense in depth —
+    # any other caller of ingest_document() is still protected even if
+    # it bypasses this route).
 
-    if not file.filename.lower().endswith(".pdf"):
+    ALLOWED_SUFFIXES = (".pdf", ".docx", ".doc")
+
+    if not file.filename.lower().endswith(ALLOWED_SUFFIXES):
         raise HTTPException(
             status_code=400,
-            detail="Only PDF files are currently supported."
+            detail=f"Unsupported file type. Supported: {', '.join(ALLOWED_SUFFIXES)}"
         )
 
     # Save uploaded file to a temporary location first.
     # ingestion.py will copy it into its own managed storage (data/uploads/<doc_id>/)
+    suffix = Path(file.filename).suffix.lower()
     try:
         with tempfile.NamedTemporaryFile(
-            delete=False, suffix=".pdf"
+            delete=False, suffix=suffix
         ) as tmp:
             shutil.copyfileobj(file.file, tmp)
             tmp_path = Path(tmp.name)
@@ -97,7 +103,6 @@ async def upload_document(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {e}")
     finally:
-        # Clean up the temporary file regardless of success/failure
         tmp_path.unlink(missing_ok=True)
 
     return UploadResponse(

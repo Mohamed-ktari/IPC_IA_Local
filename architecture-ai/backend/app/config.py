@@ -65,12 +65,13 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = "archai"
     POSTGRES_PASSWORD: str = "changeme"
     POSTGRES_DB: str = "architecture_ai"
+    POSTGRES_HOST: str = "localhost"
 
     @property
     def database_url(self) -> str:
         return (
-            f"postgresql://{self.POSTGRES_USER}:"
-            f"{self.POSTGRES_PASSWORD}@localhost/"
+            f"postgresql+psycopg://{self.POSTGRES_USER}:"
+            f"{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:5432/"
             f"{self.POSTGRES_DB}"
         )
 
