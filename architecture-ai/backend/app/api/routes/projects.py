@@ -1,11 +1,13 @@
 # projects.py
-# POST /projects        — create a project
-# GET  /projects         — list all projects
-# GET  /projects/{id}    — get one project
-# PATCH /projects/{id}   — update programme_doc_id / status / name
+# POST   /projects                          — create a project
+# GET    /projects                          — list all projects
+# GET    /projects/{project_id}              — get one project (with its documents)
+# PATCH  /projects/{project_id}              — update name/client_name/status
+# POST   /projects/{project_id}/documents     — attach a document to a project
+# DELETE /projects/{project_id}/documents/{doc_id} — detach a document
 #
 # Minimal on purpose — no auth/ownership fields yet, matches the rest of
-# the API's current scope. Extend when multi-user access matters.
+# the API's current scope.
 
 import uuid
 from fastapi import APIRouter, HTTPException, Depends
@@ -13,7 +15,8 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from app.db.session import get_db
-from app.models.project import Project
+from app.models.project import Project, ProjectDocument
+from app.documents.doc_type import DocType
 
 router = APIRouter()
 
@@ -26,8 +29,12 @@ class ProjectCreate(BaseModel):
 class ProjectUpdate(BaseModel):
     name: str | None = None
     client_name: str | None = None
-    programme_doc_id: str | None = None
     status: str | None = None
+
+
+class AddDocumentRequest(BaseModel):
+    doc_id: str
+    doc_type: DocType
 
 
 @router.post("")
@@ -67,3 +74,37 @@ def update_project(
     db.commit()
     db.refresh(project)
     return project.to_dict()
+
+
+@router.post("/{project_id}/documents")
+def add_document(
+    project_id: uuid.UUID, payload: AddDocumentRequest, db: Session = Depends(get_db)
+):
+    project = db.query(Project).filter(Project.project_id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    doc = ProjectDocument(
+        project_id=project_id,
+        doc_id=payload.doc_id,
+        doc_type=payload.doc_type.value,
+    )
+    db.add(doc)
+    db.commit()
+    db.refresh(project)
+    return project.to_dict()
+
+
+@router.delete("/{project_id}/documents/{doc_id}")
+def remove_document(project_id: uuid.UUID, doc_id: str, db: Session = Depends(get_db)):
+    doc = (
+        db.query(ProjectDocument)
+        .filter(ProjectDocument.project_id == project_id, ProjectDocument.doc_id == doc_id)
+        .first()
+    )
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not attached to this project")
+
+    db.delete(doc)
+    db.commit()
+    return {"deleted": True, "project_id": str(project_id), "doc_id": doc_id}

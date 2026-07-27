@@ -78,7 +78,21 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - ai-network
-
+  # ────────────────────────────────────────
+  # Open WebUI — Frontend for interacting with the backend and LLMs
+  # ────────────────────────────────────────
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - open_webui_data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    networks:
+      - ai-network
   
   # ────────────────────────────────────────
   # CADDY — Reverse proxy
@@ -112,6 +126,7 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  open_webui_data:
 
 # ────────────────────────────────────────
 # NETWORK — isolated internal bridge

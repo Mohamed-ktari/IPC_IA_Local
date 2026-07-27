@@ -65,6 +65,13 @@ ollama-pull:                      ## Pull the model inside the Ollama container
 ollama-list:                      ## List models available in Ollama container
 	docker exec -it ollama ollama list
 
+
+# ──────────────────────────────────────────
+# QUEUE — RQ worker for background generation jobs
+# ──────────────────────────────────────────
+
+worker:                           ## Start RQ worker for the generation queue
+	cd $(BACKEND_DIR) && ../$(VENV)/bin/rq worker generation --url redis://localhost:6379
 # ──────────────────────────────────────────
 # HEALTH
 # ──────────────────────────────────────────
@@ -89,4 +96,4 @@ help:                             ## Show all available commands
 
 .PHONY: install venv setup dev start docker-up docker-down \
         docker-logs docker-ps ollama-pull ollama-list \
-        health freeze help
+        health freeze help worker
