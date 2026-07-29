@@ -36,6 +36,15 @@ ARTICLE_STYLE_RE = re.compile(r"^\(?(article|titre|chapitre|section)\b\s*\d*", r
 # so treating it as an enum-subitem would wrongly swallow real boundaries.
 ENUM_SUBITEM_RE = re.compile(r"^\(?\d+\)|^\(?[a-zA-Z]\)|^[-•▪]\s")
 
+
+# Headings that are clearly sub-criteria / sub-items of a judgment section.
+# They must stay inside the parent section even when they render at the same
+# markdown level as the parent heading.
+CRITERION_SUBITEM_RE = re.compile(
+    r"^(sous[-\s]?critère|critère)\b",
+    re.IGNORECASE
+)
+
 # Parses a leading hierarchical number sequence — "7.2 - JUGEMENT..." -> (7, 2),
 # "7.2.1 – Jugement..." -> (7, 2, 1), "ARTICLE 7" -> (7,). Used to detect
 # continuing/nested numbering ("7.2.1" under "7.2") as distinct from
@@ -184,6 +193,10 @@ def _section_text(markdown_text: str, headings: list[dict], matched_index: int) 
 
         if ENUM_SUBITEM_RE.match(nxt["title"]):
             continue  # "1)", "a)", "•" — restarting enumeration, not a boundary
+        
+        # NEW: "Critère 1", "Sous-critère 2", etc. stay inside the parent
+        if CRITERION_SUBITEM_RE.match(nxt["title"]):
+            continue
 
         if _is_numeric_descendant(_numeric_prefix(nxt["title"]), matched_prefix):
             continue  # "7.2.1" under "7.2" — continuing hierarchical numbering
@@ -292,3 +305,11 @@ def match_section(
         "score": round(best_score, 3),
         "text": section_text,
     }
+
+def is_section_good_enough(section: dict | None, min_words: int = 120) -> bool:
+    """Return True only if the match looks complete enough to trust."""
+    if section is None:
+        return False
+    text = section.get("text") or ""
+    word_count = len(text.split())
+    return word_count >= min_words

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        #searchInput {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 14px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f4f4f4;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        button {
+            padding: 7px 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .btn-page {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-page:hover:not(:disabled) {
+            background: #0056b3;
+        }
+
+        .btn-page:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .page-info {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #noResults {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<script src="../nav/nav.js"></script>
+<div class="container">
+    <h2>Uploaded Documents</h2>
+
+    <div class="controls">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by Document ID or File Name..."
+        />
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Document ID</th>
+                <th>Original File Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="documentsTable"></tbody>
+    </table>
+
+    <div id="noResults">No documents found.</div>
+
+    <div class="pagination">
+        <button class="btn-page" id="prevBtn" onclick="changePage(-1)">← Previous</button>
+        <span class="page-info" id="pageInfo"></span>
+        <button class="btn-page" id="nextBtn" onclick="changePage(1)">Next →</button>
+    </div>
+</div>
+
+<script>
+const GET_API    = "http://192.168.99.10:8000/documents";
+const DELETE_API = "http://192.168.99.10:8000/documents";
+const PAGE_SIZE  = 100;
+
+let allDocuments = [];   // full list from API
+let filteredDocs = [];   // after search
+let currentPage  = 1;
+
+const tbody      = document.getElementById("documentsTable");
+const searchInput= document.getElementById("searchInput");
+const pageInfo   = document.getElementById("pageInfo");
+const prevBtn    = document.getElementById("prevBtn");
+const nextBtn    = document.getElementById("nextBtn");
+const noResults  = document.getElementById("noResults");
+
+// Load all documents once
+async function loadDocuments() {
+    try {
+        const response = await fetch(GET_API);
+        const data = await response.json();
+
+        allDocuments = data.documents || [];
+        applyFilterAndRender();
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="4">Failed to load documents.</td></tr>`;
+    }
+}
+
+// Filter + paginate + render
+function applyFilterAndRender() {
+    const query = searchInput.value.trim().toLowerCase();
+
+    // Filter by ID or file name
+    filteredDocs = allDocuments.filter(doc => {
+        const id   = String(doc.doc_id || "").toLowerCase();
+        const name = String(doc.original_file_name || "").toLowerCase();
+        return id.includes(query) || name.includes(query);
+    });
+
+    // Reset to page 1 when searching
+    currentPage = 1;
+    renderPage();
+}
+
+// Render current page
+function renderPage() {
+    const total = filteredDocs.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+    // Clamp page number
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end   = start + PAGE_SIZE;
+    const pageDocs = filteredDocs.slice(start, end);
+
+    // Clear table
+    tbody.innerHTML = "";
+
+    if (pageDocs.length === 0) {
+        noResults.style.display = "block";
+    } else {
+        noResults.style.display = "none";
+
+        pageDocs.forEach(doc => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${doc.doc_id}</td>
+                <td>${doc.original_file_name}</td>
+                <td>${doc.status}</td>
+                <td>
+                    <button class="btn-delete" onclick="deleteDocument('${doc.doc_id}')">
+                        Delete
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Update pagination controls
+    pageInfo.textContent = total === 0
+        ? "No documents"
+        : `Showing ${start + 1}–${Math.min(end, total)} of ${total}  •  Page ${currentPage} of ${totalPages}`;
+
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+}
+
+// Change page
+function changePage(delta) {
+    currentPage += delta;
+    renderPage();
+}
+
+// Delete document
+async function deleteDocument(doc_id) {
+    if (!confirm("Are you sure you want to delete this document?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${DELETE_API}/${doc_id}`, {
+            method: "DELETE"
+        });
+
+        if (!response.ok) {
+            throw new Error("Delete failed");
+        }
+
+        const result = await response.json();
+        alert(result.message || "Document deleted successfully.");
+
+        // Remove from local list and re-render (no need to re-fetch)
+        allDocuments = allDocuments.filter(d => d.doc_id !== doc_id);
+        applyFilterAndRender();
+
+    } catch (err) {
+        console.error(err);
+        alert("Unable to delete document.");
+    }
+}
+
+// Live search
+searchInput.addEventListener("input", applyFilterAndRender);
+
+// Initial load
+loadDocuments();
+</script>
+
+</body>
+</html>

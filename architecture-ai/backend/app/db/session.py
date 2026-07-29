@@ -33,3 +33,14 @@ def create_all_tables():
     from app.models import project  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
+
+# def drop_all_tables():
+#     # Dev-only schema teardown — drops all tables.
+#     # Move to Alembic once the schema stabilizes beyond active dev.
+#     from app.db.base import Base
+#     # Import every model module here so Base.metadata knows about it
+#     # before drop_all() runs — SQLAlchemy only drops tables for
+#     # classes that have actually been imported/registered.
+#     from app.models import project  # noqa: F401
+
+#     Base.metadata.drop_all(bind=engine)

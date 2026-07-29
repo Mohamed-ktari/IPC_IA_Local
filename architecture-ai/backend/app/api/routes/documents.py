@@ -35,6 +35,7 @@ router = APIRouter()
 class DocumentMetadata(BaseModel):
     doc_id: str
     file_name: str
+    original_file_name: str | None = None
     uploaded_by: str
     uploaded_at: str
     total_pages: int
@@ -95,9 +96,10 @@ async def upload_document(file: UploadFile = File(...)):
 
     try:
         metadata = ingest_document(
-            file_path=tmp_path,
-            uploaded_by="api_user",  # TODO: replace with real user once auth exists
-        )
+        file_path=tmp_path,
+        original_filename=file.filename,
+        uploaded_by="api_user",
+    )
     except NotImplementedError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

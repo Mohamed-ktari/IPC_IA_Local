@@ -1,7 +1,4 @@
 # section_processor.py
-# Turns one parsed section ({level, title, existing_content}) into final
-# content, running retrieval + generation for every <<>> guidance block
-# found, in order, and leaving plain text segments untouched.
 
 from app.documents.section_classifier import get_classifier
 from app.documents.retrieval import get_retriever
@@ -10,11 +7,13 @@ from app.documents.parsers.docx_parser import parse_section_content
 from app.config import settings
 from app.llm.base import Message, Role
 
+
 def process_section(
     section: dict,
     project_id: str,
     global_prompt: str,
     llm,
+    system_prompt: str,          # ADDED — was missing, referenced below but never received
 ) -> dict:
     """
     section: {"level", "title", "existing_content"} from parse_structure_docx()
@@ -29,10 +28,6 @@ def process_section(
 
     guidance_segments = [s for s in segments if s["type"] == "guidance"]
 
-    # No guidance at all — either untouched skeleton section (no <<>>, no
-    # text) or user already wrote final content with no marker. Either way,
-    # nothing for us to generate; leave existing_content as the section's
-    # content verbatim.
     if not guidance_segments:
         return {
             "level": section["level"],
@@ -71,20 +66,15 @@ def process_section(
             context = retriever.format_context(results)
             all_sources.extend(_to_source_records(results, "programme"))
 
-        # lane == "boilerplate" → context stays empty, LLM writes from
-        # guidance_text + global_prompt alone, no retrieval performed.
-
         return _generate_section_text(
             llm=llm,
             title=title,
             guidance=guidance_text,
             context=context,
             global_prompt=global_prompt,
-            system_prompt=system_prompt,
+            system_prompt=system_prompt,   # now correctly in scope via the outer function's parameter
         )
 
-    # Reassemble in original order — replace each guidance segment with
-    # its generated text, keep plain text segments verbatim.
     final_parts = []
     for seg in segments:
         if seg["type"] == "guidance":
@@ -115,9 +105,15 @@ def _to_source_records(results, lane: str) -> list[dict]:
     ]
 
 
-
-
-def _generate_section_text(llm, title: str, guidance: str, context: str, global_prompt: str, system_prompt: str, max_tokens: int | None) -> str:
+def _generate_section_text(
+    llm,
+    title: str,
+    guidance: str,
+    context: str,
+    global_prompt: str,
+    system_prompt: str,
+    max_tokens: int | None = None,   # FIXED — now has a default
+) -> str:
     max_tokens = max_tokens or settings.DEFAULT_MAX_TOKENS
     prompt_parts = [
         f"Section à rédiger : \"{title}\"",

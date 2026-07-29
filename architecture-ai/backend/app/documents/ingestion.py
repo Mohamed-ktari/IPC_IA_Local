@@ -50,6 +50,7 @@ def _get_chroma_collection():
 
 def ingest_document(
     file_path: str | Path,
+    original_filename : str | Path | None = None,
     uploaded_by: str = "unknown",
     max_pages: int | None = None,
     doc_type: DocType = DocType.unspecified,   # NEW — "memoire" | "programme" | "rc" | "unspecified"
@@ -71,6 +72,7 @@ def ingest_document(
     # Returns: document metadata dict
 
     file_path = Path(file_path)
+    original_filename = Path(original_filename)
     start = time.time()
 
     # 1. Generate unique document ID
@@ -114,6 +116,7 @@ def ingest_document(
     metadata = {
         "doc_id": doc_id,
         "file_name": file_path.name,
+        "original_file_name": original_filename.name if original_filename else None,
         "file_path": str(original_dest),
         "uploaded_by": uploaded_by,
         "uploaded_at": datetime.now(timezone.utc).isoformat(),

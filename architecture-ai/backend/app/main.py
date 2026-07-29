@@ -31,6 +31,7 @@ async def lifespan(app: FastAPI):
 
     # Create Postgres tables that don't exist yet (dev-only — no
     # migrations yet, see app/db/session.py for the Alembic note)
+    #drop_all_tables()  # DEV ONLY — drop all tables on startup (for now)
     create_all_tables()
     print("Database tables ready")
 

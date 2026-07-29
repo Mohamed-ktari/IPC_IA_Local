@@ -59,6 +59,7 @@ class ProjectDocument(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.project_id"), nullable=False)
     doc_id = Column(String, nullable=False)   # Chroma doc_id — not a real FK, lives outside Postgres
+    original_file_name = Column(String, nullable=True)  # optional, for display in UI
     doc_type = Column(String, nullable=False)  # "programme" | "memoire" | "rc" | "unspecified" | ...
     added_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
@@ -68,6 +69,7 @@ class ProjectDocument(Base):
         return {
             "id": str(self.id),
             "doc_id": self.doc_id,
+            "original_file_name": str(self.original_file_name) if self.original_file_name else None,
             "doc_type": self.doc_type,
             "added_at": self.added_at.isoformat() if self.added_at else None,
         }

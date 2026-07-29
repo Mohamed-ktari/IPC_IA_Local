@@ -34,6 +34,7 @@ class ProjectUpdate(BaseModel):
 
 class AddDocumentRequest(BaseModel):
     doc_id: str
+    original_file_name: str | None = None
     doc_type: DocType
 
 
@@ -76,22 +77,64 @@ def update_project(
     return project.to_dict()
 
 
+from fastapi import UploadFile, File, Form
+from app.documents.ingestion import ingest_document
+import tempfile
+import shutil
+from pathlib import Path
+
+
 @router.post("/{project_id}/documents")
-def add_document(
-    project_id: uuid.UUID, payload: AddDocumentRequest, db: Session = Depends(get_db)
+async def add_document(
+    project_id: uuid.UUID,
+    file: UploadFile = File(...),
+    doc_type: DocType = Form(...),
+    db: Session = Depends(get_db),
 ):
+    # 1. Check project exists
     project = db.query(Project).filter(Project.project_id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
+    # 2. Validate file type
+    ALLOWED_SUFFIXES = (".pdf", ".docx", ".doc")
+    if not file.filename.lower().endswith(ALLOWED_SUFFIXES):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type. Supported: {', '.join(ALLOWED_SUFFIXES)}"
+        )
+
+    # 3. Save temporarily and ingest
+    suffix = Path(file.filename).suffix.lower()
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            shutil.copyfileobj(file.file, tmp)
+            tmp_path = Path(tmp.name)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save upload: {e}")
+
+    try:
+        metadata = ingest_document(
+            file_path=tmp_path,
+            original_filename=file.filename,
+            uploaded_by="api_user",
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {e}")
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+    # 4. Attach to project
     doc = ProjectDocument(
         project_id=project_id,
-        doc_id=payload.doc_id,
-        doc_type=payload.doc_type.value,
+        doc_id=metadata["doc_id"],
+        doc_type=doc_type.value,
+        original_file_name=file.filename,   # or metadata.get("original_file_name")
     )
     db.add(doc)
     db.commit()
     db.refresh(project)
+
     return project.to_dict()
 
 
@@ -108,3 +151,19 @@ def remove_document(project_id: uuid.UUID, doc_id: str, db: Session = Depends(ge
     db.delete(doc)
     db.commit()
     return {"deleted": True, "project_id": str(project_id), "doc_id": doc_id}
+
+
+@router.delete("/{project_id}")
+def delete_project(project_id: uuid.UUID, db: Session = Depends(get_db)):
+    project = db.query(Project).filter(Project.project_id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    db.delete(project)
+    db.commit()
+
+    return {
+        "deleted": True,
+        "project_id": str(project_id),
+        "message": "Project deleted successfully"
+    }
