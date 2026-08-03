@@ -93,6 +93,23 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
     networks:
       - ai-network
+
+    
+  # ────────────────────────────────────────
+  # SEARXNG — self-hosted web search
+  # ────────────────────────────────────────
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    container_name: searxng
+    restart: unless-stopped
+    volumes:
+      - ./searxng:/etc/searxng:rw
+      - searxng_cache:/var/cache/searxng
+    environment:
+      - SEARXNG_BASE_URL=http://searxng:8080/
+      - SEARXNG_SECRET=${SEARXNG_SECRET:-change-this-secret}
+    networks:
+      - ai-network
   
   # ────────────────────────────────────────
   # CADDY — Reverse proxy
@@ -127,6 +144,7 @@ volumes:
   caddy_data:
   caddy_config:
   open_webui_data:
+  searxng_cache:
 
 # ────────────────────────────────────────
 # NETWORK — isolated internal bridge

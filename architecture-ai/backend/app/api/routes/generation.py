@@ -73,10 +73,13 @@ def run_generation(payload: RunGenerationRequest, db: Session = Depends(get_db))
 
     generation_queue.enqueue(
         run_generation_job,
-        structure_docx_path=str(structure_path),
-        output_path=str(output_path),
-        project_id=payload.project_id,
-        global_prompt=payload.global_prompt,
+        kwargs={
+            "structure_docx_path": str(structure_path),
+            "output_path": str(output_path),
+            "project_id": payload.project_id,
+            "global_prompt": payload.global_prompt,
+            "job_id": payload.job_id,
+        },
         job_id=payload.job_id,
         job_timeout="30m",  # generation over many sections can be slow on a 14B model
     )

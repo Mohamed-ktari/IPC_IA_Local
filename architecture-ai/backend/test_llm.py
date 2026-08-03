@@ -511,5 +511,9 @@ if __name__ == "__main__":
     #test_analysis_rag()
     #test_extraction_agent()
     #generate_excel_file()
-    test_rc_agent()
+    #test_rc_agent()
+    from docx import Document
+    doc = Document("./app/output/templates/memoire_template.docx")
+    for s in doc.styles:
+        print(s.name)
     

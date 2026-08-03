@@ -15,8 +15,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 from pydantic import BaseModel
+from app.documents.doc_type import DocType
 
 from app.documents.ingestion import (
     ingest_document,
@@ -43,6 +44,7 @@ class DocumentMetadata(BaseModel):
     chunk_count: int
     ingestion_duration_seconds: float
     status: str
+    doc_type: DocType
 
 
 class UploadResponse(BaseModel):
@@ -64,8 +66,8 @@ class DeleteResponse(BaseModel):
 # Routes
 # ----------------------------------------------------------------
 
-@router.post("/upload", response_model=UploadResponse)
-async def upload_document(file: UploadFile = File(...)):
+@router.post("/upload", response_model=UploadResponse,)
+async def upload_document(file: UploadFile = File(...),doc_type: DocType = Form(...)):
     # Receives a file upload, saves it temporarily, then runs
     # the full ingestion pipeline (parse → chunk → embed → store).
     #
@@ -73,7 +75,6 @@ async def upload_document(file: UploadFile = File(...)):
     # error) AND in ingestion.py's _parse_document (defense in depth —
     # any other caller of ingest_document() is still protected even if
     # it bypasses this route).
-
     ALLOWED_SUFFIXES = (".pdf", ".docx", ".doc")
 
     if not file.filename.lower().endswith(ALLOWED_SUFFIXES):
@@ -93,12 +94,13 @@ async def upload_document(file: UploadFile = File(...)):
             tmp_path = Path(tmp.name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save upload: {e}")
-
+    
     try:
         metadata = ingest_document(
         file_path=tmp_path,
         original_filename=file.filename,
         uploaded_by="api_user",
+        doc_type= doc_type,  # Pass the doc_type to the ingestion function
     )
     except NotImplementedError as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -118,6 +118,7 @@ async def add_document(
             file_path=tmp_path,
             original_filename=file.filename,
             uploaded_by="api_user",
+            doc_type=doc_type,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {e}")

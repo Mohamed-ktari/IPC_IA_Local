@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Details</title>
+    <title>Détails du projet</title>
 
     <style>
         .container {
@@ -203,42 +203,42 @@
 <body>
 
 <div class="container">
-    <div id="pageLoading">Loading project...</div>
+    <div id="pageLoading">Chargement du projet...</div>
 
     <div id="content" style="display: none;">
         <!-- Project Info -->
         <div class="section">
-            <h2 id="projectTitle">Project Details</h2>
+            <h2 id="projectTitle">Détails du projet</h2>
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Project ID</label>
+                    <label>ID du projet</label>
                     <input type="text" id="projectId" disabled>
                 </div>
 
                 <div class="form-group">
-                    <label>Status</label>
+                    <label>Statut</label>
                     <select id="status">
-                        <option value="pending">Pending</option>
-                        <option value="active">Active</option>
-                        <option value="completed">Completed</option>
+                        <option value="pending">En attente</option>
+                        <option value="active">Actif</option>
+                        <option value="completed">Terminé</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Name</label>
+                    <label>Nom</label>
                     <input type="text" id="name">
                 </div>
 
                 <div class="form-group">
-                    <label>Client Name</label>
+                    <label>Nom du client</label>
                     <input type="text" id="clientName">
                 </div>
             </div>
 
             <div class="actions">
-                <button class="btn btn-primary" onclick="saveProject()">Save Changes</button>
-                <a href="projects.html" class="btn btn-secondary">← Back to Projects</a>
+                <button class="btn btn-primary" onclick="saveProject()">Enregistrer les modifications</button>
+                <a href="projects.html" class="btn btn-secondary">← Retour aux projets</a>
             </div>
 
             <div id="saveMessage" class="message"></div>
@@ -246,13 +246,13 @@
 
         <!-- Documents -->
         <div class="section">
-            <h3>Documents in this Project</h3>
+            <h3>Documents de ce projet</h3>
 
             <table>
                 <thead>
                     <tr>
-                        <th>Doc ID</th>
-                        <th>Original File Name</th>
+                        <th>ID du document</th>
+                        <th>Nom de fichier d'origine</th>
                         <th>Type</th>
                         <th>Action</th>
                     </tr>
@@ -261,25 +261,25 @@
             </table>
 
             <div id="noDocs" style="display:none; padding:20px; color:#666;">
-                No documents linked to this project yet.
+                Aucun document lié à ce projet pour le moment.
             </div>
 
             <!-- Add Document -->
             <div class="add-box">
-                <h4>Upload & Add Documents to Project</h4>
+                <h4>Téléverser et ajouter des documents au projet</h4>
 
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <label>Document Type (applied to all selected files)</label>
+                    <label>Type de document (appliqué à tous les fichiers sélectionnés)</label>
                     <select id="docType">
-                        <option value="memoire">Memoire</option>
+                        <option value="memoire">Mémoire</option>
                         <option value="rc">RC</option>
                         <option value="programme">Programme</option>
-                        <option value="unspecified">Other</option>
+                        <option value="unspecified">Autre</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Select Files</label>
+                    <label>Sélectionner des fichiers</label>
                     <input
                         type="file"
                         id="projectFiles"
@@ -292,14 +292,14 @@
 
                 <div style="margin-top: 18px;">
                     <button class="btn btn-success" id="uploadAddBtn" onclick="uploadAndAddDocuments()">
-                        Upload & Add to Project
+                        Téléverser et ajouter au projet
                     </button>
                 </div>
 
                 <!-- Upload Spinner -->
                 <div id="uploadLoading" style="display:none; text-align:center; margin-top:25px;">
                     <div class="spinner"></div>
-                    <p>Uploading documents...</p>
+                    <p>Téléversement des documents...</p>
                     <div id="currentFile" style="font-weight:600; color:#007bff; margin-top:6px;"></div>
                 </div>
 
@@ -318,7 +318,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const projectId = urlParams.get("id");
 
 if (!projectId) {
-    alert("No project ID provided");
+    alert("Aucun ID de projet fourni");
     window.location.href = "projects.html";
 }
 
@@ -339,12 +339,12 @@ async function init() {
 
     } catch (err) {
         console.error(err);
-        document.getElementById("pageLoading").innerHTML = "Failed to load project.";
+        document.getElementById("pageLoading").innerHTML = "Échec du chargement du projet.";
     }
 }
 
 function renderProject() {
-    document.getElementById("projectTitle").textContent = currentProject.name || "Project Details";
+    document.getElementById("projectTitle").textContent = currentProject.name || "Détails du projet";
     document.getElementById("projectId").value = currentProject.project_id || "";
     document.getElementById("name").value = currentProject.name || "";
     document.getElementById("clientName").value = currentProject.client_name || "";
@@ -374,7 +374,7 @@ function renderDocuments() {
             <td>
                 <button class="btn btn-danger" style="padding:6px 12px; font-size:13px;"
                         onclick="removeDocument('${doc.doc_id}')">
-                    Remove
+                    Retirer
                 </button>
             </td>
         `;
@@ -393,14 +393,14 @@ document.getElementById("projectFiles").addEventListener("change", function () {
         return;
     }
 
-    let html = `<strong>${files.length} file(s) selected:</strong><ul style="margin:8px 0 0 0; padding-left:20px;">`;
+    let html = `<strong>${files.length} fichier(s) sélectionné(s) :</strong><ul style="margin:8px 0 0 0; padding-left:20px;">`;
     const displayCount = Math.min(files.length, 10);
 
     for (let i = 0; i < displayCount; i++) {
         html += `<li>${files[i].name}</li>`;
     }
     if (files.length > 10) {
-        html += `<li>... and ${files.length - 10} more</li>`;
+        html += `<li>... et ${files.length - 10} de plus</li>`;
     }
     html += `</ul>`;
 
@@ -421,7 +421,7 @@ async function uploadAndAddDocuments() {
     messageEl.style.display = "none";
 
     if (files.length === 0) {
-        messageEl.textContent = "Please select at least one file.";
+        messageEl.textContent = "Veuillez sélectionner au moins un fichier.";
         messageEl.classList.add("error");
         return;
     }
@@ -429,7 +429,7 @@ async function uploadAndAddDocuments() {
     // UI loading state
     loading.style.display = "block";
     uploadBtn.disabled = true;
-    uploadBtn.textContent = "Uploading...";
+    uploadBtn.textContent = "Téléversement...";
 
     let successCount = 0;
     let errorCount = 0;
@@ -437,7 +437,7 @@ async function uploadAndAddDocuments() {
 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        currentFileEl.textContent = `Processing: ${file.name} (${i + 1}/${files.length})`;
+        currentFileEl.textContent = `Traitement : ${file.name} (${i + 1}/${files.length})`;
 
         try {
             const formData = new FormData();
@@ -451,7 +451,7 @@ async function uploadAndAddDocuments() {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.detail || `Failed (${res.status})`);
+                throw new Error(errData.detail || `Échec (${res.status})`);
             }
 
             // The endpoint returns the updated project → use it
@@ -471,11 +471,11 @@ async function uploadAndAddDocuments() {
     // Finished
     loading.style.display = "none";
     uploadBtn.disabled = false;
-    uploadBtn.textContent = "Upload & Add to Project";
+    uploadBtn.textContent = "Téléverser et ajouter au projet";
     currentFileEl.textContent = "";
 
     // Show summary
-    let summary = `<strong>Finished</strong><br>${successCount} succeeded, ${errorCount} failed.<br><br>`;
+    let summary = `<strong>Terminé</strong><br>${successCount} réussi(s), ${errorCount} échec(s).<br><br>`;
     summary += results.join("<br>");
 
     messageEl.innerHTML = summary;
@@ -513,18 +513,18 @@ async function saveProject() {
 
         document.getElementById("projectTitle").textContent = currentProject.name;
 
-        messageEl.textContent = "Project updated successfully!";
+        messageEl.textContent = "Projet mis à jour avec succès !";
         messageEl.classList.add("success");
 
     } catch (err) {
         console.error(err);
-        messageEl.textContent = "Failed to update project.";
+        messageEl.textContent = "Échec de la mise à jour du projet.";
         messageEl.classList.add("error");
     }
 }
 
 async function removeDocument(docId) {
-    if (!confirm("Remove this document from the project?")) return;
+    if (!confirm("Retirer ce document du projet ?")) return;
 
     try {
         const res = await fetch(`${API_BASE}/projects/${projectId}/documents/${docId}`, {
@@ -539,7 +539,7 @@ async function removeDocument(docId) {
 
     } catch (err) {
         console.error(err);
-        alert("Failed to remove document.");
+        alert("Échec du retrait du document.");
     }
 }
 

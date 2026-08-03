@@ -325,6 +325,84 @@ class Retriever:
         results = self.retrieve(query, top_k=top_k, doc_id=doc_id)
         context = self.format_context(results, min_score=min_score)
         return context, results
+    # ------------------------------------------------------------
+    # Ephemeral retrieval — for documents that were never ingested
+    # ------------------------------------------------------------
+    # Used by callers that need RAG on a document that isn't (and won't
+    # be) persisted through ingest_document() — e.g. RCAgent's structure
+    # fallback. No ChromaDB write, no bm25_chunks.json on disk. Everything
+    # is built and discarded within this call. Reuses the same hybrid
+    # merge/normalize logic as the persisted path.
+
+    def retrieve_ephemeral(
+        self,
+        query: str,
+        chunks: list[dict],
+        top_k: int | None = None,
+    ) -> list[RetrievalResult]:
+        top_k = top_k or settings.RETRIEVAL_TOP_K
+        if not chunks:
+            return []
+
+        semantic_results = self._semantic_search_ephemeral(query, chunks)
+        bm25_results = self._bm25_search_ephemeral(query, chunks)
+
+        return self._merge_results(semantic_results, bm25_results, top_k)
+
+    def _semantic_search_ephemeral(
+        self, query: str, chunks: list[dict]
+    ) -> list[RetrievalResult]:
+        query_embedding = self.embedder.embed(query)
+        chunk_embeddings = self.embedder.embed_batch([c["text"] for c in chunks])
+
+        results = []
+        for chunk, emb in zip(chunks, chunk_embeddings):
+            similarity = self._cosine_similarity(query_embedding, emb)
+            results.append(RetrievalResult(
+                text=chunk["text"],
+                doc_id="ephemeral",
+                file_name="ephemeral",
+                chunk_index=chunk["index"],
+                similarity_score=similarity,
+                source="semantic",
+            ))
+        results.sort(key=lambda r: r.similarity_score, reverse=True)
+        return results
+
+    def _bm25_search_ephemeral(
+        self, query: str, chunks: list[dict]
+    ) -> list[RetrievalResult]:
+        chunks = [c for c in chunks if c["word_count"] >= 30]
+        if not chunks:
+            return []
+
+        bm25 = self._build_bm25_index(chunks)
+        tokenized_query = query.lower().split()
+        raw_scores = bm25.get_scores(tokenized_query)
+
+        results = []
+        for i, score in enumerate(raw_scores):
+            if score > 0:
+                results.append(RetrievalResult(
+                    text=chunks[i]["text"],
+                    doc_id="ephemeral",
+                    file_name="ephemeral",
+                    chunk_index=chunks[i]["index"],
+                    similarity_score=0.0,
+                    bm25_score=score,
+                    source="bm25",
+                ))
+        results.sort(key=lambda r: r.bm25_score, reverse=True)
+        return results
+
+    @staticmethod
+    def _cosine_similarity(a: list[float], b: list[float]) -> float:
+        dot = sum(x * y for x, y in zip(a, b))
+        norm_a = math.sqrt(sum(x * x for x in a))
+        norm_b = math.sqrt(sum(x * x for x in b))
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return dot / (norm_a * norm_b)
 
 
 _retriever: Retriever | None = None

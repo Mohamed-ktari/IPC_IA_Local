@@ -87,7 +87,8 @@ class GenerationAgent(BaseAgent):
                     "total": total,
                     "current_section": result["title"],
                 })
-
+        print("**************************************************")
+        print(result["content"])
         fill_memoire_docx(
             structure_docx_path=structure_docx_path,
             filled_sections=[
@@ -132,10 +133,18 @@ def run_generation_job(
         # function by path ("app.agents.generation_agent.run_generation_job"),
         # so it must not depend on any in-memory state from the API process.
         agent = GenerationAgent()
-        agent.run(
-            structure_docx_path=structure_docx_path,
-            output_path=output_path,
-            project_id=project_id,
-            global_prompt=global_prompt,
-            job_id=job_id,
-        )
+        try:
+            agent.run(
+                structure_docx_path=structure_docx_path,
+                output_path=output_path,
+                project_id=project_id,
+                global_prompt=global_prompt,
+                job_id=job_id,
+            )
+        except Exception as e:
+            if job_id:
+                _set_job_status(job_id, {
+                    "status": "error",
+                    "error": str(e),
+                })
+            raise

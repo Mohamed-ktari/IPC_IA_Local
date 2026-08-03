@@ -13,17 +13,19 @@ function createNav() {
     nav.innerHTML = `
         <div class="nav-container">
             <a href="../documents/upload.html" class="nav-btn ${currentPage === 'upload.html' ? 'active' : ''}">
-                Upload Documents
+                Téléverser des documents
             </a>
             <a href="../documents/documents.html" class="nav-btn ${currentPage === 'documents.html' ? 'active' : ''}">
-                View Documents
+                Voir les documents
             </a>
             <a href="../projects/projects.html" class="nav-btn ${currentPage === 'projects.html' ? 'active' : ''}">
-                Projects
+                Projets
             </a>
-
             <a href="../rc/rc-analyze.html" class="nav-btn ${currentPage === 'rc-analyze.html' ? 'active' : ''}">
-                RC Analyze
+                Analyse RC
+            </a>
+            <a href="../memoire/memoire-generation.html" class="nav-btn ${currentPage === 'memoire-generation.html' ? 'active' : ''}">
+                Mémoire
             </a>
         </div>
     `;

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Project</title>
+    <title>Créer un projet</title>
 
     <style>
         .container {
@@ -111,24 +111,24 @@
 <body>
 
 <div class="container">
-    <h2>Create Project</h2>
+    <h2>Créer un projet</h2>
 
     <form id="createForm">
         <div class="form-group">
-            <label for="name">Project Name *</label>
-            <input type="text" id="name" required placeholder="e.g. Projet Mémoire 2026">
+            <label for="name">Nom du projet *</label>
+            <input type="text" id="name" required placeholder="ex. : Projet Mémoire 2026">
         </div>
 
         <div class="form-group">
-            <label for="clientName">Client Name</label>
-            <input type="text" id="clientName" placeholder="e.g. Client ABC">
+            <label for="clientName">Nom du client</label>
+            <input type="text" id="clientName" placeholder="ex. : Client ABC">
         </div>
 
         <div class="actions">
             <button type="submit" class="btn btn-primary" id="submitBtn">
-                Create Project
+                Créer le projet
             </button>
-            <a href="projects.html" class="btn btn-secondary">Cancel</a>
+            <a href="projects.html" class="btn btn-secondary">Annuler</a>
         </div>
     </form>
 
@@ -151,13 +151,13 @@ form.addEventListener("submit", async function (e) {
     const clientName = document.getElementById("clientName").value.trim();
 
     if (!name) {
-        showMessage("Project name is required.", "error");
+        showMessage("Le nom du projet est obligatoire.", "error");
         return;
     }
 
     // Loading state
     submitBtn.disabled = true;
-    submitBtn.textContent = "Creating...";
+    submitBtn.textContent = "Création...";
     messageEl.style.display = "none";
 
     try {
@@ -174,12 +174,12 @@ form.addEventListener("submit", async function (e) {
 
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
-            throw new Error(err.detail || `Error ${res.status}`);
+            throw new Error(err.detail || `Erreur ${res.status}`);
         }
 
         const project = await res.json();
 
-        showMessage("Project created successfully! Redirecting...", "success");
+        showMessage("Projet créé avec succès ! Redirection...", "success");
 
         // Redirect to the project details page after a short delay
         setTimeout(() => {
@@ -188,9 +188,9 @@ form.addEventListener("submit", async function (e) {
 
     } catch (err) {
         console.error(err);
-        showMessage(err.message || "Failed to create project.", "error");
+        showMessage(err.message || "Échec de la création du projet.", "error");
         submitBtn.disabled = false;
-        submitBtn.textContent = "Create Project";
+        submitBtn.textContent = "Créer le projet";
     }
 });
 

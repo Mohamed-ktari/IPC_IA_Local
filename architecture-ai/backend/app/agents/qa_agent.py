@@ -27,7 +27,7 @@ from app.documents.retrieval import get_retriever
 from app.conversations import store as conversation_store
 from app.config import settings
 
-PROMPTS_DIR = Path(__file__).resolve().parent.parent / "llm" / "prompts"
+PROMPTS_DIR = Path(__file__).resolve().parent.parent / "llm" / "prompts" / "QA"
 REWRITE_HISTORY_TURNS = 6  # last N messages fed to the query-rewrite step
 
 
@@ -40,7 +40,7 @@ class QAAgent(BaseAgent):
     )
 
     def start_conversation(self, doc_ids: list[str]) -> str:
-        return conversation_store.create_conversation(doc_id)
+        return conversation_store.create_conversation(doc_ids)
 
     def ask(self, conversation_id: str, question: str) -> dict:
         conversation = conversation_store.get_conversation(conversation_id)

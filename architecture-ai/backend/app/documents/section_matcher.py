@@ -111,6 +111,7 @@ def _normalize(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text
 
+normalize_label = _normalize
 
 def _extract_headings(markdown_text: str) -> list[dict]:
     headings = []
@@ -306,7 +307,7 @@ def match_section(
         "text": section_text,
     }
 
-def is_section_good_enough(section: dict | None, min_words: int = 120) -> bool:
+def is_section_good_enough(section: dict | None, min_words: int = 30) -> bool:
     """Return True only if the match looks complete enough to trust."""
     if section is None:
         return False

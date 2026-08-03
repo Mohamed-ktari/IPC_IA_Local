@@ -9,9 +9,6 @@
 #      a dictionary of known section-name variants (structure de mémoire,
 #      critères de jugement, critères de sélection, ...).
 #
-# No RAG involved: the summary needs the whole document, and the structure
-# is a single structural element found via heading match, not semantic
-# retrieval. See section_matcher.py for why.
 #
 # This agent returns structured data only — it does NOT write the Word
 # file itself. That's the caller's/service layer's job.
@@ -23,10 +20,38 @@ from pathlib import Path
 
 from app.agents.base_agent import BaseAgent, AgentResponse
 from app.documents.chunker import Chunker
-from app.documents.section_matcher import match_section, load_sections_dict
+from app.documents.section_matcher import match_section, load_sections_dict, is_section_good_enough, normalize_label
+from app.documents.retrieval import get_retriever
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "llm" / "prompts" / "RC"
 PAGE_MARKER_RE = re.compile(r"<!--\s*page\s+\d+\s*-->", re.IGNORECASE)
+
+
+# Hardcoded per-category queries for RAG fallback — written as natural
+# French sentences (not raw label/variant lists) for embedding quality,
+# while still containing the dictionary vocabulary so BM25 gets literal
+# keyword overlap too.
+STRUCTURE_FALLBACK_QUERIES = {
+    "structure_memoire": (
+        "Structure, plan, sommaire et contenu attendu du mémoire "
+        "technique que le candidat doit produire, avec le détail des "
+        "chapitres et parties à rédiger."
+    ),
+    "criteres_jugement": (
+        "Critères de jugement, d'évaluation et de notation des offres, "
+        "pondération et modalités d'attribution du marché."
+    ),
+    "criteres_selection": (
+        "Critères de sélection des candidatures, conditions de "
+        "recevabilité et capacités techniques et professionnelles "
+        "exigées des candidats."
+    ),
+}
+DEFAULT_FALLBACK_CATEGORY = "structure_memoire"
+
+RETRIEVAL_FALLBACK_TOP_K = 3
+RETRIEVAL_FALLBACK_MIN_SCORE = 0.25
+RETRIEVAL_FALLBACK_MIN_WORDS = 30  # same floor as is_section_good_enough
 
 
 class RCAgentResponse:
@@ -146,37 +171,23 @@ class RCAgent(BaseAgent):
             target_hint=target_section_label,
             sections_dict=self.sections_dict,
         )
+        if is_section_good_enough(match):
+            return self._structure_from_match(match)
 
-        if match is None:
+        fallback_text = self._retrieve_section_fallback(
+            document_markdown, target_section_label
+        )
+        if not fallback_text:
             return {
                 "found": False,
                 "heading": None,
                 "match_score": None,
                 "raw_text": None,
                 "structure": None,
+                "source": "fallback_failed",
             }
-        user_message = (
-            f"Voici le texte de la section « {match['heading']} » extraite "
-            f"du règlement de consultation :\n\n{match['text']}\n\n"
-            "Génère la structure du mémoire technique attendue."
-        )
-        response = self.chat(
-            user_message=user_message,
-            temperature=0.0,
-            max_tokens=1500,
-            system_prompt_override=self._load_prompt("rc_structure"),
-        )
 
-        structure_text = self._ensure_annex_chapter(response.content)
-
-        return {
-            "found": True,
-            "heading": match["heading"],
-            "match_score": match["score"],
-            "raw_text": match["text"],
-            "structure": structure_text,
-        }
-
+        return self._structure_from_fallback(fallback_text)
     # ----------------------------------------------------------------
     # Step 3 — Summary (map-reduce, emphasis threaded through both steps)
     # ----------------------------------------------------------------
@@ -255,3 +266,88 @@ class RCAgent(BaseAgent):
         if not prompt_file.exists():
             raise FileNotFoundError(f"Missing prompt file: {prompt_file}")
         return prompt_file.read_text(encoding="utf-8").strip()
+
+    def _resolve_fallback_category(self, target_section_label: str | None) -> str:
+        if target_section_label:
+            norm_hint = normalize_label(target_section_label)
+            for key, entry in self.sections_dict.items():
+                all_names = [entry["label"]] + entry["variants"]
+                if any(
+                    norm_hint == normalize_label(n) or norm_hint in normalize_label(n)
+                    for n in all_names
+                ):
+                    return key
+        return DEFAULT_FALLBACK_CATEGORY
+
+    def _retrieve_section_fallback(
+        self, document_markdown: str, target_section_label: str | None
+    ) -> str | None:
+        category = self._resolve_fallback_category(target_section_label)
+        query = STRUCTURE_FALLBACK_QUERIES[category]
+
+        chunks = Chunker().chunk_for_retrieval(document_markdown)
+        if not chunks:
+            return None
+
+        results = get_retriever().retrieve_ephemeral(
+            query, chunks, top_k=RETRIEVAL_FALLBACK_TOP_K
+        )
+        results = [r for r in results if r.hybrid_score >= RETRIEVAL_FALLBACK_MIN_SCORE]
+        if not results:
+            return None
+
+        # Document order, not score order — RC sections read linearly and
+        # concatenating out of order would produce an incoherent prompt.
+        results.sort(key=lambda r: r.chunk_index)
+        combined = "\n\n".join(r.text for r in results)
+
+        if len(combined.split()) < RETRIEVAL_FALLBACK_MIN_WORDS:
+            return None
+
+        return combined
+
+    def _generate_structure_text(self, section_text: str, heading: str | None) -> str:
+        if heading:
+            intro = (
+                f"Voici le texte de la section « {heading} » extraite "
+                f"du règlement de consultation :"
+            )
+        else:
+            intro = (
+                "Voici des extraits pertinents du règlement de consultation "
+                "concernant la structure du mémoire technique attendu "
+                "(la section n'a pas pu être identifiée directement par "
+                "son titre — ces extraits ont été sélectionnés par "
+                "recherche) :"
+            )
+        user_message = (
+            f"{intro}\n\n{section_text}\n\n"
+            "Génère la structure du mémoire technique attendue."
+        )
+        response = self.chat(
+            user_message=user_message,
+            temperature=0.0,
+            max_tokens=1500,
+            system_prompt_override=self._load_prompt("rc_structure"),
+        )
+        return self._ensure_annex_chapter(response.content)
+
+    def _structure_from_match(self, match: dict) -> dict:
+        return {
+            "found": True,
+            "heading": match["heading"],
+            "match_score": match["score"],
+            "raw_text": match["text"],
+            "structure": self._generate_structure_text(match["text"], match["heading"]),
+            "source": "heading_match",
+        }
+
+    def _structure_from_fallback(self, fallback_text: str) -> dict:
+        return {
+            "found": True,
+            "heading": None,
+            "match_score": None,
+            "raw_text": fallback_text,
+            "structure": self._generate_structure_text(fallback_text, heading=None),
+            "source": "rag_fallback",
+        }

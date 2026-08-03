@@ -56,7 +56,7 @@ class AskResponse(BaseModel):
 
 class ConversationHistoryResponse(BaseModel):
     conversation_id: str
-    doc_id: str
+    doc_ids: list[str]
     created_at: float
     messages: list[dict]
 
@@ -71,7 +71,7 @@ async def start_conversation(request: StartConversationRequest):
         if get_document_metadata(doc_id) is None:
             raise HTTPException(status_code=404, detail=f"Document '{doc_id}' not found.")
     agent = QAAgent()
-    conversation_id = agent.start_conversation(request.doc_id)
+    conversation_id = agent.start_conversation(request.doc_ids)
 
     return StartConversationResponse(
         conversation_id=conversation_id,
