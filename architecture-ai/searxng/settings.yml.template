@@ -4,7 +4,7 @@
 use_default_settings: true
 
 server:
-  secret_key: "8ggQwCJQXOKfjVXlkIAVEPwdahmjfl5"
+  secret_key: "${SEARXNG_SECRET}"
   image_proxy: true
   limiter: false
 
