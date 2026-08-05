@@ -79,7 +79,6 @@ services:
     networks:
       - ai-network
 
-
   # ────────────────────────────────────────
   # BACKEND — FastAPI app (agents, RAG, ingestion)
   # ────────────────────────────────────────
@@ -128,6 +127,21 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+
+  # ────────────────────────────────────────
+  # FRONTEND — static HTML/CSS/JS app, served by Nginx
+  # ────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: unless-stopped
+    # No host port mapping needed — only Caddy talks to this container,
+    # over the internal ai-network, same pattern as backend/chromadb/etc.
+    networks:
+      - ai-network
+
   # ────────────────────────────────────────
   # Open WebUI — Frontend for interacting with the backend and LLMs
   # ────────────────────────────────────────
