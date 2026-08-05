@@ -15,8 +15,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 from pydantic import BaseModel
+from app.documents.doc_type import DocType
 
 from app.documents.ingestion import (
     ingest_document,
@@ -35,6 +36,7 @@ router = APIRouter()
 class DocumentMetadata(BaseModel):
     doc_id: str
     file_name: str
+    original_file_name: str | None = None
     uploaded_by: str
     uploaded_at: str
     total_pages: int
@@ -42,6 +44,7 @@ class DocumentMetadata(BaseModel):
     chunk_count: int
     ingestion_duration_seconds: float
     status: str
+    doc_type: DocType
 
 
 class UploadResponse(BaseModel):
@@ -63,41 +66,47 @@ class DeleteResponse(BaseModel):
 # Routes
 # ----------------------------------------------------------------
 
-@router.post("/upload", response_model=UploadResponse)
-async def upload_document(file: UploadFile = File(...)):
+@router.post("/upload", response_model=UploadResponse,)
+async def upload_document(file: UploadFile = File(...),doc_type: DocType = Form(default=DocType.unspecified)):
     # Receives a file upload, saves it temporarily, then runs
     # the full ingestion pipeline (parse → chunk → embed → store).
     #
-    # Currently only PDF is supported (enforced inside ingestion.py)
+    # Supported types are enforced here at the boundary (fast, clear
+    # error) AND in ingestion.py's _parse_document (defense in depth —
+    # any other caller of ingest_document() is still protected even if
+    # it bypasses this route).
+    ALLOWED_SUFFIXES = (".pdf", ".docx", ".doc")
 
-    if not file.filename.lower().endswith(".pdf"):
+    if not file.filename.lower().endswith(ALLOWED_SUFFIXES):
         raise HTTPException(
             status_code=400,
-            detail="Only PDF files are currently supported."
+            detail=f"Unsupported file type. Supported: {', '.join(ALLOWED_SUFFIXES)}"
         )
 
     # Save uploaded file to a temporary location first.
     # ingestion.py will copy it into its own managed storage (data/uploads/<doc_id>/)
+    suffix = Path(file.filename).suffix.lower()
     try:
         with tempfile.NamedTemporaryFile(
-            delete=False, suffix=".pdf"
+            delete=False, suffix=suffix
         ) as tmp:
             shutil.copyfileobj(file.file, tmp)
             tmp_path = Path(tmp.name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save upload: {e}")
-
+    
     try:
         metadata = ingest_document(
-            file_path=tmp_path,
-            uploaded_by="api_user",  # TODO: replace with real user once auth exists
-        )
+        file_path=tmp_path,
+        original_filename=file.filename,
+        uploaded_by="api_user",
+        doc_type= doc_type,  # Pass the doc_type to the ingestion function
+    )
     except NotImplementedError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {e}")
     finally:
-        # Clean up the temporary file regardless of success/failure
         tmp_path.unlink(missing_ok=True)
 
     return UploadResponse(

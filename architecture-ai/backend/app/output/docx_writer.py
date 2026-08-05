@@ -100,3 +100,174 @@ def generate_memoire_docx(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(output_path)
     return output_path
+
+
+
+
+    # --- appended to docx_writer.py ---
+# Fills an EXISTING structure doc's sections with generated content, as
+# opposed to generate_memoire_docx() which builds the empty skeleton from
+# scratch. Used by generation_agent, never by rc_agent.
+#
+# Matching is done by (level, title, occurrence_index) rather than pure
+# title string, so two sections that happen to share a title (rare, but
+# possible after user edits) each still get their own generated content
+# rather than the first match winning twice.
+
+def fill_memoire_docx(
+    structure_docx_path: str | Path,
+    filled_sections: list[dict],
+    output_path: str | Path,
+) -> Path:
+    structure_docx_path = Path(structure_docx_path)
+    output_path = Path(output_path)
+
+    doc = Document(structure_docx_path)
+
+    # Cache paragraphs and heading positions ONCE instead of re-querying
+    # doc.paragraphs repeatedly inside the loop — doc.paragraphs rebuilds
+    # from the XML tree on every access, which gets progressively slower
+    # as more paragraphs get inserted per section.
+    all_paragraphs = list(doc.paragraphs)
+    heading_positions = [
+        idx for idx, p in enumerate(all_paragraphs)
+        if _heading_level_for_writer(p) is not None
+    ]
+
+    if len(heading_positions) != len(filled_sections):
+        raise ValueError(
+            f"Structure mismatch: found {len(heading_positions)} headings "
+            f"in the document but received {len(filled_sections)} filled "
+            f"sections. The document may have been edited between parsing "
+            f"and filling — re-parse before filling."
+        )
+
+    for pos, section in zip(reversed(heading_positions), reversed(filled_sections)):
+        heading_para = all_paragraphs[pos]
+
+        next_pos = next((p for p in heading_positions if p > pos), None)
+        end = next_pos if next_pos is not None else len(all_paragraphs)
+
+        for p in all_paragraphs[pos + 1:end]:
+            p._element.getparent().remove(p._element)
+
+        _insert_markdown_content(heading_para, section["content"])
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    doc.save(output_path)
+    return output_path
+
+def _heading_level_for_writer(paragraph) -> int | None:
+    # Same detection logic as docx_parser._heading_level — duplicated
+    # (not imported) to keep docx_writer.py's existing zero-dependency-
+    # on-docx_parser property intact, since rc_agent must never be
+    # affected by anything generation_agent needs.
+    import re
+    style_name = paragraph.style.name if paragraph.style else ""
+    m = re.match(r"^Heading (\d+)$", style_name)
+    if m:
+        return int(m.group(1))
+    m2 = re.match(r"^Titre\s*(\d+)$", style_name, re.IGNORECASE)
+    if m2:
+        return int(m2.group(1))
+    return None
+
+# --- addition to docx_writer.py ---
+# Converts Markdown-ish LLM output into real docx formatting instead of
+# dumping raw '**'/'-'/'#' characters into a plain paragraph. Applied only
+# at write time (fill_memoire_docx) — generation/retrieval code never sees
+# or needs to know about this.
+
+import re
+
+_BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
+_ITALIC_STAR_RE = re.compile(r"\*([^*\n]+?)\*")
+_ITALIC_UNDERSCORE_RE = re.compile(r"_([^_\n]+?)_")
+_HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$")
+_BULLET_RE = re.compile(r"^\s*[-*]\s+(.+)$")
+_NUMBERED_RE = re.compile(r"^\s*(\d+[.)])\s+(.+)$")
+
+
+def _add_runs_with_inline_formatting(paragraph, text: str):
+    """
+    Adds text to `paragraph` as one or more runs, applying bold/italic
+    where '**'/'*'/'_' markers are found, and stripping the markers
+    themselves so they never appear as literal characters.
+    """
+    # Bold first (so **_x_** doesn't get mangled by italic regex eating
+    # into the ** markers) — process bold spans, and within each bold
+    # span's surrounding plain text, still check for italic.
+    pos = 0
+    for m in _BOLD_RE.finditer(text):
+        _add_plain_with_italic(paragraph, text[pos:m.start()])
+        run = paragraph.add_run(m.group(1))
+        run.bold = True
+        pos = m.end()
+    _add_plain_with_italic(paragraph, text[pos:])
+
+
+def _add_plain_with_italic(paragraph, text: str):
+    if not text:
+        return
+    # Merge both marker types into one ordered pass so runs stay in order
+    matches = []
+    for m in _ITALIC_STAR_RE.finditer(text):
+        matches.append((m.start(), m.end(), m.group(1)))
+    for m in _ITALIC_UNDERSCORE_RE.finditer(text):
+        matches.append((m.start(), m.end(), m.group(1)))
+    matches.sort(key=lambda x: x[0])
+
+    pos = 0
+    for start, end, content in matches:
+        if start < pos:
+            continue  # overlapping match, skip (already consumed)
+        if start > pos:
+            paragraph.add_run(text[pos:start])
+        run = paragraph.add_run(content)
+        run.italic = True
+        pos = end
+    if pos < len(text):
+        paragraph.add_run(text[pos:])
+
+
+def _insert_markdown_content(anchor_paragraph, content: str):
+    """
+    Inserts `content` as one or more real docx paragraphs immediately
+    after `anchor_paragraph`, converting Markdown-ish lines (headings,
+    bullets, numbered lists, bold/italic) into corresponding docx
+    formatting rather than leaving literal Markdown characters visible.
+
+    Returns the last paragraph inserted, so the caller can keep chaining
+    `addnext` calls in the right order.
+    """
+    lines = content.split("\n")
+    current_anchor = anchor_paragraph
+
+    for raw_line in lines:
+        line = raw_line.rstrip()
+        if not line.strip():
+            continue  # skip blank lines — avoids stray empty paragraphs
+
+        heading_m = _HEADING_RE.match(line)
+        bullet_m = _BULLET_RE.match(line)
+        numbered_m = _NUMBERED_RE.match(line)
+
+        new_para = current_anchor.insert_paragraph_before("")
+        current_anchor._element.addnext(new_para._element)
+        # move current_anchor forward so the NEXT line is inserted after
+        # this one, preserving original order
+        current_anchor = new_para
+
+        if heading_m:
+            _add_runs_with_inline_formatting(new_para, heading_m.group(2))
+            for run in new_para.runs:
+                run.bold = True
+        elif bullet_m:
+            new_para.style = "List Paragraph"
+            _add_runs_with_inline_formatting(new_para, "•  " + bullet_m.group(1))
+        elif numbered_m:
+            new_para.style = "List Paragraph"
+            marker, rest = numbered_m.group(1), numbered_m.group(2)
+            _add_runs_with_inline_formatting(new_para, f"{marker}  {rest}")
+
+    return current_anchor

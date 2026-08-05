@@ -91,11 +91,12 @@ class BaseAgent(ABC):
         user_message: str,
         history: list[Message] | None = None,
         temperature: float = 0.3,
-        max_tokens: int = 2048,
+        max_tokens: int | None = None,
         system_prompt_override: str | None = None,
         json_mode: bool = False,
         json_schema: dict | None = None,
     ) -> AgentResponse:
+        max_tokens = max_tokens or settings.DEFAULT_MAX_TOKENS
         start = time.time()
         try:
             messages = self._build_messages(
@@ -131,9 +132,10 @@ class BaseAgent(ABC):
         user_message: str,
         history: list[Message] | None = None,
         temperature: float = 0.3,
-        max_tokens: int = 2048,
+        max_tokens: int | None = None,
         system_prompt_override: str | None = None,
     ) -> Generator[str, None, None]:
+        max_tokens = max_tokens or settings.DEFAULT_MAX_TOKENS
         # Streaming version — yields tokens for real-time UI updates
         messages = self._build_messages(
             user_message, history, system_prompt_override

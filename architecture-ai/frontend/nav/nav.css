@@ -1,0 +1,42 @@
+/* ===== Shared Styles ===== */
+
+body {
+    font-family: Arial, sans-serif;
+    padding: 40px;
+    background: #f8f9fa;
+    margin: 0;
+}
+
+/* ===== Navigation ===== */
+.main-nav {
+    background: #1e293b;
+    padding: 14px 0;
+    margin: -40px -40px 30px -40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.nav-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    padding: 0 20px;
+}
+
+.nav-btn {
+    color: white;
+    text-decoration: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+
+.nav-btn:hover {
+    background: #334155;
+}
+
+.nav-btn.active {
+    background: #007bff;
+}

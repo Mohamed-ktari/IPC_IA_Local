@@ -50,6 +50,7 @@ class StructureResult(BaseModel):
     match_score: float | None
     raw_text: str | None
     structure: str | None
+    source: str | None = None
 
 
 class IntentResult(BaseModel):
@@ -129,6 +130,12 @@ async def analyze_rc(request: RCAnalyzeRequest):
                     output_path=output_path,
                 )
                 docx_path = str(output_path)
+                if result["structure"].get("source") == "rag_fallback":
+                    docx_error = (
+                        "Structure générée par recherche approximative (le titre de "
+                        "section n'a pas été trouvé directement) — vérifiez le "
+                        "contenu généré avant envoi."
+                    )
             except Exception as e:
                 docx_error = f"Docx generation failed: {e}"
     else:

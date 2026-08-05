@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        #searchInput {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 14px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .btn-bulk-delete {
+            background: #dc3545;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            display: none; /* shown only when selection > 0 */
+        }
+
+        .btn-bulk-delete:hover:not(:disabled) {
+            background: #c82333;
+        }
+
+        .btn-bulk-delete:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f4f4f4;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        tr.selected {
+            background: #e7f1ff !important;
+        }
+
+        button {
+            padding: 7px 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .btn-page {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-page:hover:not(:disabled) {
+            background: #0056b3;
+        }
+
+        .btn-page:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .page-info {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #noResults {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            display: none;
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<script src="../nav/nav.js"></script>
+<div class="container">
+    <h2>Documents téléversés</h2>
+
+    <div class="controls">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Rechercher par ID de document ou nom de fichier..."
+        />
+        <button class="btn-bulk-delete" id="bulkDeleteBtn" onclick="deleteSelected()">
+            Supprimer la sélection
+        </button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width:40px;">
+                    <input type="checkbox" id="selectAll" title="Tout sélectionner sur cette page">
+                </th>
+                <th>ID du document</th>
+                <th>Nom de fichier d'origine</th>
+                <th>Type de document</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="documentsTable"></tbody>
+    </table>
+
+    <div id="noResults">Aucun document trouvé.</div>
+
+    <div class="pagination">
+        <button class="btn-page" id="prevBtn" onclick="changePage(-1)">← Précédent</button>
+        <span class="page-info" id="pageInfo"></span>
+        <button class="btn-page" id="nextBtn" onclick="changePage(1)">Suivant →</button>
+    </div>
+</div>
+
+<script>
+const GET_API    = "http://192.168.99.10:8000/documents";
+const DELETE_API = "http://192.168.99.10:8000/documents";
+const PAGE_SIZE  = 100;
+
+let allDocuments = [];
+let filteredDocs = [];
+let currentPage  = 1;
+let selectedIds  = new Set();   // stores selected doc_ids
+
+const tbody        = document.getElementById("documentsTable");
+const searchInput  = document.getElementById("searchInput");
+const pageInfo     = document.getElementById("pageInfo");
+const prevBtn      = document.getElementById("prevBtn");
+const nextBtn      = document.getElementById("nextBtn");
+const noResults    = document.getElementById("noResults");
+const selectAllCb  = document.getElementById("selectAll");
+const bulkDeleteBtn= document.getElementById("bulkDeleteBtn");
+
+async function loadDocuments() {
+    try {
+        const response = await fetch(GET_API);
+        const data = await response.json();
+        allDocuments = data.documents || [];
+        selectedIds.clear();
+        updateBulkButton();
+        applyFilterAndRender();
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="5">Échec du chargement des documents.</td></tr>`;
+    }
+}
+
+function applyFilterAndRender() {
+    const query = searchInput.value.trim().toLowerCase();
+
+    filteredDocs = allDocuments.filter(doc => {
+        const id   = String(doc.doc_id || "").toLowerCase();
+        const name = String(doc.original_file_name || "").toLowerCase();
+        return id.includes(query) || name.includes(query);
+    });
+
+    currentPage = 1;
+    renderPage();
+}
+
+function renderPage() {
+    const total = filteredDocs.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end   = start + PAGE_SIZE;
+    const pageDocs = filteredDocs.slice(start, end);
+
+    tbody.innerHTML = "";
+
+    if (pageDocs.length === 0) {
+        noResults.style.display = "block";
+        selectAllCb.checked = false;
+        selectAllCb.indeterminate = false;
+    } else {
+        noResults.style.display = "none";
+
+        pageDocs.forEach(doc => {
+            const isChecked = selectedIds.has(doc.doc_id);
+            const tr = document.createElement("tr");
+            if (isChecked) tr.classList.add("selected");
+
+            tr.innerHTML = `
+                <td>
+                    <input
+                        type="checkbox"
+                        class="row-check"
+                        data-id="${doc.doc_id}"
+                        ${isChecked ? "checked" : ""}
+                    >
+                </td>
+                <td style="font-size:13px;">${doc.doc_id}</td>
+                <td>${doc.original_file_name || "-"}</td>
+                <td>${doc.doc_type || "-"}</td>
+                <td>${doc.status || "-"}</td>
+                <td>
+                    <button class="btn-delete" onclick="deleteDocument('${doc.doc_id}')">
+                        Supprimer
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Wire row checkboxes
+        tbody.querySelectorAll(".row-check").forEach(cb => {
+            cb.addEventListener("change", onRowCheckChange);
+        });
+
+        updateSelectAllState(pageDocs);
+    }
+
+    pageInfo.textContent = total === 0
+        ? "Aucun document"
+        : `Affichage de ${start + 1}–${Math.min(end, total)} sur ${total}  •  Page ${currentPage} sur ${totalPages}`;
+
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+    updateBulkButton();
+}
+
+function onRowCheckChange(e) {
+    const id = e.target.dataset.id;
+    const tr = e.target.closest("tr");
+
+    if (e.target.checked) {
+        selectedIds.add(id);
+        tr.classList.add("selected");
+    } else {
+        selectedIds.delete(id);
+        tr.classList.remove("selected");
+    }
+
+    const pageDocs = getCurrentPageDocs();
+    updateSelectAllState(pageDocs);
+    updateBulkButton();
+}
+
+function getCurrentPageDocs() {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredDocs.slice(start, start + PAGE_SIZE);
+}
+
+function updateSelectAllState(pageDocs) {
+    if (pageDocs.length === 0) {
+        selectAllCb.checked = false;
+        selectAllCb.indeterminate = false;
+        return;
+    }
+
+    const checkedCount = pageDocs.filter(d => selectedIds.has(d.doc_id)).length;
+
+    selectAllCb.checked = checkedCount === pageDocs.length;
+    selectAllCb.indeterminate = checkedCount > 0 && checkedCount < pageDocs.length;
+}
+
+function updateBulkButton() {
+    const count = selectedIds.size;
+    if (count === 0) {
+        bulkDeleteBtn.style.display = "none";
+    } else {
+        bulkDeleteBtn.style.display = "inline-block";
+        bulkDeleteBtn.textContent = `Supprimer la sélection (${count})`;
+    }
+}
+
+// Select all on current page
+selectAllCb.addEventListener("change", function () {
+    const pageDocs = getCurrentPageDocs();
+
+    pageDocs.forEach(doc => {
+        if (selectAllCb.checked) {
+            selectedIds.add(doc.doc_id);
+        } else {
+            selectedIds.delete(doc.doc_id);
+        }
+    });
+
+    // Re-render to update checkboxes + row highlight
+    renderPage();
+});
+
+function changePage(delta) {
+    currentPage += delta;
+    renderPage();
+}
+
+// Single delete
+async function deleteDocument(doc_id) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) return;
+
+    try {
+        const response = await fetch(`${DELETE_API}/${doc_id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Delete failed");
+
+        allDocuments = allDocuments.filter(d => d.doc_id !== doc_id);
+        selectedIds.delete(doc_id);
+        applyFilterAndRender();
+
+    } catch (err) {
+        console.error(err);
+        alert("Impossible de supprimer le document.");
+    }
+}
+
+// Bulk delete
+async function deleteSelected() {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+
+    if (!confirm(`Supprimer ${ids.length} document(s) ? Cette action est irréversible.`)) {
+        return;
+    }
+
+    bulkDeleteBtn.disabled = true;
+    bulkDeleteBtn.textContent = "Suppression...";
+
+    let success = 0;
+    let failed = 0;
+
+    for (const id of ids) {
+        try {
+            const response = await fetch(`${DELETE_API}/${id}`, { method: "DELETE" });
+            if (!response.ok) throw new Error("fail");
+            allDocuments = allDocuments.filter(d => d.doc_id !== id);
+            selectedIds.delete(id);
+            success++;
+        } catch (err) {
+            console.error(err);
+            failed++;
+        }
+    }
+
+    bulkDeleteBtn.disabled = false;
+    updateBulkButton();
+    applyFilterAndRender();
+
+    if (failed === 0) {
+        alert(`${success} document(s) supprimé(s) avec succès.`);
+    } else {
+        alert(`Supprimés : ${success}\nÉchecs : ${failed}`);
+    }
+}
+
+// Live search
+searchInput.addEventListener("input", () => {
+    // Keep selection, just refilter
+    applyFilterAndRender();
+});
+
+// Initial load
+loadDocuments();
+</script>
+
+</body>
+</html>

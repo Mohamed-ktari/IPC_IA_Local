@@ -27,12 +27,12 @@ router = APIRouter()
 # ----------------------------------------------------------------
 
 class StartConversationRequest(BaseModel):
-    doc_id: str
+    doc_ids: list[str]
 
 
 class StartConversationResponse(BaseModel):
     conversation_id: str
-    doc_id: str
+    doc_ids: list[str]
 
 
 class AskRequest(BaseModel):
@@ -40,6 +40,7 @@ class AskRequest(BaseModel):
 
 
 class SourceInfo(BaseModel):
+    original_file_name: str
     file_name: str
     chunk_index: int
     hybrid_score: float
@@ -56,7 +57,7 @@ class AskResponse(BaseModel):
 
 class ConversationHistoryResponse(BaseModel):
     conversation_id: str
-    doc_id: str
+    doc_ids: list[str]
     created_at: float
     messages: list[dict]
 
@@ -67,19 +68,15 @@ class ConversationHistoryResponse(BaseModel):
 
 @router.post("/conversations", response_model=StartConversationResponse)
 async def start_conversation(request: StartConversationRequest):
-    metadata = get_document_metadata(request.doc_id)
-    if metadata is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Document '{request.doc_id}' not found. Upload it first via /documents/upload."
-        )
-
+    for doc_id in request.doc_ids:
+        if get_document_metadata(doc_id) is None:
+            raise HTTPException(status_code=404, detail=f"Document '{doc_id}' not found.")
     agent = QAAgent()
-    conversation_id = agent.start_conversation(request.doc_id)
+    conversation_id = agent.start_conversation(request.doc_ids)
 
     return StartConversationResponse(
         conversation_id=conversation_id,
-        doc_id=request.doc_id,
+        doc_ids=request.doc_ids,
     )
 
 
@@ -127,3 +124,18 @@ async def delete_conversation(conversation_id: str):
             detail=f"Conversation '{conversation_id}' not found."
         )
     return {"deleted": True, "conversation_id": conversation_id}
+
+
+# NEW — add a document to an existing conversation
+class AddDocumentRequest(BaseModel):
+    doc_id: str
+
+@router.post("/conversations/{conversation_id}/documents")
+async def add_document(conversation_id: str, request: AddDocumentRequest):
+    if get_document_metadata(request.doc_id) is None:
+        raise HTTPException(status_code=404, detail=f"Document '{request.doc_id}' not found.")
+    try:
+        conversation_store.add_document(conversation_id, request.doc_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    return {"conversation_id": conversation_id, "added": request.doc_id}

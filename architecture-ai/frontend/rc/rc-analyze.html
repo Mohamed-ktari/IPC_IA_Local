@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse RC</title>
+
+    <style>
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 { margin-top: 0; color: #333; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #444;
+        }
+
+        input, select, textarea {
+            padding: 11px 13px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary { background: #0d6efd; color: white; }
+        .btn-primary:hover { background: #0b5ed7; }
+        .btn-primary:disabled { background: #6c757d; cursor: not-allowed; }
+
+        .btn-success { background: #198754; color: white; }
+        .btn-success:hover { background: #157347; }
+
+        .btn-secondary { background: #6c757d; color: white; }
+
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .message {
+            margin-top: 18px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: none;
+        }
+        .message.error   { background: #f8d7da; color: #842029; display: block; }
+        .message.success { background: #d1e7dd; color: #0f5132; display: block; }
+        .message.info    { background: #cff4fc; color: #055160; display: block; }
+
+        #results {
+            display: none;
+            margin-top: 35px;
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+        }
+
+        .result-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .result-card p, .result-card pre {
+            margin: 0;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #ddd;
+            border-top: 4px solid #0d6efd;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Analyse RC</h2>
+
+    <form id="analyzeForm">
+        <div class="form-group">
+            <label for="docId">ID du document *</label>
+            <input type="text" id="docId" required placeholder="Collez l'ID du document ici">
+        </div>
+
+        <div class="form-group">
+            <label for="userPrompt">Votre invite</label>
+            <textarea id="userPrompt" placeholder="Optionnel : donnez des instructions spécifiques au LLM..."></textarea>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary" id="analyzeBtn">
+                Analyser le RC
+            </button>
+            <button type="button" class="btn btn-danger" id="clearBtn" style="display:none;" onclick="clearSavedResults()">
+                Effacer les résultats enregistrés
+            </button>
+        </div>
+    </form>
+
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Analyse du document en cours... Cela peut prendre un moment.<br>
+        <small>Veuillez ne pas quitter cette page, sinon l'analyse sera annulée.</small></p>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <div id="results">
+        <h3>Résultats de l'analyse</h3>
+
+        <div class="result-card">
+            <h4>Résumé</h4>
+            <p id="summaryText">—</p>
+        </div>
+
+        <div class="result-card">
+            <h4>Structure</h4>
+            <pre id="structureText">—</pre>
+        </div>
+
+        <div class="result-card">
+            <h4>Intention</h4>
+            <pre id="intentText">—</pre>
+        </div>
+
+        <div class="actions" style="margin-top: 20px;">
+            <a id="downloadBtn" href="#" class="btn btn-success" style="display:none;">
+                Télécharger le DOCX généré
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="../nav/nav.js"></script>
+
+<script>
+const API_BASE = "http://192.168.99.10:8000";
+const STORAGE_KEY = "rc_analysis_last";
+
+const form = document.getElementById("analyzeForm");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const clearBtn = document.getElementById("clearBtn");
+const loading = document.getElementById("loading");
+const messageEl = document.getElementById("message");
+const results = document.getElementById("results");
+const downloadBtn = document.getElementById("downloadBtn");
+const docIdInput = document.getElementById("docId");
+const userPromptInput = document.getElementById("userPrompt");
+
+let isAnalyzing = false;
+
+function showMessage(text, type) {
+    messageEl.textContent = text;
+    messageEl.className = `message ${type}`;
+}
+
+// Warn if user tries to leave while analysis is running
+window.addEventListener("beforeunload", (e) => {
+    if (isAnalyzing) {
+        e.preventDefault();
+        e.returnValue = "";
+    }
+});
+
+function saveResults(docId, userPrompt, data) {
+    const payload = {
+        docId,
+        userPrompt,
+        data,
+        savedAt: new Date().toISOString()
+    };
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+function loadSavedResults() {
+    try {
+        const raw = sessionStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch {
+        return null;
+    }
+}
+
+function clearSavedResults() {
+    sessionStorage.removeItem(STORAGE_KEY);
+    results.style.display = "none";
+    downloadBtn.style.display = "none";
+    clearBtn.style.display = "none";
+    showMessage("Résultats enregistrés effacés.", "info");
+}
+
+function renderResults(data, docId) {
+    document.getElementById("summaryText").textContent = data.summary || "—";
+
+    const structure = data.structure || {};
+    document.getElementById("structureText").textContent =
+        `Trouvé : ${structure.found}\n` +
+        `Titre : ${structure.heading || "—"}\n` +
+        `Score de correspondance : ${structure.match_score ?? "—"}\n` +
+        `Texte brut : ${structure.raw_text || "—"}\n` +
+        `Structure : ${structure.structure || "—"}`;
+
+    const intent = data.intent || {};
+    document.getElementById("intentText").textContent =
+        `Section cible : ${intent.target_section_label || "—"}\n` +
+        `Emphase : ${intent.emphasis_instructions || "—"}`;
+
+    if (data.docx_path || data.doc_id || docId) {
+        downloadBtn.href = `${API_BASE}/rc/download/${data.doc_id || docId}`;
+        downloadBtn.style.display = "inline-block";
+    } else {
+        downloadBtn.style.display = "none";
+    }
+
+    results.style.display = "block";
+    clearBtn.style.display = "inline-block";
+}
+
+// Restore last results + form when coming back
+function tryRestore() {
+    const saved = loadSavedResults();
+    if (!saved) return;
+
+    if (saved.docId) docIdInput.value = saved.docId;
+    if (saved.userPrompt) userPromptInput.value = saved.userPrompt;
+
+    if (saved.data) {
+        renderResults(saved.data, saved.docId);
+        showMessage(
+            "Derniers résultats d'analyse restaurés pour cette session.",
+            "info"
+        );
+    }
+}
+
+form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const docId = docIdInput.value.trim();
+    const userPrompt = userPromptInput.value.trim();
+
+    if (!docId) {
+        showMessage("L'ID du document est obligatoire.", "error");
+        return;
+    }
+
+    results.style.display = "none";
+    downloadBtn.style.display = "none";
+    messageEl.style.display = "none";
+    loading.style.display = "block";
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "Analyse en cours...";
+    isAnalyzing = true;
+
+    try {
+        const res = await fetch(`${API_BASE}/rc/analyze`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                doc_id: docId,
+                user_prompt: userPrompt
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || `Erreur ${res.status}`);
+        }
+
+        const data = await res.json();
+        renderResults(data, docId);
+        saveResults(docId, userPrompt, data);
+        showMessage("Analyse terminée avec succès.", "success");
+
+    } catch (err) {
+        console.error(err);
+        // AbortError = user navigated away
+        if (err.name === "AbortError") {
+            showMessage("L'analyse a été annulée car vous avez quitté la page.", "error");
+        } else {
+            showMessage(err.message || "Échec de l'analyse.", "error");
+        }
+    } finally {
+        isAnalyzing = false;
+        loading.style.display = "none";
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Analyser le RC";
+    }
+});
+
+tryRestore();
+</script>
+
+</body>
+</html>

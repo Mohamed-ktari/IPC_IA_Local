@@ -1,0 +1,3325 @@
+[
+    {
+  "document": "03_RIVP PARIS 12 DURANCE_MémoireTechnique_FINAL.pdf",
+  "headers": [
+    {
+      "text": "SOMMAIRE"
+    },
+    {
+      "text": "APPROCHE ARCHITECTURALE ET TECHNIQUE"
+    },
+    {
+      "text": "PRESENTATION DU SITE ET ORGANISATION DU BATIMENT"
+    },
+    {
+      "text": "DIAGNOSTIC VISUEL DE L'EXISTANT ET PISTES D'INTERVENTION"
+    },
+    {
+      "text": "INTENTIONS D'INTERVENTION ET DE TRAITEMENT ARCHITECTURAL"
+    },
+    {
+      "text": "Sur les façades béton"
+    },
+    {
+      "text": "Sur les façades en pierre agrafée"
+    },
+    {
+      "text": "Sur les parties communes"
+    },
+    {
+      "text": "Au sein des logements"
+    },
+    {
+      "text": "APPROCHE DEVELOPPEMENT DURABLE"
+    },
+    {
+      "text": "STRATEGIE POUR L'ERADICATION DES ETIQUETTES DPE E, F ET G"
+    },
+    {
+      "text": "LUTTE CONTRE LES ILOTS DE CHALEUR ET CONFORT D'ETE"
+    },
+    {
+      "text": "UTILISATION DE MATERIAUX DE REEMPLOI ET DE MATERIAUX BIOSOURCES"
+    },
+    {
+      "text": "METHODOLOGIE EN MILIEU OCCUPE ET CONCERTATION LOCATAIRES"
+    },
+    {
+      "text": "ORGANISATION DU CHANTIER ET LIMITATION DES NUISANCES"
+    },
+    {
+      "text": "PROCESSUS ET MOYENS MIS EN ŒUVRE POUR LA CONCERTATION ET L'INFORMATION LOCATAIRES"
+    },
+    {
+      "text": "Concertation et information pendant la phase travaux"
+    },
+    {
+      "text": "PRISE EN COMPTE DES CONTRAINTES SPECIFIQUES DU SITE"
+    },
+    {
+      "text": "METHODOLOGIE POUR LA MISSION DIAG"
+    },
+    {
+      "text": "POURCENTAGE MINIMAL DE LOGEMENTS VISITES ET REPARTITION ENTRE COTRAITANTS"
+    },
+    {
+      "text": "Répartition de la charge de visite entre les cotraitants"
+    },
+    {
+      "text": "METHODOLOGIE ET MOYENS MIS EN ŒUVRE POUR LA PHASE DIAG"
+    },
+    {
+      "text": "COHERENCE AVEC LE PROGRAMME ET LE BUDGET"
+    },
+    {
+      "text": "JUSTIFICATION DES CHOIX TECHNIQUES EN REGARD DU BUDGET ALLOUE"
+    }
+  ]
+},
+    {
+  "document": "04_Note-methodologique.pdf",
+  "headers": [
+    {
+      "text": "SOMMAIRE"
+    },
+    {
+      "text": "Note méthodologique de management projet"
+    },
+    {
+      "text": "Rôle de chacun des membres à chaque phase du projet"
+    },
+    {
+      "text": "Équipe proposée en phase études"
+    },
+    {
+      "text": "Équipe proposée en phase travaux - Lots 1 et 2"
+    },
+    {
+      "text": "Suppléants"
+    },
+    {
+      "text": "Méthodologie envisagée de concertation des locataires"
+    },
+    {
+      "text": "Contexte"
+    },
+    {
+      "text": "Enjeux de la mission"
+    },
+    {
+      "text": "Organisation, information et concertation des usagers"
+    },
+    {
+      "text": "Phase DIAG - Etudes Diagnostics"
+    },
+    {
+      "text": "Phase AVP"
+    },
+    {
+      "text": "Phase DET"
+    },
+    {
+      "text": "POINTS DE VIGILANCE EN PHASE TRAVAUX ET ACTION PRÉVUES"
+    },
+    {
+      "text": "Réunions de concertation"
+    },
+    {
+      "text": "Planning que l'équipe s'engage à respecter"
+    },
+    {
+      "text": "Organisation du groupement"
+    },
+    {
+      "text": "Organigrame"
+    },
+    {
+      "text": "La répartition des tâches entre les membres de l'équipe"
+    },
+    {
+      "text": "Une organisation structurée"
+    },
+    {
+      "text": "Les réunions d'avant-projet"
+    },
+    {
+      "text": "Les réunions de contrôle et d'avancement des études"
+    },
+    {
+      "text": "Les revues techniques"
+    },
+    {
+      "text": "Le Management qualité"
+    },
+    {
+      "text": "Les procédures"
+    },
+    {
+      "text": "Le management de la validation"
+    },
+    {
+      "text": "Les réunions de mises au point"
+    },
+    {
+      "text": "Le déroulement des études"
+    },
+    {
+      "text": "Diagnostic et esquisse"
+    },
+    {
+      "text": "Etudes d'avant-projet (APS et APD)"
+    },
+    {
+      "text": "Etudes de projet (PRO)"
+    },
+    {
+      "text": "Assistance pour la passation des contrats de travaux (ACT)"
+    },
+    {
+      "text": "Dossier de consultation des entreprises"
+    },
+    {
+      "text": "Analyse des offres"
+    },
+    {
+      "text": "Organisation et suivi des travaux"
+    },
+    {
+      "text": "Période préparatoire"
+    },
+    {
+      "text": "Intervention dans les logements"
+    },
+    {
+      "text": "Surveillance des travaux"
+    },
+    {
+      "text": "Visite de fin de travaux - OPR"
+    },
+    {
+      "text": "Suivi pendant la GPA"
+    },
+    {
+      "text": "Gestion des relations avec le maître d'ouvrage et les autres intervenants (CT, SPS, certificateur…)"
+    },
+    {
+      "text": "Relation avec le Contrôleur Technique (CT)"
+    },
+    {
+      "text": "Relation avec le Coordinateur Sécurité et Protection de la Santé (CSPS)"
+    },
+    {
+      "text": "Relation avec le Certificateur"
+    },
+    {
+      "text": "ANNEXES"
+    },
+    {
+      "text": "Présentation des modalités de mise en œuvre prévues pour la réalisation des heures d'insertion professionnelles selon le cadre de mémoire joint en annexe."
+    },
+    {
+      "text": "Labels"
+    },
+    {
+      "text": "Proposition Honoraires"
+    }
+  ]
+},
+{
+  "document": "08-Memoire.pdf",
+  "headers": [
+    { "text": "Sommaire" },
+
+    { "text": "COMPREHENSION DE LA CONSULTATION" },
+    { "text": "ENJEUX DU MULTI-SITE DU PROJET ET DES CONTRAINTES ASSOCIEES" },
+    { "text": "Enjeux et défis" },
+    { "text": "Diagnostic des 7 sites" },
+    { "text": "CONTRAINTES LOGISTIQUES ET SOCIALES D'INTERVENTION EN MILIEU OCCUPE" },
+    { "text": "Contraintes sociales" },
+    { "text": "La maîtrise d'ouvrage" },
+    { "text": "Les locataires" },
+    { "text": "Contraintes logistiques" },
+    { "text": "OBJECTIFS TECHNIQUES ET THERMIQUES" },
+    { "text": "Objectifs techniques" },
+    { "text": "Objectifs thermiques" },
+    { "text": "OBJECTIFS FINANCIERS" },
+    { "text": "Méthode et Outils" },
+    { "text": "Objectifs financiers" },
+    { "text": "PARTICULARITES DE CHAQUE OPERATION" },
+
+    { "text": "16 logements - 25 avenue Paul Déroulède à Vincennes (0394)" },
+    { "text": "Présentation générale" },
+    { "text": "Clos et Couvert" },
+    { "text": "Désordre structurels" },
+    { "text": "Parties communes et locaux techniques" },
+    { "text": "Parties privatives" },
+    { "text": "Equipements techniques" },
+    { "text": "Espaces extérieurs" },
+    { "text": "Amiante" },
+
+    { "text": "13 logements - 38 rue de la Jarry à Vincennes (0396)" },
+    { "text": "Présentation générale" },
+    { "text": "Clos et Couvert" },
+    { "text": "Désordre structurels" },
+    { "text": "Parties communes et locaux techniques" },
+    { "text": "Parties privatives" },
+    { "text": "Espaces extérieurs" },
+    { "text": "Amiante" },
+
+    { "text": "7 logements - 25 rue Diderot à Vincennes (0397)" },
+    { "text": "Clos et Couvert" },
+    { "text": "Désordre structurels" },
+    { "text": "Parties communes et locaux techniques" },
+    { "text": "Parties privatives" },
+    { "text": "Equipements techniques" },
+    { "text": "Espaces extérieurs" },
+
+    { "text": "17 logements - 139 rue de France à Vincennes (2498)" },
+    { "text": "Clos et Couvert" },
+    { "text": "Désordre structurels" },
+    { "text": "Parties communes et locaux techniques" },
+    { "text": "Parties privatives" },
+    { "text": "Equipements techniques" },
+    { "text": "Espaces extérieurs" },
+    { "text": "Amiante" },
+
+    { "text": "13 logements - 13 rue Nungesser à Fontenay-sous-Bois (0383)" },
+    { "text": "Clos et Couvert" },
+    { "text": "Désordre structurels" },
+    { "text": "Parties communes et locaux techniques" },
+    { "text": "Parties privatives" },
+    { "text": "Equipements techniques" },
+    { "text": "Espaces extérieurs" },
+    { "text": "Amiante" },
+
+    { "text": "10 logements - 4/6 rue de l'Audience à Fontenay-sous-Bois (0386)" },
+    { "text": "Clos et Couvert" },
+    { "text": "Désordre structurels" },
+    { "text": "Parties communes et locaux techniques" },
+    { "text": "Parties privatives" },
+    { "text": "Equipements techniques" },
+    { "text": "Espaces extérieurs" },
+    { "text": "Amiante" },
+
+    { "text": "27 logements - 3 rue Pauline à Fontenay-sous-Bois (1016)" },
+    { "text": "Clos et Couvert" },
+    { "text": "Désordre structurels" },
+    { "text": "Parties communes et locaux techniques" },
+    { "text": "Parties privatives" },
+    { "text": "Equipements techniques" },
+    { "text": "Espaces extérieurs" },
+    { "text": "Amiante" },
+
+    { "text": "PRESENTATION DES INTERLOCUTEURS" },
+    { "text": "Prinvault Architectes" },
+    { "text": "IPC" },
+    { "text": "BET Wab" },
+    { "text": "The Engineers" },
+    { "text": "TEMPS ACCORDE AU PROJET PAR LES DIFFERENTS MEMBRES" },
+    { "text": "Cohérence du temps au regard des particularités « multisite » et milieu occupé" },
+
+    { "text": "PLANNING DETAILLE COHERENT ET REALISTE DE L'OPERATION" },
+    { "text": "DETAIL PAR PHASE/ELEMENTS DE MISSION" },
+    { "text": "Délais à AE" },
+    { "text": "Planning du programme travaux" },
+    { "text": "CALENDRIER DES TRAVAUX" },
+
+    { "text": "PRESENTATION DES OUTILS ET METHODE" },
+    { "text": "VISA" },
+    { "text": "DEROULEMENT DU CHANTIER" },
+    { "text": "PERIODE PREPARATOIRE" },
+    { "text": "ETAT DES LIEUX AVANT TRAVAUX" },
+    { "text": "SURVEILLANCE DES TRAVAUX" },
+    { "text": "Organisation du chantier" },
+    { "text": "Outils numériques de gestion de suivi de chantier" },
+    { "text": "Pollution" },
+    { "text": "Charges" },
+    { "text": "GESTION DES DELAIS" },
+    { "text": "ENGAGEMENT DE RESPECT DE L'ENVELOPPE BUDGETAIRE" },
+    { "text": "VISITE DE FIN DE TRAVAUX - OPR" },
+    { "text": "SUIVI PENDANT LA GPA" },
+
+    { "text": "QUALITE SOCIETALE ET ENVIRONNEMENTALE" },
+    { "text": "INTEGRATION DES LOCATAIRES DANS LA DEMARCHE / CONCERTATION" },
+    { "text": "Livret-résident « la réhabilitation : mode d'emploi »" },
+    { "text": "Communication avec les résidents pendant les travaux" },
+    { "text": "Gestion des réclamations pendant les travaux" },
+    { "text": "CONFORT ET SANTE DES PARTIES PRENANTES" },
+    { "text": "PROTECTION DE L'ENVIRONNEMENT" },
+    { "text": "Démarche réemploi et réutilisation" },
+    { "text": "Choix des procédés et produits de construction" },
+    { "text": "Chantier à faibles nuisances" },
+    { "text": "Mesures structurantes" },
+    { "text": "Schéma d'organisation et de gestion des déchets (SOGED)" },
+    { "text": "Gestion et collecte sélective des déchets" },
+    { "text": "Tri et bennes" },
+    { "text": "La réunion environnementale de fin de chantier" },
+    { "text": "PERFORMANCE ECONOMIQUE DURABLE" },
+    { "text": "Performance économique" },
+    { "text": "Entretien et maintenance" },
+    { "text": "RELATIONS HARMONIEUSES DES BATIMENTS AVEC LEUR ENVIRONNEMENT" }
+  ]
+},
+    {
+        "document": "13.1 Note d'intention A&B.pdf",
+        "headers": [
+            {
+                "text": "2.1.3 - NOTE D'INTENTION"
+            },
+            {
+                "text": "SOMMAIRE"
+            },
+            {
+                "text": "1. PRINCIPALES PROBLÉMATIQUES DU SITE"
+            },
+            {
+                "text": "A. CONTEXTE DE L'OPÉRATION"
+            },
+            {
+                "text": "SITUATION"
+            },
+            {
+                "text": "URBANISME"
+            },
+            {
+                "text": "B. ANALYSE DU SITE"
+            },
+            {
+                "text": "ESPACE EXTÉRIEUR ET ACCÈS"
+            },
+            {
+                "text": "Habiter le parc"
+            },
+            {
+                "text": "Les cheminements"
+            },
+            {
+                "text": "1. PRINCIPALES PROBLÉMATIQUES DU SITE 1. PRINCIPALES PROBLÉMATIQUES DU SITE"
+            },
+            {
+                "text": "B. ANALYSE DU SITE"
+            },
+            {
+                "text": "1. PRINCIPALES PROBLÉMATIQUES DU SITE"
+            },
+            {
+                "text": "B. ANALYSE DU SITE"
+            },
+            {
+                "text": "ENVELOPPE"
+            },
+            {
+                "text": "Façades"
+            },
+            {
+                "text": "Menuiseries extérieures"
+            },
+            {
+                "text": "Toitures"
+            },
+            {
+                "text": "ORGANISATION FONCTIONNELLE EXISTANTE"
+            },
+            {
+                "text": "STRUCTURE"
+            },
+            {
+                "text": "Bâtiment 400"
+            },
+            {
+                "text": "de 20 à 30cm ."
+            },
+            {
+                "text": "Bâtiment 410"
+            },
+            {
+                "text": "Bâtiment 415"
+            },
+            {
+                "text": "Bâtiment 420"
+            },
+            {
+                "text": "2. PROPOSITIONS TECHNIQUES"
+            },
+            {
+                "text": "A. CONTRAINTES TECHNIQUES"
+            },
+            {
+                "text": "SÉCURITÉ INCENDIE"
+            },
+            {
+                "text": "AMIANTE ET PLOMB"
+            },
+            {
+                "text": "Travaux en sous-section 3"
+            },
+            {
+                "text": "Travaux en sous-section 4"
+            },
+            {
+                "text": "Le traitement des peintures au plomb"
+            },
+            {
+                "text": "2. PROPOSITIONS TECHNIQUES"
+            },
+            {
+                "text": "B. SOLUTIONS TECHNIQUES ENVIRONNEMENTALES"
+            },
+            {
+                "text": "NOTE ENVIRONNEMENTALE"
+            },
+            {
+                "text": "SOBRIÉTÉ ÉNERGÉTIQUE ET POUVOIR DE VIVRE"
+            },
+            {
+                "text": "La performance par l'enveloppe"
+            },
+            {
+                "text": "Des énergies bas carbone, renouvelables, locales pour plus de pouvoir d'achat"
+            },
+            {
+                "text": "LIMITER L'IMPACT CARBONE DES TRAVAUX DE RÉNOVATION"
+            },
+            {
+                "text": "2. PROPOSITIONS TECHNIQUES"
+            },
+            {
+                "text": "B. SOLUTIONS TECHNIQUES ENVIRONNEMENTALES"
+            },
+            {
+                "text": "CONFORT ET BIEN-ÊTRE 4 SAISONS"
+            },
+            {
+                "text": "Bien être"
+            },
+            {
+                "text": "Forte perméabilité"
+            },
+            {
+                "text": "Faible perméabilité"
+            },
+            {
+                "text": "CHANTIER À FAIBLE NUISANCE ET ÉCOLOGIQUE"
+            },
+            {
+                "text": "A&B ARCHITECTES"
+            },
+            {
+                "text": "IPC"
+            },
+            {
+                "text": "POUGET Consultants"
+            },
+            {
+                "text": "Amiex"
+            },
+            {
+                "text": "ETHiC ID"
+            },
+            {
+                "text": "Marché Q018F"
+            },
+            {
+                "text": "Atelier Alice Tricon"
+            }
+        ]
+    },
+    {
+        "document": "15.1 Note d'intention_IPC.pptx",
+        "headers": []
+    },
+    {
+        "document": "2_Note Methodologique.pdf",
+        "headers": [
+            {
+                "text": "MISSION DE MAITRISE D'ŒUVRE RELATIVE A L'OPERATION DE REHABILITATION ENERGETIQUE ET TRAVAUX DE REMISE EN ETAT D'UNE RESIDENCE DE 82 LOGEMENTS 8 A 14 ALLEE MARCEL PAUL 77200 TORCY"
+            },
+            {
+                "text": "M E M O I R E   T E C H N I Q U E"
+            },
+            {
+                "text": "Table des matières"
+            },
+            {
+                "text": "1. COMPREHENSION DU PROJET"
+            },
+            {
+                "text": "1.1 Site"
+            },
+            {
+                "text": "1.2 Le bâti"
+            },
+            {
+                "text": "1.3 Intentions"
+            },
+            {
+                "text": "Les façades :"
+            },
+            {
+                "text": "Terrasses :"
+            },
+            {
+                "text": "Loggias / balcons"
+            },
+            {
+                "text": "Menuiseries extérieures :"
+            },
+            {
+                "text": "Les gardes -corps :"
+            },
+            {
+                "text": "Les parties communes :"
+            },
+            {
+                "text": "Amélioration des espaces extérieurs :"
+            },
+            {
+                "text": "Parties privatives :"
+            },
+            {
+                "text": "Techniquement :"
+            },
+            {
+                "text": "2. METHODE DE DIAGNOSTIC"
+            },
+            {
+                "text": "2.1 Objectifs"
+            },
+            {
+                "text": "Objectif final :"
+            },
+            {
+                "text": "2.2 Réalisation du diagnostic"
+            },
+            {
+                "text": "1. Analyse des documents du maître d 'ouvrage"
+            },
+            {
+                "text": "2. États des lieux de l'enveloppe du bâtiment"
+            },
+            {
+                "text": "3. États des lieux des parties communes de toutes les cages : halls, paliers et locaux communs"
+            },
+            {
+                "text": "4. États des lieux des sous-sols et locaux techniques"
+            },
+            {
+                "text": "5. États des lieux de 15 à 20% des logements"
+            },
+            {
+                "text": "6. L'état des lieux des espaces extérieurs se décomposera en :"
+            },
+            {
+                "text": "3. ORGANISATION ET METHODOLOGIE MISES EN ŒUVRE A CHACUNE DES PHASES DE LA MISSION"
+            },
+            {
+                "text": "3.1 Organisation et Présentation de l'équipe de MO"
+            },
+            {
+                "text": "3.1.1 Intervenants"
+            },
+            {
+                "text": "POUGET Consultants"
+            },
+            {
+                "text": "3.1.2 Organigramme de l'équipe intervenante"
+            },
+            {
+                "text": "3.1.3 Répartition des tâches"
+            },
+            {
+                "text": "3.2 Une organisation structurée"
+            },
+            {
+                "text": "3.2.1 Les réunions d'avant-projet"
+            },
+            {
+                "text": "3.2.2 Les réunions de contrôle et d'avancement des études"
+            },
+            {
+                "text": "3.2.3 Les revues techniques"
+            },
+            {
+                "text": "3.2.4 Le Management qualité"
+            },
+            {
+                "text": "3.2.5 Les procédures"
+            },
+            {
+                "text": "3.3 La relation avec les acteurs du projet"
+            },
+            {
+                "text": "3.3.1 La maîtrise d'ouvrage"
+            },
+            {
+                "text": "3.3.2 La ville"
+            },
+            {
+                "text": "3.3.3 Les ABF"
+            },
+            {
+                "text": "3.3.4 L'état (ANRU)"
+            },
+            {
+                "text": "3.3.5 Les habitants"
+            },
+            {
+                "text": "3.3.6 Le Contrôleur technique"
+            },
+            {
+                "text": "3.3.7 Le Coordonnateur SPS"
+            },
+            {
+                "text": "3.4 Le management de la validation"
+            },
+            {
+                "text": "3.4.1 La validation en continu"
+            },
+            {
+                "text": "3.4.2 Les réunions de mises au point"
+            },
+            {
+                "text": "3.5 Méthodologie"
+            },
+            {
+                "text": "3.5.1 Diagnostic"
+            },
+            {
+                "text": "Etat des Lieux"
+            },
+            {
+                "text": "3.5.2 Avant Projet Sommaire"
+            },
+            {
+                "text": "3.5.3 Avant Projet Définitif"
+            },
+            {
+                "text": "3.5.4 Projet"
+            },
+            {
+                "text": "3.5.5 Opérations préalables au démarrage du chantier"
+            },
+            {
+                "text": "Information des locataires"
+            },
+            {
+                "text": "Programmation séquentielle des travaux"
+            },
+            {
+                "text": "3.5.6 VISA"
+            },
+            {
+                "text": "3.5.7 DET"
+            },
+            {
+                "text": "3.5.8 Logement témoin"
+            },
+            {
+                "text": "3.5.9 Réception"
+            },
+            {
+                "text": "3.5.10 GPA"
+            },
+            {
+                "text": "3.6 Etude et gestion de chantier en milieu occupé"
+            },
+            {
+                "text": "3.6.1 Communication avec les locataires"
+            },
+            {
+                "text": "3.6.1.1 En phase études"
+            },
+            {
+                "text": "3.6.1.2 Aide à la concertation en phase de conception"
+            },
+            {
+                "text": "3.6.1.3 Phase travaux"
+            },
+            {
+                "text": "o Réunion d'informations préalables avec les habitants d'un bâtiment ou d'une cage d'escalier"
+            },
+            {
+                "text": "o Visite avant travaux EDL"
+            },
+            {
+                "text": "o Préparation de chantier"
+            },
+            {
+                "text": "o Logement témoin"
+            },
+            {
+                "text": "Durant la phase de consultation :"
+            },
+            {
+                "text": "Durant la phase de chantier :"
+            },
+            {
+                "text": "Réception :"
+            },
+            {
+                "text": "o Intervention dans les logements"
+            },
+            {
+                "text": "3.6.2 Visite de logements"
+            },
+            {
+                "text": "3.6.3 Intervention en milieu occupé"
+            },
+            {
+                "text": "3.6.4 Sécurité du chantier"
+            },
+            {
+                "text": "3.6.5 Mesures pour limiter les nuisances des locataires et des riverains (bruits, poussières, occupation des logements, déplacements des intervenants sur le chantier et leurs moyens matériels…)"
+            },
+            {
+                "text": "3.7 Environnemental"
+            },
+            {
+                "text": "3.7.1 Matériaux biosourcés, réemploi, choix des matériaux, chantier vert…"
+            },
+            {
+                "text": "o Conception durable et matériaux"
+            },
+            {
+                "text": "o Matériaux bio-sourcés - Réemploi - Recyclage"
+            },
+            {
+                "text": "o Chantier Vert"
+            },
+            {
+                "text": "4. CALENDRIER PREVISIONNEL"
+            }
+        ]
+    },
+    {
+        "document": "9 Memoire Technique_val oise habitat _FINAL.docx",
+        "headers": [
+            {
+                "text": "1 Moyens humains"
+            },
+            {
+                "text": "1.1 Présentation de l’équipe de maîtrise d’œuvre"
+            },
+            {
+                "text": "1.2 Équipe affectée à l’opération"
+            },
+            {
+                "text": "1.3 Organigramme de l’équipe"
+            },
+            {
+                "text": "2 Mode opératoire mis en œuvre pour la réalisation des prestations et organisation en cas de pic d'activité au sein du groupement"
+            },
+            {
+                "text": "2.1 Répartition des tâches et compétences entre les membres de l’équipe"
+            },
+            {
+                "text": "2.2 Organisation en phase conception"
+            },
+            {
+                "text": "2.3 Organisation en phase chantier"
+            },
+            {
+                "text": "2.4 Mission OPC"
+            },
+            {
+                "text": "2.5 Organisation en cas de pic d'activité au sein du groupement"
+            },
+            {
+                "text": "3 Dispositif de protection de l’environnement et d’insertion sociale"
+            },
+            {
+                "text": "3.1 Économie circulaire"
+            },
+            {
+                "text": "3.2 Chantier à faibles nuisances"
+            },
+            {
+                "text": "3.3 Clause d’insertion"
+            }
+        ]
+    },
+    {
+        "document": "CDC ST GRATIEN _ memoire _ final.docx",
+        "headers": [
+            {
+                "text": "1 Compréhension des enjeux et besoins"
+            },
+            {
+                "text": "1.1 Rappel des éléments du dossier"
+            },
+            {
+                "text": "1.2 Rappel des informations de la visite de site"
+            },
+            {
+                "text": "1.3 Points de vigilances / Optimisations financières et techniques"
+            },
+            {
+                "text": "2 Méthodologie de gestion de projet en milieu contraint"
+            },
+            {
+                "text": "2.1 Plan d’installation de chantier / Hypothèses retenues"
+            },
+            {
+                "text": "2.2 Réunions publiques"
+            },
+            {
+                "text": "2.3 Intervention dans les logements :"
+            },
+            {
+                "text": "2.4 Surveillance des travaux :"
+            },
+            {
+                "text": "2.5 Visite de fin de travaux – OPR :"
+            },
+            {
+                "text": "2.6 Suivi pendant la GPA"
+            },
+            {
+                "text": "2.7 Réduction des nuisances"
+            },
+            {
+                "text": "2.8 Limitation des nuisances sonores"
+            },
+            {
+                "text": "2.9 Limitation des nuisances visuelles et tenue du chantier"
+            },
+            {
+                "text": "2.10 Limitation des nuisances des riverains dues au trafic"
+            },
+            {
+                "text": "3 Aptitude de l’équipe et adéquation de l’équipe avec l’opération"
+            },
+            {
+                "text": "3.1 Organigramme de l’équipe"
+            },
+            {
+                "text": "3.2 Equipe affectée à l’opération"
+            },
+            {
+                "text": "3.3 Répartition des tâches"
+            },
+            {
+                "text": "4 Pertinence de l’organisation et du mode opératoire pour mener l’ensemble des prestations"
+            },
+            {
+                "text": "5 Conclusions et remarques complémentaires sur le programme"
+            }
+        ]
+    },
+    {
+        "document": "Cadre note methodologique-V4 ANGA - Sans PHOTOS-revu IPC.docx",
+        "headers": [
+            {
+                "text": "Sous-critère 1 : Compréhension des enjeux et du contenu du programme - 30 POINTS :"
+            },
+            {
+                "text": "LE 1er TYPE DE REUNIONS"
+            },
+            {
+                "text": "Sous-critère 2 : Méthodologie proposée pour réaliser la mission - 30 POINTS :"
+            },
+            {
+                "text": "Sous-critère 3 : Composition et qualité de l’équipe dédiée à la mission - 10 POINTS :"
+            }
+        ]
+    },
+    {
+        "document": "Capacite, References, Methode-FINAL.docx",
+        "headers": []
+    },
+    {
+        "document": "IPC_007-Cadre de mémoire-ipc.docx",
+        "headers": [
+            {
+                "text": "1 Chapitre 1 : Perception globale du site et compréhension des enjeux du programme (10 pts)"
+            },
+            {
+                "text": "2 Perception du site"
+            },
+            {
+                "text": "3 Compréhension des enjeux"
+            },
+            {
+                "text": "3.1 Constat des existants"
+            },
+            {
+                "text": "1. Logements"
+            },
+            {
+                "text": "2. Combles"
+            },
+            {
+                "text": "3. Parties communes"
+            },
+            {
+                "text": "4. Sous-sol"
+            },
+            {
+                "text": "5.  Espaces extérieurs"
+            },
+            {
+                "text": "5.  Systèmes"
+            },
+            {
+                "text": "3.2 Solutions techniques envisageables"
+            },
+            {
+                "text": "4 Chapitre 2 : Mesures spécifiques à l’opération (20 points)"
+            },
+            {
+                "text": "5 Méthodologie détaillée pour le suivi des diagnostics préalables en phase études (10 points)"
+            },
+            {
+                "text": "5.1 Objectifs du diagnostic"
+            },
+            {
+                "text": "5.2 Réalisation du diagnostic"
+            },
+            {
+                "text": "5.3 Investigations complémentaires"
+            },
+            {
+                "text": "6 Méthodologie détaillée envisagée pour mener une opération de création d’une VMC en milieu occupé (10 points)"
+            },
+            {
+                "text": "6.1 Solution technique de création de la VMC"
+            },
+            {
+                "text": "6.2 Organisation et suivi des travaux en milieu occupé"
+            },
+            {
+                "text": "7 Chapitre 3 : Gestion de l’environnement de chantier (10 points)"
+            },
+            {
+                "text": "8 Modalités d’organisation de la gestion de la communication avec les locataires (et les commerces et les copropriétés voisines si nécessaires) - 5 points"
+            },
+            {
+                "text": "8.1 Communiquer avec les acteurs du projet :"
+            },
+            {
+                "text": "8.2 Communiquer avec les locataires en phase étude"
+            },
+            {
+                "text": "8.3 Communiquer avec les locataires en phase travaux"
+            },
+            {
+                "text": "9 - Planning prévisionnel (études + travaux) – 5 points"
+            },
+            {
+                "text": "9.1 Planning prévisionnel des études"
+            },
+            {
+                "text": "9.2 Planning prévisionnel des travaux"
+            }
+        ]
+    },
+    {
+        "document": "IPC_Cadre mémoire technique Viarmes.docx",
+        "headers": []
+    },
+    {
+        "document": "IPC_MT_GISORS.docx",
+        "headers": [
+            {
+                "text": "1 Table des matières"
+            },
+            {
+                "text": "1 NOTE METHODOLOGIQUE"
+            },
+            {
+                "text": "1.1 SOLUTIONS TECHNIQUES"
+            },
+            {
+                "text": "1.1.1 Analyse du programme"
+            },
+            {
+                "text": "1.1.2 Solutions techniques et démarche de coût global"
+            },
+            {
+                "text": "1.1.3 Amélioration énergétique"
+            },
+            {
+                "text": "1.1.4 Analyse structure"
+            },
+            {
+                "text": "1.1.5 Travaux en présence d’amiante."
+            },
+            {
+                "text": "1.2 ESTIMATIF TRAVAUX"
+            },
+            {
+                "text": "1.3 CHOIX EN FAVEUR DE LA QUALITE ENVIRONNEMENTALE"
+            },
+            {
+                "text": "1.3.1 Approche carbone"
+            },
+            {
+                "text": "1.3.2 Recyclage et rénovation circulaire"
+            },
+            {
+                "text": "1.3.3 Confort et santé : Qualité de l’Air Intérieur"
+            },
+            {
+                "text": "1.4 PLANNING"
+            },
+            {
+                "text": "1.4.1 Respect des délais en phase étude"
+            },
+            {
+                "text": "1.4.2 Le respect des délais en phase travaux"
+            },
+            {
+                "text": "2 REFERENCES SPECIFIQUES"
+            },
+            {
+                "text": "2.1 Références spécifiques du personnel assigné à la mission"
+            },
+            {
+                "text": "2.2 Références communes au groupement"
+            },
+            {
+                "text": "3 COMPETENCES SPECIFIQUES DE L’EQUIPE DEDIEE"
+            },
+            {
+                "text": "3.1 Présentation du groupement"
+            },
+            {
+                "text": "3.2 Pouget Consultants bureau d’études RGE (thermique et fluids) est en mesure d’apporter une expertise fine et adaptée des besoins définis dans cette consultation. En effet, nous intervenons en pleine complémentarité sur les sujets suivants :"
+            },
+            {
+                "text": "3.3 Organisation"
+            },
+            {
+                "text": "3.4 Méthodologie d’exécution des études"
+            },
+            {
+                "text": "3.4.1 La communication interne au groupement"
+            },
+            {
+                "text": "3.4.2 La gestion de projet"
+            },
+            {
+                "text": "3.5 Modalité des missions en phase étude"
+            },
+            {
+                "text": "3.5.1 Parfaire la connaissance du site à l’aide d’études complémentaires"
+            },
+            {
+                "text": "3.5.2 Diagnostic et esquisse :"
+            },
+            {
+                "text": "3.5.3 Études d'avant-projet (Avp) :"
+            },
+            {
+                "text": "3.5.4 Etudes de projet (PRO) :"
+            },
+            {
+                "text": "3.5.5 Assistance pour la passation des contrats de travaux (ACT)"
+            },
+            {
+                "text": "3.6 Organisation et suivi des travaux"
+            },
+            {
+                "text": "3.6.1 Période préparatoire :"
+            },
+            {
+                "text": "3.6.2 Surveillance des travaux :"
+            },
+            {
+                "text": "3.6.3 Gestion des réclamations pendant les travaux"
+            },
+            {
+                "text": "3.6.4 Visite de fin de travaux – OPR"
+            },
+            {
+                "text": "3.6.5 Suivi pendant la GPA"
+            },
+            {
+                "text": "3.6.6 Qualité documentaire de la réalisation (DOE)"
+            },
+            {
+                "text": "4 RSE ET DEVELOPPEMENT DURABLE"
+            },
+            {
+                "text": "4.1 Engagement de performance en matière de RSE"
+            },
+            {
+                "text": "4.2 En matière d’environnement"
+            },
+            {
+                "text": "4.3 Engagement de performance en matière de RSE"
+            },
+            {
+                "text": "5 ANNEXES"
+            }
+        ]
+    },
+    {
+        "document": "IPC_MT_lots_6_8_V2.pdf",
+        "headers": [
+            {
+                "text": "ACCORD-CADRE À MARCHÉS SUBSÉQUENTS ET À BONS DE COMMANDES DE MAITRISE D'ŒUVRE, BUREAU D'ETUDES, GEOMETRES POUR DES OPERATION DE MAINTENANCE - RÉHABILITATION & RENOUVELLEMENT URBAIN"
+            },
+            {
+                "text": "ESH LOGIREP"
+            },
+            {
+                "text": "ESH LOGIRYS"
+            },
+            {
+                "text": "1-  Réponses aux attentes du MO en phase études"
+            },
+            {
+                "text": "a. En matière d'environnement"
+            },
+            {
+                "text": "b.  Prise en compte de l'existant"
+            },
+            {
+                "text": "c.  Qualité architecturale"
+            },
+            {
+                "text": "d. Pilotage d'une équipe de maîtrise d'œuvre"
+            },
+            {
+                "text": "e.  Engagement de délais"
+            },
+            {
+                "text": "f. Engagement de respect de l'enveloppe budgétaire"
+            },
+            {
+                "text": "g.  Engagement de performance en matière de RSE"
+            },
+            {
+                "text": "2-  Réponses aux attentes du MO en phase Chantier"
+            },
+            {
+                "text": "a.  Qualité et conformité architecturale"
+            },
+            {
+                "text": "b. Pilotage d'une équipe de maîtrise d'œuvre"
+            },
+            {
+                "text": "Période préparatoire :"
+            },
+            {
+                "text": "Surveillance des travaux :"
+            },
+            {
+                "text": "Visite de fin de travaux -OPR :"
+            },
+            {
+                "text": "c.  Engagement de délais"
+            },
+            {
+                "text": "d.  Engagement de respect de l'enveloppe budgétaire"
+            },
+            {
+                "text": "e.  Engagement de performance en matière de RSE"
+            },
+            {
+                "text": "3-  Réponses aux attentes du MO en phase Réception et GPA"
+            },
+            {
+                "text": "a.  Réactivité et disponibilité"
+            },
+            {
+                "text": "b.  Qualité documentaire de la réalisation (DOE)"
+            },
+            {
+                "text": "ANNEXE"
+            },
+            {
+                "text": "Organigramme équipe de maîtrise d'œuvre"
+            }
+        ]
+    },
+    {
+        "document": "IPC_SEQENS_Memoire neuilly-Marne.docx",
+        "headers": [
+            {
+                "text": "1"
+            }
+        ]
+    },
+    {
+        "document": "Logirep_Memoire_Park Montreuil-FINAL.docx",
+        "headers": []
+    },
+    {
+        "document": "Memoire Technique_francs moisins_nego.pdf",
+        "headers": [
+            {
+                "text": "MEMOIRE TECHNIQUE"
+            },
+            {
+                "text": "SUITE A NEGOCIATIONS"
+            },
+            {
+                "text": "Maitre d'ouvrage"
+            },
+            {
+                "text": "Objet de la mission"
+            },
+            {
+                "text": "É quipe de maitrise d'œuvre"
+            },
+            {
+                "text": "le 19 juin 2025"
+            },
+            {
+                "text": "SOMMAIRE"
+            },
+            {
+                "text": "Partie 1. Evaluation du programme prévisionnel et du délai d'exécution"
+            },
+            {
+                "text": "Article 1_1_ Analyse du programme"
+            },
+            {
+                "text": "1. Traitement du clos et couvert"
+            },
+            {
+                "text": "2. Intervention sur les parties privatives"
+            },
+            {
+                "text": "Équipements des logements"
+            },
+            {
+                "text": "3. Intervention sur les parties communes et gestion technique du bâtiment"
+            },
+            {
+                "text": "Sous-sol du bâtiment B1"
+            },
+            {
+                "text": "Parties communes du bâtiment B2 cage 7"
+            },
+            {
+                "text": "Équipements VMC bâtiment B2"
+            },
+            {
+                "text": "4. Restructuration des commerces du bâtiment 1"
+            },
+            {
+                "text": "5. Objectif étiquette B et Label énergétique : BBC Rénovation EFINERGIE 2024"
+            },
+            {
+                "text": "6. Panneaux photovoltaïque"
+            },
+            {
+                "text": "TF - Etude de faisabilité photovoltaïque"
+            },
+            {
+                "text": "Les étapes d'étude seront les suivantes :"
+            },
+            {
+                "text": "Synthèse et livrable"
+            },
+            {
+                "text": "TO - Etude de faisabilité photovoltaïque"
+            },
+            {
+                "text": "Phase 1 -Etudes d'avant -projet (APD) :"
+            },
+            {
+                "text": "Phase 2 - Études de projet (PRO/DCE) :"
+            },
+            {
+                "text": "Phase 3 - Assistance au Contrat de Travaux (ACT) :"
+            },
+            {
+                "text": "Phase 4 - VISA :"
+            },
+            {
+                "text": "7. Montant prévisionnel des travaux"
+            },
+            {
+                "text": "1. Planning des études"
+            },
+            {
+                "text": "2. Planning des travaux"
+            },
+            {
+                "text": "Partie 2. Evaluation des outils, moyens de coordination et méthodologie d'intervention"
+            },
+            {
+                "text": "Article 2_1_ Décomposition et répartition des tâches"
+            },
+            {
+                "text": "1. Décomposition du temps passé par intervenant et par phase"
+            },
+            {
+                "text": "1.1. Tranche ferme"
+            },
+            {
+                "text": "1.2. Tranche optionnelle"
+            },
+            {
+                "text": "2. Méthodologie d'intervention en milieu occupé"
+            },
+            {
+                "text": "2.1. Communiquer avec les acteurs du projet :"
+            },
+            {
+                "text": "La maîtrise d'ouvrage :"
+            },
+            {
+                "text": "Les locataires :"
+            },
+            {
+                "text": "Les partenaires extérieurs (ANRU, ville de Saint-Denis)"
+            },
+            {
+                "text": "Le Contrôleur technique :"
+            },
+            {
+                "text": "Le Coordonnateur SPS :"
+            },
+            {
+                "text": "2.2. Organisation et suivi des travaux"
+            },
+            {
+                "text": "Période préparatoire :"
+            },
+            {
+                "text": "Surveillance des travaux :"
+            },
+            {
+                "text": "Visite de fin de travaux -OPR"
+            },
+            {
+                "text": "Suivi pendant la GPA"
+            },
+            {
+                "text": "3. Méthodologie d'intervention en phase d'exécution avec les entreprises"
+            },
+            {
+                "text": "3.1. Période préparation de chantier :"
+            },
+            {
+                "text": "3.2. Période de travaux"
+            },
+            {
+                "text": "3.3. AOR"
+            },
+            {
+                "text": "Partie 3. D émarche d'économie circulaire"
+            },
+            {
+                "text": "Article 3_1_ Économie circulaire"
+            },
+            {
+                "text": "Les objectifs :"
+            },
+            {
+                "text": "Article 3_2_ Ébauche du « diagnostic ressource » propre à l'opération"
+            },
+            {
+                "text": "Exemple de réemploi de porte pour la fabrication de mobilier"
+            },
+            {
+                "text": "Partie 4. Projection architecturale"
+            },
+            {
+                "text": "Article 4_1_ Intentions architecturales"
+            },
+            {
+                "text": "1. Constat : Analyse Architecturale"
+            },
+            {
+                "text": "2. Intentions :  Parti Architectural"
+            },
+            {
+                "text": "Article 4_2_ Parti architectural et technique"
+            },
+            {
+                "text": "Nous envisageons ainsi :"
+            },
+            {
+                "text": "1. Bâtiment B1 : Angle Danielle Casanova / Parc du Franc Moisin"
+            },
+            {
+                "text": "2. Bâtiment B2 : Allée Saint Exupéry"
+            }
+        ]
+    },
+    {
+        "document": "Memoire ingenierie sociale 2024.docx",
+        "headers": [
+            {
+                "text": "SOMMAIRE"
+            },
+            {
+                "text": "1.\tMoyens et organisation mis en œuvre pour la préparation, l’exécution des prestations"
+            },
+            {
+                "text": "1 Equipe projet"
+            },
+            {
+                "text": "2 Moyens matériels"
+            },
+            {
+                "text": "2.\tMéthodologie et organisation des enquêtes"
+            },
+            {
+                "text": "A.\tRéunion de préparation avec la Maîtrise d’ouvrage"
+            },
+            {
+                "text": "B.\tRéunions de préparation avec les partenaires d’Elogie Siemp"
+            },
+            {
+                "text": "C.\tInformation des ménages"
+            },
+            {
+                "text": "D.\tPhase d’enquête : Méthodologie d’intervention"
+            },
+            {
+                "text": "1.\tMoyens de mise en œuvre"
+            },
+            {
+                "text": "2.\tModalités de contact et prise de rendez-vous"
+            },
+            {
+                "text": "3.\t L’enquête par entretien à domicile"
+            },
+            {
+                "text": "D.\tTraitement informatique des données"
+            },
+            {
+                "text": "1.\tLe traitement des données en interne"
+            },
+            {
+                "text": "2.\tL’analyse des données par le chargé de mission"
+            },
+            {
+                "text": "3.\tElaboration du rapport et des documents complémentaires"
+            },
+            {
+                "text": "4. Modalités d’accompagnement d’Elogie Siemp dans la conduite de la mission"
+            },
+            {
+                "text": "3.\tGestion et protection des données"
+            },
+            {
+                "text": "Personnel IPC"
+            },
+            {
+                "text": "Sécurité informatique"
+            },
+            {
+                "text": "Relation avec le client"
+            },
+            {
+                "text": "Gestion et traitement des informations recueillies"
+            },
+            {
+                "text": "Registre des activités de traitement"
+            },
+            {
+                "text": "Pseudonymisation et chiffrement des données"
+            }
+        ]
+    },
+    {
+        "document": "Mémoire 2AD-ipc.docx",
+        "headers": [
+            {
+                "text": "Réhabilitation thermique de la résidence comportant 123 logements collectifs"
+            },
+            {
+                "text": "4 à 8 avenue de Villepreux / 4 à 13 rue Romain Rolland"
+            },
+            {
+                "text": "LES CLAYES-SOUS-BOIS (78340)"
+            },
+            {
+                "text": "MEMOIRE JUSTIFICATIF"
+            },
+            {
+                "text": "1. Présentation du groupement et organisation générale"
+            },
+            {
+                "text": "1.1 Raison d’être du groupement"
+            },
+            {
+                "text": "1.2 Moyens humains mobilisés pour le projet"
+            },
+            {
+                "text": "Architecte Mandataire – 2AD Architecture"
+            },
+            {
+                "text": "Nota : les CV, qualifications, attestations de compétences des intervenants sont joints en annexe"
+            },
+            {
+                "text": "Bureau d’études - IPC"
+            },
+            {
+                "text": "Nota : les CV, qualifications, attestations de compétences des intervenants sont joints en annexe"
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "Bureau d’études Thermique, fluide, environnement – TRIBU ENERGIE"
+            },
+            {
+                "text": "Nota : les CV, qualifications, attestations de compétences des intervenants sont joints en annexe"
+            },
+            {
+                "text": "1.3 Répartition des tâches au sein de l’équipe de maitrise d’œuvre"
+            },
+            {
+                "text": "1.2 Moyens techniques et matériels mobilisables"
+            },
+            {
+                "text": "2. Compréhension du site et enjeux spécifiques du projet des Clayes-sous-Bois"
+            },
+            {
+                "text": "3. Organisation et méthodologie générale de la mission"
+            },
+            {
+                "text": "4. Méthodologie par phase de mission"
+            },
+            {
+                "text": "4.1 Phase Diagnostic (DIAG)"
+            },
+            {
+                "text": "4.2 Phase Avant-Projet Sommaire (APS)"
+            },
+            {
+                "text": "4.3 Phase Avant-Projet Définitif (APD)"
+            },
+            {
+                "text": "4.4 Phase Projet / Dossier de Consultation des Entreprises (PRO / DCE)"
+            },
+            {
+                "text": "4.5 Phase Assistance à la passation des contrats de travaux (ACT)"
+            },
+            {
+                "text": "4.6 Phase Direction de l’Exécution des Travaux (DET) – Intervention en milieu occupé"
+            },
+            {
+                "text": "4.7 Phase Assistance aux Opérations de Réception (AOR)"
+            },
+            {
+                "text": "4.8 Gestion du risque amiante"
+            },
+            {
+                "text": "4.9 Mission optionnelle d’Ordonnancement, Pilotage et Coordination (OPC)"
+            },
+            {
+                "text": "5. Relation avec les locataires et information tout au long du projet"
+            },
+            {
+                "text": "5.1 Relation avec la maîtrise d’ouvrage et le gestionnaire"
+            },
+            {
+                "text": "5.2 Information, concertation et accompagnement des locataires"
+            },
+            {
+                "text": "5.3 Suivi et traitement des réclamations des locataires"
+            },
+            {
+                "text": "6. Réflexion sur le phasage de l’opération et calendrier prévisionnel"
+            },
+            {
+                "text": "7. Démarche de coût global et maîtrise financière de l’opération"
+            },
+            {
+                "text": "7.1 Principes généraux d’arbitrage et de priorisation"
+            },
+            {
+                "text": "7.2 Mise en œuvre opérationnelle de la démarche de coût global"
+            },
+            {
+                "text": "7.3 Maîtrise financière en phase travaux"
+            },
+            {
+                "text": "7.4 Accompagnement de COSIVIA dans l’optimisation du financement de l’opération"
+            },
+            {
+                "text": "8. Démarche RSE et développement durable"
+            },
+            {
+                "text": "8.1 Une démarche structurée et partagée au sein du groupement"
+            },
+            {
+                "text": "8.2 Intégration des enjeux environnementaux dès la conception"
+            },
+            {
+                "text": "8.3 Chantier à faibles nuisances et gestion environnementale"
+            },
+            {
+                "text": "8.4 Dimension sociale et responsabilité vis-à-vis des occupants"
+            },
+            {
+                "text": "8.5 Amélioration continue et transmission"
+            },
+            {
+                "text": "9. Conclusion – Engagement du groupement"
+            }
+        ]
+    },
+    {
+        "document": "Mémoire RSE_compltPOUGET revu IPC.docx",
+        "headers": [
+            {
+                "text": "Table des matières"
+            },
+            {
+                "text": "1 Mesures environnementales mises en oeuvre par l’équipe de maîtrise d’oeuvre au titre du présent marché"
+            },
+            {
+                "text": "1.1 Indicateurs de Performance Clés (KPIs) Environnementaux pour la Réhabilitation"
+            },
+            {
+                "text": "1.2 Moyens mis en œuvre dans le cadre du présent marché pour une mobilité douce et/ou décarbonée pour les déplacements professionnels des employés (Part de la flotte professionnelle n'utilisant pas de carburant essence ou diesel, Taux de covoiturage dans les déplacements professionnels, etc…)"
+            },
+            {
+                "text": "1.3 Moyens mis en œuvre dans le cadre du présent marché pour la gestion des déchets liés à l’activité (Collecte et tri des déchets, Contrats avec des entreprises spécialisées dans la récolte, le recyclage et la valorisation des déchets, etc…)"
+            },
+            {
+                "text": "1.4 Présentation de la démarche ISO 26000 appliquée par l’entreprise au titre du présent marché ;"
+            },
+            {
+                "text": "1.4.1 VOLET SOCIAL"
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "1.4.2 Management participatif et épanouissement des collaborateurs"
+            },
+            {
+                "text": "1.4.3 Développement des compétences et engagement sociétal"
+            },
+            {
+                "text": "1.4.4 Impact social et inclusion"
+            },
+            {
+                "text": "1.4.5 VOLET ENVIRONNEMENTALE"
+            },
+            {
+                "text": "1.4.6 Qualité, Expertise et Performance Environnementale"
+            },
+            {
+                "text": "1.4.7 Maîtrise de l’Empreinte Environnementale et Engagement Interne"
+            },
+            {
+                "text": "2 Mesures sociétales mises en oeuvre par l’équipe de maîtrise d’oeuvre au titre du présent marché :"
+            },
+            {
+                "text": "2.1 Détailler pour le présent marché le nombre d'heures réalisées, le nombre de salariés concernés par des contrats de professionnalisation ou des contrats d'apprentissage, ou les partenariats mis en place pour l’insertion des publics éloignés de l'emploi via l'emploi de salariés en contrats d'insertion avec le tissu économique local, structures d’insertions par l’activité économique (SIAE), de l’économie sociale et solidaire (ESS) et des structures du secteur du travail protégé et adapté (ESAT-STPA)."
+            },
+            {
+                "text": "2.1.1 VOLET SOCIETAL"
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "2.1.2 La valorisation des compétences et le rayonnement de la filière"
+            },
+            {
+                "text": "2.1.3 Une responsabilité ancrée dans l’éthique et la solidarité locale"
+            }
+        ]
+    },
+    {
+        "document": "Note methodologique_les_Ulis_V1.docx",
+        "headers": [
+            {
+                "text": "1 Table des matières"
+            },
+            {
+                "text": "1 Caractéristiques des bâtiments"
+            },
+            {
+                "text": "2 Compréhension de l’opération"
+            },
+            {
+                "text": "2.1 La compréhension du site (réponse aux contraintes de travaux en site occupé, du délai…),"
+            },
+            {
+                "text": "2.1.1 Diagnostic à la suite de la visite de site"
+            },
+            {
+                "text": "2.1.2 Méthodologie d’intervention en milieu occupé"
+            },
+            {
+                "text": "2.1.3 Maîtrise des délais"
+            },
+            {
+                "text": "2.2 Les enjeux techniques"
+            },
+            {
+                "text": "2.2.1 Amiante"
+            },
+            {
+                "text": "2.2.2 Amélioration énergétique de la sécurité y compris incendie (Tranche ferme)"
+            },
+            {
+                "text": "2.2.3 Amélioration énergétique, du confort, de la sécurité et de la technique (Tranche optionnelle)"
+            },
+            {
+                "text": "2.3 Les études et principes constructifs envisagés par la maîtrise d’œuvre pour atteindre les objectifs techniques, financier, locatifs et thermiques recherchés"
+            },
+            {
+                "text": "2.3.1 Amélioration énergétique et du confort (Tranche ferme)"
+            },
+            {
+                "text": "2.4 Proposition d’amélioration du programme et initiative du candidat"
+            },
+            {
+                "text": "3 Méthodologie d’exécution des études et des travaux avec un planning détaillé cohérent et réaliste de l’opération et détail par phase/éléments de mission pour respecter les délais imposés et/ou les optimiser."
+            },
+            {
+                "text": "3.1 Méthodologie d’exécution des études"
+            },
+            {
+                "text": "3.1.1 Une organisation structurée"
+            },
+            {
+                "text": "3.1.2 Le management de la validation"
+            },
+            {
+                "text": "3.2 Méthodologie d’intervention en phase d’exécution avec les entreprises"
+            },
+            {
+                "text": "3.2.1 Période préparation de chantier :"
+            },
+            {
+                "text": "3.2.2 Période de travaux"
+            },
+            {
+                "text": "3.2.3 AOR"
+            },
+            {
+                "text": "3.3 Planning détaillé"
+            },
+            {
+                "text": "3.3.1 Calendrier Tranche Ferme"
+            },
+            {
+                "text": "3.3.2 Calendrier Tranche Optionnelle"
+            },
+            {
+                "text": "4 Analyse financière détaillée du budget de la maitrise d’ouvrage et proposition d’optimisation"
+            },
+            {
+                "text": "5 Temps passé par les différents membres de l’équipe et la cohérence de celui-ci au vu des éléments de la mission."
+            },
+            {
+                "text": "5.1 Equipe projet :"
+            },
+            {
+                "text": "5.2 Répartition des tâches au sein de l’équipe dédiée au projet :"
+            },
+            {
+                "text": "5.3"
+            },
+            {
+                "text": "5.4 Temps passé par éléments de missions :"
+            },
+            {
+                "text": "5.4.1 Temps passé par éléments de missions et co-traitant Tranche Ferme"
+            },
+            {
+                "text": "5.4.2 Temps passé par éléments de missions et co-traitant Tranche Optionnelle"
+            }
+        ]
+    },
+    {
+        "document": "Note méthodo.docx",
+        "headers": []
+    },
+    {
+        "document": "RAF_Note-technique.pdf",
+        "headers": [
+            {
+                "text": "Groupe Flandre - Paris 19ème"
+            },
+            {
+                "text": "Le soin des choses Note d'intentions"
+            },
+            {
+                "text": "Madame, Monsieur,"
+            },
+            {
+                "text": "Note d'intentions Note d'intentions"
+            },
+            {
+                "text": "Sommaire : Sommaire :"
+            },
+            {
+                "text": "Rappel des critères Rappel des critères"
+            },
+            {
+                "text": "Partie 1 Analyse du site, respect des contraintes et du patrimoine existant Partie 1 Analyse du site, respect des contraintes et du patrimoine existant."
+            },
+            {
+                "text": "Petite histoire du site, un patrimoine industriel capable. Petite histoire du site,"
+            },
+            {
+                "text": "1890, 1890,"
+            },
+            {
+                "text": "Analyse administrative"
+            },
+            {
+                "text": "UG.2.3.1 Soubassement et façades"
+            },
+            {
+                "text": "UG.2.3.2 Ravalement et isolation"
+            },
+            {
+                "text": "UG.2.3.3 Couronnement et couverture"
+            },
+            {
+                "text": "UG.2.3.4 Extensions et surélévations"
+            },
+            {
+                "text": "Les contraintes du site"
+            },
+            {
+                "text": "Une approche adaptée"
+            },
+            {
+                "text": "Partie 2 Pertinence des propositions d'intervention en lien avec le budget travaux. et au regard de l' analyse critique des documents"
+            },
+            {
+                "text": "Approche architecturale au projet."
+            },
+            {
+                "text": "Améliorer le confort, un objectif multiple."
+            },
+            {
+                "text": "Penser l'écologie et la durabilité du projet."
+            },
+            {
+                "text": "Valoriser la richesse patrimoniale à l'échelle du site : affirmer la symétrie et la perspective."
+            },
+            {
+                "text": "Approche technique au projet."
+            },
+            {
+                "text": "Ce poste consiste notamment à réaliser les travaux suivants :"
+            },
+            {
+                "text": "Bâtiment B :"
+            },
+            {
+                "text": "Bâtiments B et C :"
+            },
+            {
+                "text": "Concernant les risques sanitaires :"
+            },
+            {
+                "text": "Le projet se décline ensuite à partir de ces principes :"
+            },
+            {
+                "text": "Approche paysagère au projet."
+            },
+            {
+                "text": "Traitement des sols et gestion des pavés existants"
+            },
+            {
+                "text": "Création  de  zones  infiltrantes  et  prise  en  compte  des réseaux"
+            },
+            {
+                "text": "Conservation des pentes et gestion des eaux pluviales"
+            },
+            {
+                "text": "Zones de pleine terre et plantations d'arbres"
+            },
+            {
+                "text": "Les essences arbustives envisagées incluent :"
+            },
+            {
+                "text": "Approche financière au projet."
+            },
+            {
+                "text": "Associée à l' emploi d'isolants biosourcés (fibre de bois,  chanvre),  cette  démarche  contribue  au  stockage temporaire de carbone biogénique et à la diminution de l' énergie grise de l' opération."
+            },
+            {
+                "text": "Partie 3"
+            },
+            {
+                "text": "Approche au développement durable au regard de l'opération incluant notamment la vérification des objectifs thermiques"
+            },
+            {
+                "text": "3.1 Atteinte de la certification NF habitat HQE"
+            },
+            {
+                "text": "3.2 Économie circulaire"
+            },
+            {
+                "text": "3.3 Atteinte des objectifs thermiques Mission EVA"
+            },
+            {
+                "text": "3.4 Choix de conception en matière environnementale"
+            },
+            {
+                "text": "3.5 Chantier à faibles nuisances"
+            },
+            {
+                "text": "3.5.1 Mesures structurantes"
+            },
+            {
+                "text": "3.5.2 Schéma d'organisation et de gestion des déchets (SOGED)"
+            },
+            {
+                "text": "conservée ;"
+            },
+            {
+                "text": "3.5.3 Gestion de l'énergie"
+            },
+            {
+                "text": "Gestion de l'eau"
+            },
+            {
+                "text": "Confort acoustique"
+            },
+            {
+                "text": "Confort visuel"
+            },
+            {
+                "text": "3.5.4 Gestion et collecte sélective des déchets"
+            },
+            {
+                "text": "Tri et bennes :"
+            },
+            {
+                "text": "3.5.5 La réunion environnementale de fin de chantier"
+            },
+            {
+                "text": "Partie 4 Organisation et méthodologie adaptée pour l'opération"
+            },
+            {
+                "text": "Diagnostic / Esquisse"
+            },
+            {
+                "text": "Objectifs du diagnostic"
+            },
+            {
+                "text": "Réalisation du diagnostic"
+            },
+            {
+                "text": "5. Livrables"
+            },
+            {
+                "text": "Investigations complémentaires"
+            },
+            {
+                "text": "Nous avons d'ores et déjà pu identifier les investigations suivantes :"
+            },
+            {
+                "text": "Etudes d' avant-projet (AVP) :"
+            },
+            {
+                "text": "Etudes de projet (PRO) :"
+            },
+            {
+                "text": "Assistance lors de la passation des contrats de travaux (ACT) :"
+            },
+            {
+                "text": "Organisation et suivi des travaux"
+            },
+            {
+                "text": "Surveillance des travaux :"
+            },
+            {
+                "text": "Visite de fin de travaux - OPR"
+            },
+            {
+                "text": "Suivi pendant la GPA"
+            },
+            {
+                "text": "Gestion de l'environnement de chantier"
+            },
+            {
+                "text": "La maîtrise d'ouvrage :"
+            },
+            {
+                "text": "Les locataires, commerces et la PMI :"
+            },
+            {
+                "text": "Le Contrôleur technique :"
+            },
+            {
+                "text": "Le Coordonnateur SPS :"
+            },
+            {
+                "text": "Planning prévisionnel du projet"
+            },
+            {
+                "text": "Etudes"
+            },
+            {
+                "text": "Présentation de l'équipe dédiée au projet"
+            },
+            {
+                "text": "Un architecte mandataire spécialisé :"
+            },
+            {
+                "text": "projets patrimoniaux et conception frugale."
+            },
+            {
+                "text": "Un interlocuteur principal"
+            },
+            {
+                "text": "Un partenaire technique polydisciplinaire spécialisé  dans  la  réhabilitation  du  logement social"
+            },
+            {
+                "text": "Un  partenaire  spécialisé  sur  les  question thermiques et écologiques. L'équipe WAB"
+            },
+            {
+                "text": "Une paysagiste à l' approche frugal."
+            },
+            {
+                "text": "Répar ƟƟ on des tâches au sein de l'équipe de maitrise d'œuvre par phase"
+            }
+        ]
+    },
+    {
+        "document": "RIVP 8007-8010-8011_MémoireTechnique_FINAL.pdf",
+        "headers": [
+            {
+                "text": "SOMMAIRE"
+            },
+            {
+                "text": "1. APPROCHE ARCHITECTURALE ET TECHNIQUE"
+            },
+            {
+                "text": "1.1. DIAGNOSTIC VISUEL ET COMPREHENSION DE L'EXISTANT - GROUPE 8007"
+            },
+            {
+                "text": "1.1.1 Analyse des façades, pignons et toiture"
+            },
+            {
+                "text": "1.1.2 Parties communes et privatives"
+            },
+            {
+                "text": "1.1.3 Espaces extérieurs"
+            },
+            {
+                "text": "1.2. INTENTIONS D'INTERVENTION ET DE TRAITEMENT ARCHITECTURAL - GROUPE 8007"
+            },
+            {
+                "text": "1.3. DIAGNOSTIC VISUEL ET COMPREHENSION DE L'EXISTANT - GROUPE 8010"
+            },
+            {
+                "text": "1.3.1 Analyse des façades, pignons et toiture"
+            },
+            {
+                "text": "1.3.2 Parties communes et privatives"
+            },
+            {
+                "text": "1.3.3 Espaces extérieurs"
+            },
+            {
+                "text": "1.4. INTENTIONS D'INTERVENTION ET DE TRAITEMENT ARCHITECTURAL - GROUPE 8010"
+            },
+            {
+                "text": "1.5. DIAGNOSTIC VISUEL ET COMPREHENSION DE L'EXISTANT - GROUPE 8011"
+            },
+            {
+                "text": "1.5.1 Analyse des façades, pignons et toiture"
+            },
+            {
+                "text": "1.5.2 Parties communes et privatives"
+            },
+            {
+                "text": "1.6. INTENTIONS D'INTERVENTION ET DE TRAITEMENT ARCHITECTURAL - GROUPE 8011"
+            },
+            {
+                "text": "Traitement de l'enveloppe et des façades"
+            },
+            {
+                "text": "Amélioration du confort des logements"
+            },
+            {
+                "text": "2. APPROCHE DEVELOPPEMENT DURABLE"
+            },
+            {
+                "text": "2.1. STRATEGIE POUR L'ERADICATION DES ETIQUETTES DPE E, F ET G"
+            },
+            {
+                "text": "GROUPE 08007 - 26 rue Gagnée / Rue de la Fraternité"
+            },
+            {
+                "text": "GROUPE 08010 - 5 à 19 rue Gagnée"
+            },
+            {
+                "text": "GROUPE 08011 - 2 à 16 rue Gagnée"
+            },
+            {
+                "text": "2.2. LUTTE CONTRE LES ILOTS DE CHALEUR ET CONFORT D'ETE"
+            },
+            {
+                "text": "GROUPE 08007 - 26 rue Gagnée / Rue de la Fraternité"
+            },
+            {
+                "text": "GROUPE 08010 - 5 à 19 rue Gagnée"
+            },
+            {
+                "text": "GROUPE 08011 - 2 à 16 rue Gagnée"
+            },
+            {
+                "text": "2.3. UTILISATION DE MATERIAUX DE REEMPLOI ET DE MATERIAUX BIOSOURCES"
+            },
+            {
+                "text": "3. METHODOLOGIE EN MILIEU OCCUPE ET CONCERTATION LOCATAIRES"
+            },
+            {
+                "text": "3.1. ORGANISATION DU CHANTIER ET LIMITATION DES NUISANCES"
+            },
+            {
+                "text": "3.2. PROCESSUS  ET  MOYENS  MIS  EN  ŒUVRE  POUR  LA  CONCERTATION  ET  L'INFORMATION LOCATAIRES"
+            },
+            {
+                "text": "Concertation et information pendant les phases d'études"
+            },
+            {
+                "text": "Concertation et information pendant la phase travaux"
+            },
+            {
+                "text": "3.3. PRISE EN COMPTE DES CONTRAINTES SPECIFIQUES DU SITE"
+            },
+            {
+                "text": "4. METHODOLOGIE POUR LA MISSION DIAG"
+            },
+            {
+                "text": "4.1. POURCENTAGE MINIMAL DE LOGEMENTS VISITES ET REPARTITION ENTRE COTRAITANTS"
+            },
+            {
+                "text": "Répartition de la charge de visite entre les cotraitants"
+            },
+            {
+                "text": "4.2. METHODOLOGIE ET MOYENS MIS EN ŒUVRE POUR LA PHASE DIAG"
+            },
+            {
+                "text": "5. COHERENCE AVEC LE PROGRAMME ET LE BUDGET"
+            },
+            {
+                "text": "5.1. COHERENCE DES PROPOSITIONS AU REGARD DU PROGRAMME ET DU BUDGET ALLOUE POUR CHAQUE GROUPE"
+            },
+            {
+                "text": "5.1.2 Groupe 8010"
+            },
+            {
+                "text": "Coutlogt"
+            },
+            {
+                "text": "EcartparrapportaubudgetduMO"
+            },
+            {
+                "text": "5.1.3 Groupe 8011"
+            },
+            {
+                "text": "EcartparrapportaubudgetduMO"
+            },
+            {
+                "text": "5.2. DELAIS CONTRACTUELS POUR CHAQUE PHASE DE LA MISSION"
+            },
+            {
+                "text": "6. CONCLUSION"
+            }
+        ]
+    },
+    {
+        "document": "RIVP PARIS 13 NATIONALE_MémoireTechnique_V1 du 2025 11 05.docx",
+        "headers": [
+            {
+                "text": "1 Approche architecturale et technique"
+            },
+            {
+                "text": "1.1 Diagnostic visuel et comprehension de l’existant"
+            },
+            {
+                "text": "1.1.1 Analyse des façades, pignons et toiture"
+            },
+            {
+                "text": "1.1.2 Parties communes"
+            },
+            {
+                "text": "1.2 Intentions d’intervention et de traitement architectural"
+            },
+            {
+                "text": "2 Approche développement durable"
+            },
+            {
+                "text": "2.1 Stratégie pour l’éradication des étiquettes DPE E, F et G"
+            },
+            {
+                "text": "2.2 Lutte contre les ilots de chaleur et confort d’été"
+            },
+            {
+                "text": "2.3 Utilisation de matériaux de réemploi et de matériaux biosourcés"
+            },
+            {
+                "text": "3 Méthodologie en milieu occupé et concertation locataires"
+            },
+            {
+                "text": "3.1 Organisation du chantier et limitation des nuisances"
+            },
+            {
+                "text": "3.2 Processus et moyens mis en œuvre pour la concertation et l’information locataires"
+            },
+            {
+                "text": "3.3 Prise en compte des contraintes spécifiques du site"
+            },
+            {
+                "text": "4 Méthodologie pour la mission DIAG"
+            },
+            {
+                "text": "4.1 Pourcentage minimal de logements visités et répartition entre cotraitants"
+            },
+            {
+                "text": "4.2 Méthodologie et moyens mis en œuvre pour la phase DIAG"
+            },
+            {
+                "text": "5 Cohérence avec le programme et le budget"
+            },
+            {
+                "text": "5.1 Justification des choix techniques en regard du budget alloué"
+            },
+            {
+                "text": "5.2 Démonstration de la faisabilité et de l'atteinte des objectifs du programme"
+            }
+        ]
+    },
+    {
+        "document": "SEQENS_Memoire BOBIGNY.docx",
+        "headers": [
+            {
+                "text": "Table des matières"
+            },
+            {
+                "text": "1 Présentation et organisation de l’équipe de maîtrise d’œuvre"
+            },
+            {
+                "text": "1.1 La composition et la structuration de l’équipe dédiée au projet"
+            },
+            {
+                "text": "1.2 La capacité de l’équipe à travailler de manière coordonnée et réactive :"
+            },
+            {
+                "text": "1.3 La désignation d'un interlocuteur unique pour le pilotage global de la mission et pour assurer l’interface avec le maître d’ouvrage."
+            },
+            {
+                "text": "2 Compréhension de l’opération"
+            },
+            {
+                "text": "2.1 La compréhension du site (contrainte de travaux en milieu occupé, délai) et enjeux du projet"
+            },
+            {
+                "text": "2.2 Le constat des pathologies de la résidence"
+            },
+            {
+                "text": "2.3 Les moyens envisagés par la maîtrise d’œuvre pour atteindre les objectifs techniques, financiers, locatifs et thermiques recherchées,"
+            },
+            {
+                "text": "2.4 Propositions d’amélioration du programme initial et initiative du candidat."
+            },
+            {
+                "text": "3 Méthodologie d’exécution des études et des travaux"
+            },
+            {
+                "text": "3.1 Déroulé des études"
+            },
+            {
+                "text": "3.2 Organisation et suivi des travaux"
+            },
+            {
+                "text": "3.3 Calendriers des études et travaux"
+            },
+            {
+                "text": "4 Analyse financière du budget et proposition d’optimisation"
+            },
+            {
+                "text": "4.1 Analyse financière"
+            },
+            {
+                "text": "4.2 Optimisation du budget"
+            },
+            {
+                "text": "5 Analyse financière détaillée du budget de la maitrise d’ouvrage et proposition d’optimisation du budget initial."
+            },
+            {
+                "text": "6 La compréhension et méthodologie de mise en œuvre des enjeux calendaires du projet, notamment :"
+            },
+            {
+                "text": "6.1 Calendrier des études"
+            },
+            {
+                "text": "7 Démarche adaptée au développement durable, transmission de livrables"
+            },
+            {
+                "text": "7.1 Intégration d’une démarche RSE dans la conduite du projet : communication avec les habitants, insertion sociale, gestion responsable du chantier, prévention des nuisances, égalité de traitement et éthique de la relation fournisseur"
+            },
+            {
+                "text": "7.2 Proposition sur méthodologie de réemploi, de réutilisation des matériaux et capacité à utiliser des matériaux issus du réemploi pour l’opération."
+            },
+            {
+                "text": "7.3 Propositions de mise en œuvre d’objectifs, de clauses et critères RSE (insertion, environnement) au-delà de la réglementation en lien direct avec l’objet du marché."
+            },
+            {
+                "text": "7.4 Capacité à suivre l’exécution des ambitions RSE (présentation d’un REX, etc.)"
+            },
+            {
+                "text": "8 Annexes :"
+            }
+        ]
+    },
+    {
+        "document": "document-1-31_01A_3180L - STS - IPC _Mémoire .pdf",
+        "headers": [
+            {
+                "text": "REHABILITATION DE 8 LOGEMENTS"
+            },
+            {
+                "text": "Note d'intention"
+            },
+            {
+                "text": "La composition et les compétences de notre équipe"
+            },
+            {
+                "text": "Délais d'études"
+            },
+            {
+                "text": "AMOTIVATION DE L'EQUIPE"
+            },
+            {
+                "text": "BPRINCIPALES PROBLEMATIQUES ET PERCEPTION DE CE PROJET"
+            },
+            {
+                "text": "1Enjeux de l'opération"
+            },
+            {
+                "text": "2Critique du programme"
+            },
+            {
+                "text": "3Problématiques essentielles"
+            },
+            {
+                "text": "Quelle architecture ?"
+            },
+            {
+                "text": "Analyse de la façade principale :"
+            },
+            {
+                "text": "En  résumé :"
+            },
+            {
+                "text": "Quel traitement ?"
+            },
+            {
+                "text": "Il est proposé à ce stade de consultation :"
+            },
+            {
+                "text": "Ci-dessous quelques exemples de nos réalisations :"
+            },
+            {
+                "text": "Quel type de chauffage et de production ECS ?"
+            },
+            {
+                "text": "CAnalyse du chiffrage de travaux de la MOA"
+            },
+            {
+                "text": "DPrise en compte des locataires"
+            },
+            {
+                "text": "1Présentation synthétique du groupement"
+            },
+            {
+                "text": "SITUSAVAIS ARCHITECTES, mandataire"
+            },
+            {
+                "text": "IPC Ingénierie Pilotage Coordination, BE TCE, Amiante et Economiste"
+            },
+            {
+                "text": "2Equipe dédiée au projet"
+            },
+            {
+                "text": "SITUSAVAIS, architectes mandataire"
+            },
+            {
+                "text": "IPC, BET fluides et économiste"
+            },
+            {
+                "text": "3Organisation et répartition du travail"
+            },
+            {
+                "text": "3.1 Tableau de répartition des tâches entres les différents membres de l'équipe."
+            },
+            {
+                "text": "3.2 Contraintes en milieu occupé -Méthodologie et organisation"
+            },
+            {
+                "text": "3.2.1 Approche intégrée pour une réhabilitation efficace"
+            },
+            {
+                "text": "Notre méthodologie repose sur :"
+            },
+            {
+                "text": "3.2.2 Stratégie en phase études"
+            },
+            {
+                "text": "aDiagnostic -DIAG"
+            },
+            {
+                "text": "bAvant-projet (APS et APD)"
+            },
+            {
+                "text": "cAutorisation administrative"
+            },
+            {
+                "text": "dPRO -DCE"
+            },
+            {
+                "text": "3.3 Moyens de communication avec les locataires"
+            },
+            {
+                "text": "3.3.1 Supports d'information"
+            },
+            {
+                "text": "3.3.2 Concertation et communication"
+            },
+            {
+                "text": "3.4 Organisation et suivi des travaux"
+            },
+            {
+                "text": "3.4.1 Période préparatoire"
+            },
+            {
+                "text": "3.4.2 Intervention dans les logements"
+            },
+            {
+                "text": "3.4.3 Surveillance des travaux"
+            },
+            {
+                "text": "3.4.4 Visite de fin de travaux -OPR"
+            },
+            {
+                "text": "3.4.5 Suivi pendant la GPA"
+            },
+            {
+                "text": "4Présentation détaillée des références"
+            },
+            {
+                "text": "Voir annexes"
+            },
+            {
+                "text": "SITUSAVAIS ARCHITECTES"
+            },
+            {
+                "text": "IPC"
+            },
+            {
+                "text": "DELAIS D'ETUDES"
+            },
+            {
+                "text": "Délais d'exécution de chaque élément de mission"
+            },
+            {
+                "text": "Organisation générale de la mission"
+            },
+            {
+                "text": "Méthodologie pour la production des études"
+            },
+            {
+                "text": "Outils et moyens mis en œuvre"
+            },
+            {
+                "text": "Gestion des couts et délais pendant les travaux"
+            },
+            {
+                "text": "Gestion des risques, sécurité et règlementation"
+            },
+            {
+                "text": "Communication avec le maitre d'ouvrage"
+            },
+            {
+                "text": "CONCLUSION"
+            },
+            {
+                "text": "Toutes les dispositions décrites visent à garantir :"
+            }
+        ]
+    },
+    {
+        "document": "memoire technique_RLF_CHATILLON_V2-ipc.docx",
+        "headers": [
+            {
+                "text": "1 Compréhension du projet"
+            },
+            {
+                "text": "1.1 Budget"
+            },
+            {
+                "text": "1.2 Contexte urbain et environnemental"
+            },
+            {
+                "text": "Contexte"
+            },
+            {
+                "text": "PLUI"
+            },
+            {
+                "text": "Accès à la résidence et espaces extérieurs"
+            },
+            {
+                "text": "Espaces extérieurs"
+            },
+            {
+                "text": "1.3 Contexte bâti et organisation de l’ensemble immobilier"
+            },
+            {
+                "text": "Locaux communs"
+            },
+            {
+                "text": "Stationnements privatifs"
+            },
+            {
+                "text": "Sécurité"
+            },
+            {
+                "text": "1.4 L’enveloppe et le bâti :"
+            },
+            {
+                "text": "Façades et pignons"
+            },
+            {
+                "text": "Toiture"
+            },
+            {
+                "text": "Menuiseries extérieures et occultations"
+            },
+            {
+                "text": "1.5 Les équipements de chauffage et de ventilation"
+            },
+            {
+                "text": "Ventilation"
+            },
+            {
+                "text": "Chauffage et eau chaude"
+            },
+            {
+                "text": "1.6 Les parties communes"
+            },
+            {
+                "text": "Halls, Cages d’escaliers et paliers"
+            },
+            {
+                "text": "Sous-sols"
+            },
+            {
+                "text": "Les équipements techniques"
+            },
+            {
+                "text": "1.7 Les logements :"
+            },
+            {
+                "text": "Les pièces sèches"
+            },
+            {
+                "text": "Les pièces humides"
+            },
+            {
+                "text": "Sécurité"
+            },
+            {
+                "text": "2 METHODE DE DIAGNOSTIC"
+            },
+            {
+                "text": "2.1 Objectifs"
+            },
+            {
+                "text": "2.2 Réalisation du diagnostic"
+            },
+            {
+                "text": "2.3 Identification des investigations complémentaires amiante"
+            },
+            {
+                "text": "3 organisation et méthodologie mises en œuvre à chacune des phases de la mission"
+            },
+            {
+                "text": "3.1 Intervenants"
+            },
+            {
+                "text": "3.1.1 Présentation de l’équipe"
+            },
+            {
+                "text": "3.1.2 Organigramme de l’équipe intervenante"
+            },
+            {
+                "text": "3.1.3 Répartition des tâches"
+            },
+            {
+                "text": "3.2 Une organisation structurée"
+            },
+            {
+                "text": "3.2.1 Les réunions d’avant-projet"
+            },
+            {
+                "text": "3.2.2 Les réunions de contrôle et d’avancement des études"
+            },
+            {
+                "text": "3.2.3 Les revues techniques"
+            },
+            {
+                "text": "3.2.4 Le Management qualité"
+            },
+            {
+                "text": "3.2.5 Les procédures"
+            },
+            {
+                "text": "3.3 La relation avec les acteurs du projet"
+            },
+            {
+                "text": "3.3.1 La maîtrise d’ouvrage"
+            },
+            {
+                "text": "3.3.2 La ville"
+            },
+            {
+                "text": "3.3.3 Les ABF"
+            },
+            {
+                "text": "3.3.4 Les habitants"
+            },
+            {
+                "text": "3.3.5 Le Contrôleur technique"
+            },
+            {
+                "text": "3.3.6 Le Coordonnateur SPS"
+            },
+            {
+                "text": "3.4 Le management de la validation"
+            },
+            {
+                "text": "3.4.1 La validation en continu"
+            },
+            {
+                "text": "3.4.2 Les réunions de mises au point"
+            },
+            {
+                "text": "3.5 Méthodologie mise en œuvre à chaque phase de projet"
+            },
+            {
+                "text": "3.5.1 Avant-Projet Sommaire"
+            },
+            {
+                "text": "3.5.2 Avant Projet Définitif"
+            },
+            {
+                "text": "3.5.3 Projet"
+            },
+            {
+                "text": "3.5.4 Opérations préalables au démarrage du chantier"
+            },
+            {
+                "text": "3.5.5 VISA"
+            },
+            {
+                "text": "3.5.6 DET"
+            },
+            {
+                "text": "3.5.7 Logement témoin"
+            },
+            {
+                "text": "3.5.8 Réception"
+            },
+            {
+                "text": "3.5.9 GPA"
+            },
+            {
+                "text": "3.5.10 Intervention en présence d’amiante"
+            },
+            {
+                "text": "Plan de retrait – mode opératoire et chantier test – contrôle"
+            },
+            {
+                "text": "Communication et signalétique en cas d’intervention en sous-section 3"
+            },
+            {
+                "text": "Gestion des déchets"
+            },
+            {
+                "text": "Livrables"
+            },
+            {
+                "text": "3.6 • Démarche de réemploi et réutilisation - Respecter la charte de chantier RLF (à faibles nuisances)"
+            },
+            {
+                "text": "3.6.1 Démarche réemploi et réutilisation"
+            },
+            {
+                "text": "Gestion des déchets"
+            },
+            {
+                "text": "Exemples de réemploi dans le cadre de nos opérations"
+            },
+            {
+                "text": "Réemploi de portes palières et céramique : opération Fécamp pour Paris Habitat"
+            },
+            {
+                "text": "Réemploi de parquet : opération Romainville pour Paris Habitat"
+            },
+            {
+                "text": "Réemploi de portes palières : opération Belleville TUV pour Paris Habitat"
+            },
+            {
+                "text": "3.6.2 Chantier à faibles nuisances"
+            },
+            {
+                "text": "Mesures structurantes"
+            },
+            {
+                "text": "Schéma d’organisation et de gestion des déchets (SOGED)"
+            },
+            {
+                "text": "Gestion de l’énergie"
+            },
+            {
+                "text": "Gestion de l’eau"
+            },
+            {
+                "text": "Confort acoustique"
+            },
+            {
+                "text": "Confort visuel"
+            },
+            {
+                "text": "Gestion et collecte sélective des déchets"
+            },
+            {
+                "text": "La réunion environnementale de fin de chantier"
+            },
+            {
+                "text": "Choix des procédés et produits de construction"
+            },
+            {
+                "text": "Entretien et maintenance"
+            },
+            {
+                "text": "4 Calendrier prévisionnel"
+            },
+            {
+                "text": "4.1 Calendriers des études"
+            },
+            {
+                "text": "4.1.1 Calendrier des études"
+            },
+            {
+                "text": "4.1.2 Calendrier des études optimisé"
+            },
+            {
+                "text": "4.2 • Calendrier d’exécution"
+            }
+        ]
+    },
+    {
+        "document": "motivation et memoire 2024.docx",
+        "headers": [
+            {
+                "text": "1 Motivation de l’équipe"
+            },
+            {
+                "text": "1 UNE VOLONTÉ DE PARTENARIAT PRIVILÉGIÉ, DES MOYENS POUR LE CONCRÉTISER"
+            },
+            {
+                "text": "2 UNE VOLONTÉ DE RÉUSSIR LE PROJET"
+            },
+            {
+                "text": "2 Moyens humains"
+            },
+            {
+                "text": "3 L'équipe"
+            },
+            {
+                "text": "3 Organisation de l’équipe"
+            },
+            {
+                "text": "4 Organisation des tâches"
+            },
+            {
+                "text": "5 Répartition des missions"
+            },
+            {
+                "text": "4 Méthodologie de la conduite des études"
+            },
+            {
+                "text": "4.1 UNE ORGANISATION STRUCTURÉE"
+            },
+            {
+                "text": "6 Les réunions d’avant-projet :"
+            },
+            {
+                "text": "7 Les revues de projet hebdomadaires :"
+            },
+            {
+                "text": "8 Les réunions de contrôle et d’avancement des études :"
+            },
+            {
+                "text": "9 Les revues techniques :"
+            },
+            {
+                "text": "10 Le Management qualité :"
+            },
+            {
+                "text": "11 Les procédures :"
+            },
+            {
+                "text": "4.2 LE MANAGEMENT DE VALIDATION"
+            },
+            {
+                "text": "12 La validation en continu :"
+            },
+            {
+                "text": "13 Les réunions de mises au point :"
+            },
+            {
+                "text": "4.3 MÉTHODOLOGIE MISE EN OEUVRE"
+            },
+            {
+                "text": "4.3.1 Les études"
+            },
+            {
+                "text": "4.3.1.1 Phase diagnostic (DIA)"
+            },
+            {
+                "text": "4.3.1.1.1 Environnement urbain et architectural :"
+            },
+            {
+                "text": "4.3.1.1.2 Diagnostic des installations techniques :"
+            },
+            {
+                "text": "4.3.1.1.3 Diagnostic de l’état de conservation du bâti :"
+            },
+            {
+                "text": "4.3.1.1.4 Diagnostic thermique :"
+            },
+            {
+                "text": "4.3.1.2 Phase Avant-Projet Sommaire (APS)"
+            },
+            {
+                "text": "4.3.1.3 Phase Avant-Projet Détaillé (APD)"
+            },
+            {
+                "text": "4.3.1.4 Phase Projet (PRO)"
+            },
+            {
+                "text": "4.3.1.5 Assistance pour la passation des contrats de travaux (ACT)"
+            },
+            {
+                "text": "4.3.2 Le déroulement des travaux"
+            },
+            {
+                "text": "4.3.2.1 Direction de l’exécution des travaux - Visa"
+            },
+            {
+                "text": "4.3.2.1.1 Phase de préparation de chantier :"
+            },
+            {
+                "text": "4.3.2.1.2 Phase réalisation des travaux :"
+            },
+            {
+                "text": "4.3.2.2 Assistance opération de réception (AOR)"
+            },
+            {
+                "text": "4.3.2.3 Suivi pendant la GPA"
+            },
+            {
+                "text": "4.3.2.4 Méthodologie de chiffrage"
+            },
+            {
+                "text": "4.3.3 Contraintes de pilotage et de coordination avec les partenaires du projet"
+            },
+            {
+                "text": "4.3.3.1 La Maitrise d’Ouvrage :"
+            },
+            {
+                "text": "4.3.3.2 La ville :"
+            },
+            {
+                "text": "4.3.3.3 La communauté d’Agglomération :"
+            },
+            {
+                "text": "4.3.3.4 Les habitants :"
+            },
+            {
+                "text": "4.3.3.5 Le Contrôleur technique :"
+            },
+            {
+                "text": "4.3.3.6 Le Coordonnateur SPS :"
+            },
+            {
+                "text": "5 MÉTHODOLOGIE D’ORGANISATION ET DU SUIVI DES TRAVAUX EN MILIEU OCCUPÉ"
+            },
+            {
+                "text": "5.1 LA QUALITÉ\t DES RELATIONS AVEC LES LOCATAIRES"
+            },
+            {
+                "text": "5.1.1 En phase études"
+            },
+            {
+                "text": "5.1.1.1 Groupe de travail"
+            },
+            {
+                "text": "5.1.1.2 Information des locataires"
+            },
+            {
+                "text": "5.1.2 En phase travaux"
+            },
+            {
+                "text": "5.1.2.1 Objectifs opérationnels"
+            },
+            {
+                "text": "5.1.2.2 Logement témoin"
+            },
+            {
+                "text": "5.1.2.3 Visite préalable aux travaux"
+            },
+            {
+                "text": "5.1.2.4 Liste personnalisée des travaux"
+            },
+            {
+                "text": "5.1.2.5 Recueil d'utilisation"
+            },
+            {
+                "text": "5.2 LA MAITRISE DU DÉROULEMENT DES TRAVAUX EN MILIEU OCCUPÉ"
+            },
+            {
+                "text": "5.2.1 La conduite technique du chantier"
+            },
+            {
+                "text": "5.2.2 L'exécution des travaux en site habité"
+            },
+            {
+                "text": "5.2.2.1 Programmation des travaux"
+            },
+            {
+                "text": "5.2.2.2 Réalisation des travaux"
+            },
+            {
+                "text": "5.2.2.3 Intervention dans les logements"
+            },
+            {
+                "text": "5.2.2.4 Surveillance des travaux"
+            },
+            {
+                "text": "5.2.2.5 Réclamations locataires"
+            },
+            {
+                "text": "5.2.2.6 Visite de fin de travaux"
+            },
+            {
+                "text": "5.2.2.7 Durant l’année de parfait achèvement"
+            },
+            {
+                "text": "6 MéTHODOLOGIE POUR UNE CONCERTATION"
+            },
+            {
+                "text": "6.1.1.1 Le site internet d’information"
+            },
+            {
+                "text": "6.1.1.2 Les Guides"
+            },
+            {
+                "text": "7 MÉTHODE MISE EN ŒUVRE ET PLANNING DES PRESTATIONS"
+            },
+            {
+                "text": "8 GESTION D’UN CHANTIER EN PRéSENCE D’AMIANTE"
+            },
+            {
+                "text": "8.1.1.1 Traitement de l’amiante dans les façades :"
+            },
+            {
+                "text": "8.1.1.2 Traitement de l’amiante en parties privatives :"
+            },
+            {
+                "text": "8.1.1.3 Traitement de l’amiante suite à la réception des rapports de diagnostic :"
+            },
+            {
+                "text": "8.1.1.4 Le principe du chantier Test"
+            },
+            {
+                "text": "8.1.1.5 La recherche de présence d’amiante dans les matériaux et produits"
+            },
+            {
+                "text": "8.1.1.6 La prise en compte de la présence d’amiante"
+            },
+            {
+                "text": "8.1.1.6.1 En phases Études / Conception"
+            },
+            {
+                "text": "8.1.1.6.2 En phase Chantier"
+            },
+            {
+                "text": "8.1.1.6.3 Méthodologie d’intervention"
+            },
+            {
+                "text": "8.1.1.7 Personnel qualifié"
+            },
+            {
+                "text": "9 GESTION D’UN CHANTIER EN PRéSENCE DE PLOMB"
+            },
+            {
+                "text": "9.1.1.1 Voies de pénétration du plomb dans l’organisme"
+            },
+            {
+                "text": "9.1.1.1.1 Voie digestive"
+            },
+            {
+                "text": "9.1.1.1.2 Voie pulmonaire"
+            },
+            {
+                "text": "9.1.1.1.3 Voie cutanée"
+            },
+            {
+                "text": "9.1.1.2 Constat de risque d’exposition au plomb (CREP)"
+            },
+            {
+                "text": "9.1.1.3 Méthodologie"
+            },
+            {
+                "text": "10 MOYENS ET OUTILS INFORMATIQUES UTILISéS"
+            },
+            {
+                "text": "10.1.1.1 LOCAL D’ACTIVITÉ :"
+            },
+            {
+                "text": "10.1.1.2 MATÉRIEL DIVERS :"
+            },
+            {
+                "text": "10.1.1.3 EQUIPEMENT INFORMATIQUE :"
+            },
+            {
+                "text": "11 JUSTIFICATIF TECHNIQUE ET FINANCIER DE LA RÉMUNERATION PROPOSÉE"
+            },
+            {
+                "text": "11.1.1.1 Pour la partie études :"
+            },
+            {
+                "text": "11.1.1.2 Pour la partie travaux :"
+            },
+            {
+                "text": "11.1.1.3 Pour les missions complémentaires :"
+            },
+            {
+                "text": "12 APPROCHE ENVIRONNEMENTALE"
+            },
+            {
+                "text": "12.1.1.1 SUR LES ECONOMIES DE CHARGES"
+            },
+            {
+                "text": "12.1.1.2 GESTION DE LA CERTIFICATION CERQUAL"
+            },
+            {
+                "text": "13 EXIGENCES ENVIRONNEMENTALES - MATéRIAUX"
+            },
+            {
+                "text": "13.1.1.1 Contribution des matériaux de construction à la qualité de l’air intérieur"
+            },
+            {
+                "text": "13.1.1.2 Pistes de réflexion"
+            },
+            {
+                "text": "14 MéTHODOLOGIE DANS LA MISE EN ŒUVRE D’UN CHANTIER PROPRE"
+            },
+            {
+                "text": "14.1 EN PHASE CONCEPTION"
+            },
+            {
+                "text": "14.1.1.1 Plan d’installation de chantier"
+            },
+            {
+                "text": "14.1.1.2 Appel d’offres - réponses des entreprises"
+            },
+            {
+                "text": "14.2 EN PHASE RÉALISATION"
+            },
+            {
+                "text": "14.2.1.1 Organisation environnementale de la préparation de chantier"
+            },
+            {
+                "text": "14.2.1.2 Traitement des déchets"
+            },
+            {
+                "text": "14.2.1.3 Traitement des déchets de démolition"
+            },
+            {
+                "text": "14.2.1.3.1 Evaluation quantitative"
+            },
+            {
+                "text": "14.2.1.3.2 Limitation et valorisation"
+            },
+            {
+                "text": "14.2.1.4 Communication"
+            },
+            {
+                "text": "14.2.1.5 Organisation du chantier"
+            },
+            {
+                "text": "14.2.1.6 Nuisances"
+            },
+            {
+                "text": "14.2.1.7 Nettoyage de chantier"
+            },
+            {
+                "text": "14.2.1.8 Déconstruction"
+            },
+            {
+                "text": "14.2.1.9 Pollution des sols, des eaux et de l’air"
+            },
+            {
+                "text": "14.2.1.10 Autres actions"
+            },
+            {
+                "text": "15 DéMARCHE DE QUALITé ENVIRONNEMENTALE"
+            },
+            {
+                "text": "15.1 GESTION DE LA CERTIFICATION CERQUAL"
+            },
+            {
+                "text": "15.2 GESTION DE LA CERTIFICATION PROMOTELEC"
+            },
+            {
+                "text": "15.3 LA PARTIE THERMIQUE"
+            },
+            {
+                "text": "15.4 LES MATÉRIAUX"
+            },
+            {
+                "text": "15.4.1.1 Exigences environnementales pour les matériaux"
+            },
+            {
+                "text": "15.4.1.2 Contribution des matériaux de construction à la qualité de l’air intérieur"
+            },
+            {
+                "text": "15.4.1.3 Pistes de réflexion"
+            },
+            {
+                "text": "15.5 DIMINUTION DES IMPACTS ENVIRONNEMENTAUX (Energie, eau, pollution, déchets …)"
+            },
+            {
+                "text": "15.5.1.1 Eclairage"
+            },
+            {
+                "text": "15.5.1.2 Maîtrise des consommations d’eau"
+            },
+            {
+                "text": "15.5.1.3 Energie solaire"
+            },
+            {
+                "text": "15.5.1.4 Impacter le comportemental"
+            },
+            {
+                "text": "15.6 CONFORT ET SANTÉ"
+            },
+            {
+                "text": "15.6.1.1 Qualité de l’air intérieur"
+            },
+            {
+                "text": "15.6.1.2 Confort hygrothermique d’hiver et d’été"
+            },
+            {
+                "text": "15.6.1.3 Confort acoustique"
+            },
+            {
+                "text": "15.6.1.4 Matériaux"
+            },
+            {
+                "text": "15.6.1.5 Confort olfactif"
+            },
+            {
+                "text": "15.7 RÉDUCTION DES NUISANCES"
+            },
+            {
+                "text": "15.8 LIMITATION DES NUISANCES SONORES"
+            },
+            {
+                "text": "15.9 LIMITATION DES NUISANCES VISUELLES ET TENUE DU CHANTIER"
+            },
+            {
+                "text": "15.10 LIMITATION DES NUISANCES DES RIVERAINS DUES AU TRAFIC"
+            },
+            {
+                "text": "15.11 Impact environnemental"
+            },
+            {
+                "text": "16 MÉTHODOLOGIE EN VUE D’ATTEINDRE LES OBJECTIfs ENVIRONNEMENTAUX"
+            },
+            {
+                "text": "16.1.1.1 Pratique de la certification"
+            },
+            {
+                "text": "16.1.1.2 Mise en place de la certification"
+            },
+            {
+                "text": "16.1.1.3 Suivi du chantier"
+            },
+            {
+                "text": "17 MISSION opc"
+            },
+            {
+                "text": "17.1 ORDONNANCEMENT"
+            },
+            {
+                "text": "17.1.1.1 ELABORATION DES CALENDRIERS TOUS CORPS D’ETAT :"
+            },
+            {
+                "text": "17.1.1.2 ETABLISSEMENT DES DEMANDES D’ACOMPTES MENSUELLES DES ENTREPRISES RÉVISION ET VÉRIFICATION :"
+            },
+            {
+                "text": "17.2 PILOTAGE"
+            },
+            {
+                "text": "17.3 COORDINATION"
+            },
+            {
+                "text": "18 COUT GLOBAL"
+            },
+            {
+                "text": "18.1.1.1.1 D’une part, le coût global correspond à l’ensemble des coûts d’un bâtiment, durant tout son cycle de vie : sa conception, sa construction, son exploitation et sa destruction."
+            },
+            {
+                "text": "18.1.1.1.2 D’autre part, le coût global se réfère à un processus d’évaluation qui permet de prendre en considération tous les coûts attribuables à toutes les décisions en cours de conception, ces coûts étant évalués en fonction du facteur temps."
+            }
+        ]
+    },
+    {
+        "document": "presentation equipe_V2.docx",
+        "headers": [
+            {
+                "text": "1 Présentation de l’équipe"
+            },
+            {
+                "text": "1.1 Présentation synthétique"
+            },
+            {
+                "text": "1.2 Equipe affectée à l’opération"
+            },
+            {
+                "text": "1.3 Organigramme de l’équipe"
+            },
+            {
+                "text": "1.4 La répartition des tâches entre les membres de l’équipe"
+            },
+            {
+                "text": "1.5 Répartition des tâches"
+            },
+            {
+                "text": "2 Méthodologie de travail mise en place"
+            },
+            {
+                "text": "2.1 En phase conception"
+            },
+            {
+                "text": "2.2 En phase chantier"
+            }
+        ]
+    }
+]

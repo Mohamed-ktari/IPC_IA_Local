@@ -65,12 +65,13 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = "archai"
     POSTGRES_PASSWORD: str = "changeme"
     POSTGRES_DB: str = "architecture_ai"
+    POSTGRES_HOST: str = "localhost"
 
     @property
     def database_url(self) -> str:
         return (
-            f"postgresql://{self.POSTGRES_USER}:"
-            f"{self.POSTGRES_PASSWORD}@localhost/"
+            f"postgresql+psycopg://{self.POSTGRES_USER}:"
+            f"{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:5432/"
             f"{self.POSTGRES_DB}"
         )
 
@@ -129,7 +130,7 @@ class Settings(BaseSettings):
     # SECURITY
     # ------------------------------------------------------------------
     SECRET_KEY: str = "change-this-in-production"
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]  # frontend URL
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:8080", "http://192.168.99.10:8080", "http://192.168.99.10:3000",]  # frontend URL
 
     class Config:
         env_file = str(BASE_DIR / ".env")

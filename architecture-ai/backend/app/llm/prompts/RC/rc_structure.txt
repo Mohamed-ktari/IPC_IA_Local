@@ -5,12 +5,16 @@ TÂCHE : à partir du texte fourni (extrait d'un règlement de consultation déc
 RÈGLES STRICTES :
 1. Ne résume pas le contenu de chaque partie — produis uniquement le PLAN (titres et sous-titres attendus), tel qu'il ressort du texte source.
 2. Respecte l'ordre et la hiérarchie (parties / sous-parties) tels qu'indiqués dans le texte source.
-3. Si le texte source ne précise pas de sous-parties pour une section, laisse-la comme un point unique.
-4. N'invente aucune section qui ne serait pas déductible du texte fourni.
-5. Réponds en français.
-6. Utilise un format markdown avec des titres numérotés :
+3. Distinction entre une VRAIE sous-partie et une simple énumération dans un paragraphe :
+   - Transforme un élément de liste en sous-partie distincte du plan UNIQUEMENT s'il constitue un critère ou point nommé à part entière — reconnaissable à un intitulé court et autonome (ex: "Méthodologie et moyens pour le suivi des travaux"), souvent accompagné d'un barème (points, %) ou d'une numérotation formelle (1), 2), 3)) qui structure clairement le texte source en parties parallèles.
+   - Ne fragmente PAS une liste à puces qui ne fait qu'énumérer des détails, exemples, ou sous-composantes narratives à l'intérieur d'un seul critère (ex: une liste de documents à fournir, une liste d'exemples, une liste de tâches décrivant COMMENT un même critère sera rempli). Ces éléments restent du texte descriptif sous leur point unique, pas des sous-parties du plan.
+   - En cas de doute : si les éléments de la liste pourraient chacun faire l'objet d'une section de mémoire technique séparée et notée indépendamment, ce sont des sous-parties. S'ils décrivent seulement des aspects ou modalités d'un même point, ce n'en est pas.
+4. Si le texte source ne précise pas de sous-parties pour une section selon les critères ci-dessus, laisse-la comme un point unique.
+5. N'invente aucune section qui ne serait pas déductible du texte fourni.
+6. Réponds en français.
+7. Utilise un format markdown avec des titres numérotés :
    1. Titre de partie
       1.1 Sous-partie
       1.2 Sous-partie
    2. Titre de partie
-7. Le plan doit TOUJOURS se terminer par un dernier chapitre numéroté intitulé "Annexes", même si le texte source ne le mentionne pas explicitement.
+8. Le plan doit TOUJOURS se terminer par un dernier chapitre numéroté intitulé "Annexes", même si le texte source ne le mentionne pas explicitement.

@@ -79,6 +79,87 @@ services:
     networks:
       - ai-network
 
+
+  # ────────────────────────────────────────
+  # BACKEND — FastAPI app (agents, RAG, ingestion)
+  # ────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    # Loads every key from the root .env as baseline env vars inside the
+    # container — never copied into the image, only injected at runtime.
+    # Keys below in `environment:` override these where host != container
+    # values differ (service DNS names instead of localhost, internal
+    # ports instead of host-mapped ports).
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=${POSTGRES_USER:-archai}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+      - POSTGRES_DB=${POSTGRES_DB:-architecture_ai}
+      - REDIS_URL=redis://redis:6379
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000              # chromadb's internal container port, not the 8001 host mapping
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      # Persist uploads/chroma/logs on the host so they survive container
+      # rebuilds — paths match settings.upload_path / chroma_path /
+      # audit_log_path defaults (BASE_DIR/backend/data/...).
+      - ./backend/data/uploads:/app/data/uploads
+      - ./backend/data/chroma:/app/data/chroma
+      - ./backend/data/logs:/app/data/logs
+    depends_on:
+      - postgres
+      - redis
+      - chromadb
+      - ollama
+    networks:
+      - ai-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  # ────────────────────────────────────────
+  # Open WebUI — Frontend for interacting with the backend and LLMs
+  # ────────────────────────────────────────
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - open_webui_data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    networks:
+      - ai-network
+
+    
+  # ────────────────────────────────────────
+  # SEARXNG — self-hosted web search
+  # ────────────────────────────────────────
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    container_name: searxng
+    restart: unless-stopped
+    volumes:
+      - ./searxng:/etc/searxng:rw
+      - searxng_cache:/var/cache/searxng
+    environment:
+      - SEARXNG_BASE_URL=http://searxng:8080/
+      - SEARXNG_SECRET=${SEARXNG_SECRET:-change-this-secret}
+    networks:
+      - ai-network
   
   # ────────────────────────────────────────
   # CADDY — Reverse proxy
@@ -112,6 +193,8 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  open_webui_data:
+  searxng_cache:
 
 # ────────────────────────────────────────
 # NETWORK — isolated internal bridge

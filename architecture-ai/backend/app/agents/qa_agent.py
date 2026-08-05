@@ -27,7 +27,7 @@ from app.documents.retrieval import get_retriever
 from app.conversations import store as conversation_store
 from app.config import settings
 
-PROMPTS_DIR = Path(__file__).resolve().parent.parent / "llm" / "prompts"
+PROMPTS_DIR = Path(__file__).resolve().parent.parent / "llm" / "prompts" / "QA"
 REWRITE_HISTORY_TURNS = 6  # last N messages fed to the query-rewrite step
 
 
@@ -39,15 +39,15 @@ class QAAgent(BaseAgent):
         "ingéré, en conversation multi-tours (RAG)."
     )
 
-    def start_conversation(self, doc_id: str) -> str:
-        return conversation_store.create_conversation(doc_id)
+    def start_conversation(self, doc_ids: list[str]) -> str:
+        return conversation_store.create_conversation(doc_ids)
 
     def ask(self, conversation_id: str, question: str) -> dict:
         conversation = conversation_store.get_conversation(conversation_id)
         if conversation is None:
             raise ValueError(f"Conversation '{conversation_id}' not found")
 
-        doc_id = conversation["doc_id"]
+        doc_ids = conversation["doc_ids"]
         raw_history = conversation["messages"]  # [{"role", "content"}, ...]
 
         history_messages = [
@@ -66,7 +66,7 @@ class QAAgent(BaseAgent):
         context, results = retriever.retrieve_and_format(
             query=standalone_query,
             top_k=settings.QA_RETRIEVAL_TOP_K,
-            doc_id=doc_id,
+            doc_id=doc_ids,
             min_score=settings.QA_MIN_SCORE,
         )
 
@@ -86,7 +86,6 @@ class QAAgent(BaseAgent):
         # used in format_context — otherwise the frontend would show sources
         # the LLM never actually saw in its prompt.
         used_results = [r for r in results if r.hybrid_score >= settings.QA_MIN_SCORE]
-
         return {
             "conversation_id": conversation_id,
             "answer": response.content,
@@ -95,6 +94,7 @@ class QAAgent(BaseAgent):
                 {
                     "chunk_index": r.chunk_index,
                     "file_name": r.file_name,
+                    "original_file_name": r.original_file_name,
                     "hybrid_score": round(r.hybrid_score, 3),
                 }
                 for r in used_results

@@ -1,0 +1,105 @@
+{
+  "presentation_entreprise": {
+    "label": "Présentation de l'entreprise",
+    "variants": [
+      "présentation de l'entreprise",
+      "présentation de l'agence",
+      "présentation du candidat",
+      "présentation de la société",
+      "identité de l'entreprise"
+    ],
+    "retrieval_lanes": ["memoire"],
+    "needs_retrieval": true
+  },
+  "equipe_projet": {
+    "label": "Équipe de travail",
+    "variants": [
+      "équipe de travail",
+      "équipe projet",
+      "moyens humains",
+      "organisation de l'équipe",
+      "composition de l'équipe",
+      "intervenants du projet"
+    ],
+    "retrieval_lanes": ["memoire"],
+    "needs_retrieval": true
+  },
+  "comprehension_enjeux": {
+    "label": "Compréhension des enjeux",
+    "variants": [
+      "compréhension des enjeux",
+      "analyse des enjeux du projet",
+      "compréhension du contexte",
+      "compréhension de la demande"
+    ],
+    "retrieval_lanes": ["programme", "memoire"],
+    "needs_retrieval": true
+  },
+  "analyse_site": {
+    "label": "Analyse du site",
+    "variants": [
+      "analyse du site",
+      "analyse du contexte site",
+      "diagnostic du site",
+      "état des lieux du site"
+    ],
+    "retrieval_lanes": ["programme"],
+    "needs_retrieval": true
+  },
+  "methodologie": {
+    "label": "Méthodologie",
+    "variants": [
+      "méthodologie",
+      "méthodologie générale",
+      "approche méthodologique",
+      "démarche proposée",
+      "organisation de la mission"
+    ],
+    "retrieval_lanes": ["memoire"],
+    "needs_retrieval": true
+  },
+  "moyens_materiels": {
+    "label": "Moyens matériels",
+    "variants": [
+      "moyens matériels",
+      "matériel mis à disposition",
+      "logiciels utilisés",
+      "outils et équipements"
+    ],
+    "retrieval_lanes": ["memoire"],
+    "needs_retrieval": true
+  },
+  "planning_prevu": {
+    "label": "Planning prévisionnel",
+    "variants": [
+      "planning prévisionnel",
+      "calendrier prévisionnel",
+      "délais d'exécution",
+      "planning de la mission"
+    ],
+    "retrieval_lanes": ["programme"],
+    "needs_retrieval": true
+  },
+  "references_similaires": {
+    "label": "Références similaires",
+    "variants": [
+      "références similaires",
+      "références de l'entreprise",
+      "expériences similaires",
+      "projets de référence"
+    ],
+    "retrieval_lanes": ["memoire"],
+    "needs_retrieval": true
+  },
+  "mentions_legales": {
+    "label": "Mentions légales / signature",
+    "variants": [
+      "mentions légales",
+      "signature",
+      "fait à",
+      "cachet de l'entreprise"
+    ],
+    "retrieval_lanes": [],
+    "needs_retrieval": false
+  }
+}

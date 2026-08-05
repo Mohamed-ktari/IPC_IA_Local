@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Génération de mémoire</title>
+
+    <style>
+        .container {
+            max-width: 720px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 { margin-top: 0; color: #333; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #444;
+        }
+
+        input, select, textarea {
+            padding: 11px 13px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary { background: #0d6efd; color: white; }
+        .btn-primary:hover { background: #0b5ed7; }
+        .btn-primary:disabled { background: #6c757d; cursor: not-allowed; }
+
+        .btn-success { background: #198754; color: white; }
+        .btn-success:hover { background: #157347; }
+
+        .btn-secondary { background: #6c757d; color: white; }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover { background: #c82333; }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .message {
+            margin-top: 18px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: none;
+        }
+        .message.error   { background: #f8d7da; color: #842029; display: block; }
+        .message.success { background: #d1e7dd; color: #0f5132; display: block; }
+        .message.info    { background: #cff4fc; color: #055160; display: block; }
+
+        #progressBox {
+            display: none;
+            margin-top: 28px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 14px;
+            background: #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #0d6efd;
+            border-radius: 8px;
+            transition: width 0.35s ease;
+        }
+
+        .progress-meta {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #ddd;
+            border-top: 3px solid #0d6efd;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        #uploadLoading, #startLoading {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        #downloadBox {
+            display: none;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Mémoire technique — Génération</h2>
+
+    <div class="form-group">
+        <label>1. Téléverser la structure (.docx squelette) *</label>
+        <input type="file" id="structureFile" accept=".docx">
+    </div>
+
+    <div id="uploadLoading">
+        <div class="spinner"></div>
+        <p>Téléversement de la structure...</p>
+    </div>
+
+    <div class="form-group">
+        <label for="projectId">2. ID du projet *</label>
+        <input type="text" id="projectId" placeholder="Collez l'ID du projet">
+    </div>
+
+    <div class="form-group">
+        <label for="globalPrompt">3. Invite globale (optionnel)</label>
+        <textarea id="globalPrompt" placeholder="Instructions optionnelles pour toute la génération..."></textarea>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-primary" id="startBtn" onclick="startGeneration()">
+            Lancer la génération
+        </button>
+        <button class="btn btn-danger" id="dismissBtn" style="display:none;" onclick="dismissJob()">
+            Abandonner la tâche
+        </button>
+        <a href="../projects/projects.html" class="btn btn-secondary">Retour</a>
+    </div>
+
+    <div id="startLoading">
+        <div class="spinner"></div>
+        <p>Démarrage de la tâche...</p>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <div id="progressBox">
+        <div class="progress-label" id="progressLabel">Génération en cours...</div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-meta" id="progressMeta">0 / 0</div>
+    </div>
+
+    <div id="downloadBox">
+        <a id="downloadBtn" href="#" class="btn btn-success">
+            Télécharger le mémoire rempli
+        </a>
+    </div>
+</div>
+
+<script src="../nav/nav.js"></script>
+
+<script>
+const API_BASE = "http://192.168.99.10:8000";
+const STORAGE_KEY = "memoire_job_id";
+
+let currentJobId = null;
+let pollTimer = null;
+
+const structureFile = document.getElementById("structureFile");
+const projectIdInput = document.getElementById("projectId");
+const globalPromptInput = document.getElementById("globalPrompt");
+const startBtn = document.getElementById("startBtn");
+const dismissBtn = document.getElementById("dismissBtn");
+const messageEl = document.getElementById("message");
+const progressBox = document.getElementById("progressBox");
+const progressFill = document.getElementById("progressFill");
+const progressLabel = document.getElementById("progressLabel");
+const progressMeta = document.getElementById("progressMeta");
+const downloadBox = document.getElementById("downloadBox");
+const downloadBtn = document.getElementById("downloadBtn");
+const uploadLoading = document.getElementById("uploadLoading");
+const startLoading = document.getElementById("startLoading");
+
+function showMessage(text, type) {
+    messageEl.textContent = text;
+    messageEl.className = `message ${type}`;
+}
+
+function saveJobId(jobId) {
+    localStorage.setItem(STORAGE_KEY, jobId);
+    const url = new URL(window.location.href);
+    url.searchParams.set("job_id", jobId);
+    history.replaceState(null, "", url.toString());
+}
+
+function clearJobId() {
+    localStorage.removeItem(STORAGE_KEY);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("job_id");
+    history.replaceState(null, "", url.pathname + url.search);
+}
+
+function getSavedJobId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("job_id") || localStorage.getItem(STORAGE_KEY);
+}
+
+function dismissJob() {
+    if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+    }
+    clearJobId();
+    currentJobId = null;
+    progressBox.style.display = "none";
+    downloadBox.style.display = "none";
+    dismissBtn.style.display = "none";
+    startBtn.disabled = false;
+    progressFill.style.width = "0%";
+    progressFill.style.background = "#0d6efd";
+    showMessage("Tâche abandonnée. Vous pouvez lancer une nouvelle génération.", "info");
+}
+
+async function startGeneration() {
+    const file = structureFile.files[0];
+    const projectId = projectIdInput.value.trim();
+    const globalPrompt = globalPromptInput.value.trim();
+
+    if (!file) {
+        showMessage("Veuillez sélectionner un fichier structure .docx.", "error");
+        return;
+    }
+    if (!projectId) {
+        showMessage("L'ID du projet est obligatoire.", "error");
+        return;
+    }
+
+    downloadBox.style.display = "none";
+    progressBox.style.display = "none";
+    messageEl.style.display = "none";
+    startBtn.disabled = true;
+    dismissBtn.style.display = "none";
+    progressFill.style.background = "#0d6efd";
+
+    try {
+        // 1. Upload structure
+        uploadLoading.style.display = "block";
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadRes = await fetch(`${API_BASE}/generation/upload-structure`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!uploadRes.ok) {
+            const err = await uploadRes.json().catch(() => ({}));
+            throw new Error(err.detail || `Échec du téléversement (${uploadRes.status})`);
+        }
+
+        const uploadData = await uploadRes.json();
+        currentJobId = uploadData.job_id;
+        saveJobId(currentJobId);
+
+        uploadLoading.style.display = "none";
+
+        // 2. Start generation
+        startLoading.style.display = "block";
+
+        const runRes = await fetch(`${API_BASE}/generation/run`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                job_id: currentJobId,
+                project_id: projectId,
+                global_prompt: globalPrompt
+            })
+        });
+
+        if (!runRes.ok) {
+            const err = await runRes.json().catch(() => ({}));
+            clearJobId();
+            throw new Error(err.detail || `Échec du démarrage (${runRes.status})`);
+        }
+
+        startLoading.style.display = "none";
+        showMessage("Génération démarrée. Suivi de la progression...", "info");
+
+        progressBox.style.display = "block";
+        dismissBtn.style.display = "inline-block";
+        startPolling();
+
+    } catch (err) {
+        console.error(err);
+        showMessage(err.message || "Une erreur s'est produite.", "error");
+        startBtn.disabled = false;
+        uploadLoading.style.display = "none";
+        startLoading.style.display = "none";
+    }
+}
+
+function startPolling() {
+    if (pollTimer) clearInterval(pollTimer);
+
+    // Immediate first check (useful when resuming)
+    checkStatus();
+
+    pollTimer = setInterval(checkStatus, 2000);
+}
+
+async function checkStatus() {
+    if (!currentJobId) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/generation/status/${currentJobId}`);
+        if (!res.ok) throw new Error("Status check failed");
+
+        const data = await res.json();
+        const current = data.current ?? 0;
+        const total = data.total ?? 0;
+        const status = data.status || "running";
+
+        progressBox.style.display = "block";
+        dismissBtn.style.display = "inline-block";
+        startBtn.disabled = true;
+
+        const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+        progressFill.style.width = `${pct}%`;
+        progressMeta.textContent = `${current} / ${total}`;
+
+        if (status === "done") {
+            progressLabel.textContent = "Génération terminée !";
+            progressFill.style.background = "#198754";
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
+
+            downloadBtn.href = `${API_BASE}/generation/result/${currentJobId}`;
+            downloadBox.style.display = "block";
+            showMessage("Mémoire généré avec succès.", "success");
+            startBtn.disabled = false;
+            // Keep job_id so refresh still shows download; user can Dismiss
+            // Or uncomment next line to auto-clear:
+            // clearJobId();
+
+        } else if (status === "error" || status === "failed") {
+            progressLabel.textContent = "Échec de la génération.";
+            progressFill.style.background = "#dc3545";
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
+            showMessage(data.message || "Échec de la génération.", "error");
+            startBtn.disabled = false;
+            clearJobId();
+
+        } else if (status === "queued") {
+            progressLabel.textContent = "En file d'attente — en attente de démarrage...";
+        } else {
+            progressLabel.textContent = `Traitement de la section ${current} / ${total}...`;
+        }
+
+    } catch (err) {
+        console.error(err);
+        // keep polling
+    }
+}
+
+// Resume job when user comes back to the page
+function tryResumeJob() {
+    const savedId = getSavedJobId();
+    if (!savedId) return;
+
+    currentJobId = savedId;
+    saveJobId(currentJobId); // sync URL + localStorage
+    showMessage("Reprise de la tâche en cours...", "info");
+    progressBox.style.display = "block";
+    dismissBtn.style.display = "inline-block";
+    startBtn.disabled = true;
+    startPolling();
+}
+
+tryResumeJob();
+</script>
+
+</body>
+</html>
