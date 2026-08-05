@@ -109,7 +109,7 @@ def ingest_document(
 
     # 7. Store chunks in ChromaDB
     print(f"[ingestion] Storing in ChromaDB...")
-    _store_in_chromadb(doc_id, chunks, file_path.name, doc_type, project_id)
+    _store_in_chromadb(doc_id, chunks, file_path.name, original_filename.name if original_filename else None, doc_type, project_id)
 
     # 8. Build and save metadata
     duration = round(time.time() - start, 2)
@@ -171,6 +171,7 @@ def _store_in_chromadb(
     doc_id: str,
     chunks: list[dict],
     file_name: str,
+    original_file_name: str | None = None,
     doc_type: DocType = DocType.unspecified,  # NEW
     project_id: str | None = None,    # NEW
 ):
@@ -195,6 +196,7 @@ def _store_in_chromadb(
         meta = {
             "doc_id": doc_id,
             "file_name": file_name,
+            "original_file_name": original_file_name,
             "chunk_index": chunk["index"],
             "word_count": chunk["word_count"],
             "doc_type": doc_type.value,

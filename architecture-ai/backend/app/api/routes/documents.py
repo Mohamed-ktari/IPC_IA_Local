@@ -67,7 +67,7 @@ class DeleteResponse(BaseModel):
 # ----------------------------------------------------------------
 
 @router.post("/upload", response_model=UploadResponse,)
-async def upload_document(file: UploadFile = File(...),doc_type: DocType = Form(...)):
+async def upload_document(file: UploadFile = File(...),doc_type: DocType = Form(default=DocType.unspecified)):
     # Receives a file upload, saves it temporarily, then runs
     # the full ingestion pipeline (parse → chunk → embed → store).
     #

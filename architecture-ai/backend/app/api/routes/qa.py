@@ -40,6 +40,7 @@ class AskRequest(BaseModel):
 
 
 class SourceInfo(BaseModel):
+    original_file_name: str
     file_name: str
     chunk_index: int
     hybrid_score: float

@@ -86,7 +86,6 @@ class QAAgent(BaseAgent):
         # used in format_context — otherwise the frontend would show sources
         # the LLM never actually saw in its prompt.
         used_results = [r for r in results if r.hybrid_score >= settings.QA_MIN_SCORE]
-
         return {
             "conversation_id": conversation_id,
             "answer": response.content,
@@ -95,6 +94,7 @@ class QAAgent(BaseAgent):
                 {
                     "chunk_index": r.chunk_index,
                     "file_name": r.file_name,
+                    "original_file_name": r.original_file_name,
                     "hybrid_score": round(r.hybrid_score, 3),
                 }
                 for r in used_results

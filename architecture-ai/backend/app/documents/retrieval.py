@@ -36,12 +36,14 @@ class RetrievalResult:
         bm25_score: float = 0.0,
         hybrid_score: float = 0.0,
         source: str = "hybrid",
+        original_file_name: str | None = None,
     ):
         self.text = text
         self.doc_id = doc_id
         self.file_name = file_name
         self.chunk_index = chunk_index
         self.similarity_score = similarity_score
+        self.original_file_name = original_file_name
         self.bm25_score = bm25_score
         self.hybrid_score = hybrid_score
         self.source = source  # "semantic" | "bm25" | "hybrid"
@@ -184,6 +186,7 @@ class Retriever:
                 text=text,
                 doc_id=metadata.get("doc_id", ""),
                 file_name=metadata.get("file_name", ""),
+                original_file_name=metadata.get("original_file_name", ""),
                 chunk_index=metadata.get("chunk_index", i),
                 similarity_score=similarity,
                 source="semantic",
@@ -230,6 +233,7 @@ class Retriever:
             if meta_path.exists():
                 meta = json.loads(meta_path.read_text(encoding="utf-8"))
                 file_name = meta.get("file_name", did)
+                original_file_name = meta.get("original_file_name", did) 
 
             for i, score in enumerate(raw_scores):
                 if score > 0:
@@ -237,6 +241,7 @@ class Retriever:
                         text=chunks[i]["text"],
                         doc_id=did,
                         file_name=file_name,
+                        original_file_name=original_file_name,
                         chunk_index=chunks[i]["index"],
                         similarity_score=0.0,
                         bm25_score=score,

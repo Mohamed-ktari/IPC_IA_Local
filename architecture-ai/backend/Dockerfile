@@ -9,6 +9,13 @@
 # ────────────────────────────────────────────────────────────
 FROM nvidia/cuda:13.0.0-cudnn-runtime-ubuntu22.04
 
+# Prevent apt from ever trying to prompt interactively (e.g. tzdata's
+# "Geographic area?" question, pulled in transitively by
+# software-properties-common) — without this, docker build just hangs
+# forever waiting for keyboard input that can never arrive.
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Paris
+
 # ────────────────────────────────────────────────────────────
 # System dependencies
 #   - python3.14 (matches the dev venv exactly — not in Ubuntu 22.04's
@@ -40,9 +47,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # (which would pull in the system's default python, not 3.14).
 RUN python3.14 -m ensurepip --upgrade
 
-# Make python3.14 the default `python`/`pip`
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.14 1 \
-    && update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.14 1
+# Make python3.14 the default `python`. We deliberately do NOT alias a
+# bare `pip` binary here — ensurepip doesn't reliably install the pip
+# console script at a predictable path across images, so every pip
+# invocation below uses `python -m pip` instead, which always resolves
+# correctly against whatever `python` points to.
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.14 1
 
 WORKDIR /app
 
@@ -52,8 +62,8 @@ WORKDIR /app
 # only rebuilding it when requirements.txt actually changes.
 # ────────────────────────────────────────────────────────────
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && python -m pip install --no-cache-dir -r requirements.txt
 
 # ────────────────────────────────────────────────────────────
 # Application source

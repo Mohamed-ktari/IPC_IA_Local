@@ -56,19 +56,20 @@ class Pipe:
         extracted = []
         for f in files:
             name = f.get("filename") or f.get("name") or "upload.bin"
+            original_name = f.get("original_filename") or f.get("original_name")
             raw = f.get("content") or f.get("data")
             if raw is None:
                 continue
             if isinstance(raw, str):
                 # assume base64-encoded if it's a string
                 raw = base64.b64decode(raw)
-            extracted.append({"filename": name, "content": raw})
+            extracted.append({"filename": name, "original_filename": original_name, "content": raw})
         return extracted
 
-    async def _upload_file(self, client: httpx.AsyncClient, filename: str, content: bytes) -> str:
+    async def _upload_file(self, client: httpx.AsyncClient, filename: str, original_filename: str | None, content: bytes) -> str:
         resp = await client.post(
             f"{self.valves.BACKEND_BASE_URL}/documents/upload",
-            files={"file": (filename, content)},
+            files={"file": (filename, original_filename, content)},
         )
         resp.raise_for_status()
         return resp.json()["document"]["doc_id"]  # adjust key name if /documents/upload's
@@ -86,7 +87,7 @@ class Pipe:
         async with httpx.AsyncClient(timeout=self.valves.REQUEST_TIMEOUT) as client:
             new_files = await self._extract_files(body)
             new_doc_ids = [
-                await self._upload_file(client, f["filename"], f["content"])
+                await self._upload_file(client, f["filename"], f["original_filename"], f["content"])
                 for f in new_files
             ]
 
