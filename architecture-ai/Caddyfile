@@ -1,15 +1,30 @@
 :80 {
-    log {
-        output stdout
-        format console
-    }
+	log {
+		output stdout
+		format console
+	}
 
-    encode gzip zstd
+	encode gzip zstd
 
-    reverse_proxy host.docker.internal:8000 {
-        header_up Host {upstream_hostport}
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
-    }
+	# Backend API — frontend JS calls fetch("/api/..."), handle_path strips
+	# the "/api" prefix before forwarding, so /api/projects reaches the
+	# backend container as /projects (matching its actual route paths).
+	handle_path /api/* {
+		reverse_proxy backend:8000 {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Everything else — the static frontend site
+	handle {
+		reverse_proxy frontend:80 {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
 }
